@@ -1,0 +1,38 @@
+{{- if .Values.dotcms.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dotcms-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.dotcms.storageSize }}
+{{- end }}
+---
+{{- if .Values.database.local }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.storageSize }}
+{{- end }}
+---
+{{- if .Values.opensearch.local }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opensearch-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.opensearch.storageSize }}
+{{- end }}

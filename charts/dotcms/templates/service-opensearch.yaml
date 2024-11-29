@@ -1,0 +1,25 @@
+{{- if .Values.opensearch.local }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: opensearch
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+      protocol: TCP
+    - name: metrics
+      port: 9600
+      targetPort: 9600
+      protocol: TCP
+  selector:
+    app: opensearch
+{{- end }}

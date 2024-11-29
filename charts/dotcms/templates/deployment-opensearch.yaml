@@ -1,0 +1,41 @@
+{{- if .Values.opensearch.local }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+    spec:
+      containers:
+        - name: opensearch
+          image: {{ .Values.opensearch.image }}
+          ports:
+            - containerPort: 9200
+            - containerPort: 9600
+          env:
+            - name: cluster.name
+              value: {{ .Values.opensearch.clusterName }}
+            - name: discovery.type
+              value: single-node
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: {{ .Values.opensearch.javaOpts }}
+            - name: plugins.security.disabled
+              value: "true"               
+          volumeMounts:
+            - name: opensearch-volume
+              mountPath: /usr/share/opensearch/data
+      volumes:
+        - name: opensearch-volume
+          persistentVolumeClaim:
+            claimName: opensearch-pvc
+{{- end }}
