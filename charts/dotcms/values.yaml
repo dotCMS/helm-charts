@@ -1,0 +1,63 @@
+namespace: dotcms-dev
+fullname: dotcms-cluster
+environment: dev
+version: 'latest'
+clusterID: dotcms-local-dev-cluster
+
+resources:
+  requests:
+    cpu: 0.5
+    memory: 5Gi
+  limits:
+    cpu: 2
+    memory: 5Gi
+
+terminationGracePeriodSeconds: 40
+startupDelaySeconds: 30
+serviceAccountName: dotcms-sa
+
+ingress:
+  host: dotcms.local
+    
+dotcms:
+  enabled: true
+  storageSize: 3Gi
+  customEnvVars:
+    DOT_ES_AUTH_BASIC_PASSWORD: "admin"
+    DOT_INITIAL_ADMIN_PASSWORD: "admin"
+
+redis:
+  image: redis:latest
+  storageSize: 3Gi
+  local: true
+  host: redis.local
+  password: MY_SECRET_P4SS
+  port: 6379
+  sessionEnabled: true
+  sessionHost: redis
+  sessionPersistentPolicies: DEFAULT  
+  sslEnabled: false
+
+database:
+  image: pgvector/pgvector:pg16
+  local: true
+  storageSize: 3Gi
+  host: postgres.local
+  name: dotcms
+  username: dotcmsdbuser
+  password: password
+  port: 5432
+  maxConnections: 400
+  sharedBuffers: 128MB
+
+opensearch:
+  image: opensearchproject/opensearch:1
+  clusterName: elastic-cluster
+  local: true
+  storageSize: 3Gi
+  host: opensearch.local
+  port: 9200
+  javaOpts: '-Xmx1G'
+  ports:
+    - 9200
+    - 9600

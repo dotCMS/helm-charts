@@ -1,0 +1,46 @@
+{{- if .Values.database.local }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
+          volumeMounts:
+            - name: dbdata
+              mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres
+          image: {{ .Values.database.image }}
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+          ports:
+            - containerPort: {{ .Values.database.port }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.database.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.password }}
+            - name: POSTGRES_DB
+              value: {{ .Values.database.name }}
+          volumeMounts:
+            - name: dbdata
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: dbdata
+          persistentVolumeClaim:
+            claimName: database-pvc
+{{- end }}
