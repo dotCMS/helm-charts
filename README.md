@@ -104,21 +104,9 @@ Add the certificate and private key as a Kubernetes Secret:
   kubectl get secrets developer-certificate-secret -n dotcms-dev
   ```
 
-### 4. **Reference the Secret in the Chart**
+### 4. **Customize your chart values**
 
-To configure the chart to use your Secret, modify the values.yaml file:
-
-Add the name of your Secret under the certificates section
-
-  ```yaml
-  certificates:
-    secretName: developer-certificate-secret
-    domain: dotcms.local
-  ```
-
-### 5. **Customize your chart values**
-
-You can customize your chart values by modifying the values.yaml file. For example, you can change the `image` tag or the number of replicas of `dotcms` service. e.g.:
+You can customize your chart values by creating a values.local.yaml file. For example, you can change the `image` tag or the number of replicas of `dotcms` service. e.g.:
 
   ```yaml
   dotcms:
@@ -130,5 +118,23 @@ You can customize your chart values by modifying the values.yaml file. For examp
       DOT_INITIAL_ADMIN_PASSWORD: "some-value"
   ```
 
+### 5. **Clone the DotCMS Helm chart**
+
+Clone the DotCMS Helm chart repository:
+
+  ```bash
+  git clone git@github.com:dotCMS/helm-charts.git
+  ```
+
 ### 6. **Install the DotCMS Helm chart**
-helm install dotcms ./dotcms -f values.local.yaml --namespace dotcms-dev
+
+Go to the `helm-charts` directory and install the chart:
+
+  ```bash
+  cd helm-charts/chart
+  ```
+
+  ```bash
+  helm install dotcms ./dotcms -f values.local.yaml --namespace dotcms-dev
+  ```
+
