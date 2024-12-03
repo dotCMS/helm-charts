@@ -17,14 +17,65 @@ startupDelaySeconds: 30
 serviceAccountName: dotcms-sa
 
 ingress:
+  tlsSecretName: developer-certificate-secret
   host: dotcms.local
     
 dotcms:
+  port: 8080
+  image: dotcms/dotcms-test:1.0.0-SNAPSHOT
+  imagePullPolicy: Never
+  replicaCount: 1
   enabled: true
   storageSize: 3Gi
   customEnvVars:
     DOT_ES_AUTH_BASIC_PASSWORD: "admin"
     DOT_INITIAL_ADMIN_PASSWORD: "admin"
+
+  container:
+    ports:
+      - containerPort: 8082
+      - containerPort: 8443  
+    lifecycle:
+      postStart:
+        command:
+          - /bin/bash
+          - -c
+          - if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup;
+            fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;
+      preStop:
+        command:
+          - sleep
+          - '20'
+
+    startupProbe:
+      httpGet:
+        path: /api/v1/appconfiguration
+        port: 8082
+      initialDelaySeconds: 60
+      periodSeconds: 5
+      successThreshold: 1
+      failureThreshold: 18
+      timeoutSeconds: 1
+
+    livenessProbe:
+      httpGet:
+        path: /api/v1/appconfiguration
+        port: 8082
+      initialDelaySeconds: 1
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 1
+      timeoutSeconds: 10
+
+    readinessProbe:
+      httpGet:
+        path: /api/v1/appconfiguration
+        port: 8082
+      initialDelaySeconds: 1
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 1
+      timeoutSeconds: 5    
 
 redis:
   image: redis:latest
