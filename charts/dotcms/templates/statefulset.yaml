@@ -57,11 +57,11 @@ spec:
             timeoutSeconds: {{ .Values.dotcms.container.readinessProbe.timeoutSeconds }}         
           env:
             - name: CMS_JAVA_OPTS
-              value: '-Xmx1g'
+              value: '{{ .Values.dotcms.javaOpts }}'
             - name: LANG
-              value: 'C.UTF-8'
+              value: '{{ .Values.dotcms.lang }}'
             - name: TZ
-              value: 'UTC'
+              value: '{{ .Values.dotcms.timezone }}'
             - name: TOMCAT_REDIS_SESSION_ENABLED
               value: '{{ .Values.redis.sessionEnabled }}'
             - name: TOMCAT_REDIS_SESSION_HOST
