@@ -1,0 +1,100 @@
+{{- if .Values.dotcms.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.fullname }}
+spec:
+  replicas: {{ .Values.dotcms.replicaCount }}
+  serviceName: {{ .Values.fullname }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fullname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullname }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: dotcms
+          image: {{ .Values.dotcms.image }}
+          imagePullPolicy: {{ .Values.dotcms.imagePullPolicy }}
+          ports: {{ toJson .Values.dotcms.container.ports }}
+          lifecycle:
+            postStart:
+              exec:
+                command: {{ toJson .Values.dotcms.container.lifecycle.postStart.command }}
+            preStop:
+              exec:
+                command: {{ toJson .Values.dotcms.container.lifecycle.preStop.command }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.dotcms.container.startupProbe.httpGet.path }}
+              port: {{ .Values.dotcms.container.startupProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.dotcms.container.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.dotcms.container.startupProbe.periodSeconds }}
+            successThreshold: {{ .Values.dotcms.container.startupProbe.successThreshold }}
+            failureThreshold: {{ .Values.dotcms.container.startupProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.dotcms.container.startupProbe.timeoutSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.dotcms.container.livenessProbe.httpGet.path }}
+              port: {{ .Values.dotcms.container.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.dotcms.container.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.dotcms.container.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.dotcms.container.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.dotcms.container.livenessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.dotcms.container.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.dotcms.container.readinessProbe.httpGet.path }}
+              port: {{ .Values.dotcms.container.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.dotcms.container.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.dotcms.container.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.dotcms.container.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.dotcms.container.readinessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.dotcms.container.readinessProbe.timeoutSeconds }}         
+          env:
+            - name: CMS_JAVA_OPTS
+              value: '{{ .Values.dotcms.javaOpts }}'
+            - name: LANG
+              value: '{{ .Values.dotcms.lang }}'
+            - name: TZ
+              value: '{{ .Values.dotcms.timezone }}'
+            - name: TOMCAT_REDIS_SESSION_ENABLED
+              value: '{{ .Values.redis.sessionEnabled }}'
+            - name: TOMCAT_REDIS_SESSION_HOST
+              value: '{{ .Values.redis.sessionHost }}'
+            - name: TOMCAT_REDIS_SESSION_PORT
+              value: '{{ .Values.redis.port }}'
+            - name: TOMCAT_REDIS_SESSION_PASSWORD
+              value: '{{ .Values.redis.password }}'
+            - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
+              value: '{{ .Values.redis.sslEnabled }}'
+            - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
+              value: '{{ .Values.redis.persistentPolicies }}'
+            - name: DB_BASE_URL
+              value: 'jdbc:postgresql://db/{{ .Values.database.name }}'
+            - name: DB_USERNAME
+              value: '{{ .Values.database.username }}'
+            - name: DB_PASSWORD
+              value: '{{ .Values.database.password }}'
+            - name: DOT_DOTCMS_CLUSTER_ID
+              value: '{{ .Values.clusterID }}'              
+            - name: DOT_ES_ENDPOINTS
+              value: 'http://opensearch:{{ .Values.opensearch.port }}'
+
+            # Custom environment variables
+            {{- range $key, $value := .Values.dotcms.customEnvVars }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}            
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /data/shared
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: dotcms-pvc
+{{- end }}
