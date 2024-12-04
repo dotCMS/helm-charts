@@ -77,48 +77,21 @@ Using mkcert, generate a certificate for the local domain:
 
 ### 3. **Create a Kubernetes Secret**
 
-Add the certificate and private key as a Kubernetes Secret:
 
-1. Create the `dotcms-dev` namespace:
-  
-  ```bash
-  kubectl create namespace dotcms-dev
-  ```
-
-  Check that the namespace was created successfully:
+1. Run this command for creating the Secret `developer-certificate-secret` in the `dotcms-dev` namespace:
 
   ```bash
-  kubectl get namespaces
-  ```
-
-2. Run this command for creating the Secret `developer-certificate-secret` in the `dotcms-dev` namespace:
-
-  ```bash
-  kubectl create secret tls developer-certificate-secret --namespace=dotcms-dev \
+  kubectl create secret tls developer-certificate-secret --namespace=dotcms-dev --create-namespace \
     --cert=dotcms.local.pem --key=dotcms.local-key.pem
   ```
 
-3. Confirm the Secret was created successfully:
+2. Confirm the Secret was created successfully:
 
   ```bash
   kubectl get secrets developer-certificate-secret -n dotcms-dev
   ```
 
-### 4. **Customize your chart values**
-
-You can customize your chart values by creating a values.local.yaml file. For example, you can change the `image` tag or the number of replicas of `dotcms` service. e.g.:
-
-  ```yaml
-  dotcms:
-    image: dotcms/dotcms:trunk
-    imagePullPolicy: Always
-    replicaCount: 2
-    customEnvVars:
-      DOT_ES_AUTH_BASIC_PASSWORD: "some-value"
-      DOT_INITIAL_ADMIN_PASSWORD: "some-value"
-  ```
-
-### 5. **Clone the DotCMS Helm chart**
+### 4. **Clone the DotCMS Helm chart**
 
 Clone the DotCMS Helm chart repository:
 
@@ -126,15 +99,24 @@ Clone the DotCMS Helm chart repository:
   git clone git@github.com:dotCMS/helm-charts.git
   ```
 
-### 6. **Install the DotCMS Helm chart**
+### 5. **Install the DotCMS Helm chart**
 
 Go to the `helm-charts` directory and install the chart:
 
   ```bash
-  cd helm-charts/chart
+  cd helm-charts/charts
   ```
 
   ```bash
-  helm install dotcms ./dotcms -f values.local.yaml --namespace dotcms-dev
+  helm install dotcms ./dotcms --namespace dotcms-dev --create-namespace
   ```
+
+### 6. **Helper tools**
+
+  You can use the following resources to help you with the setup:
+
+  - [DotCMS Utilities](https://github.com/dotCMS/dotcms-utilities/tree/main/dev-k8s-local-setup#dotcms-local-development-setup-using-kubernetes)
+
+  This tool automates the setup of a local development environment for DotCMS using Kubernetes. It ensures that all necessary tools and configurations are in place before installing the DotCMS Helm chart.
+
 
