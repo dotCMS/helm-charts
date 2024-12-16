@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   backoffLimit: {{ .Values.jobRetries }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
   template:
     spec:
       restartPolicy: Never
@@ -29,13 +30,11 @@ spec:
 
             {{- range .Values.dotcmsClusterPvcs }}
             echo "Restoring content to /mnt/{{ . }}...";
-            mkdir -p /tmp/restore-temp/{{ . }};
-            tar xzf /tmp/restore-temp/{{ . }}.tar.gz -C /tmp/restore-temp/{{ . }} || exit 1;
-            cp -r /tmp/restore-temp/{{ . }}/* /mnt/{{ . }} || exit 1;
+            tar xzf /tmp/restore-temp/{{ . }}.tar.gz -C /mnt/{{ . }} || exit 1;
             {{- end }}
 
             ls -lthR /tmp/restore-temp;
-            rm -rf /tmp/restore-temp;
+            
             echo "Restore process completed successfully!";            
 
         volumeMounts:

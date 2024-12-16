@@ -1,6 +1,6 @@
 namespace: dotcms-dev
 # Operation to perform: "backup" or "restore"
-operation: restore
+operation: backup
 # Jobs configuration
 jobRetries: 3
 ttlSecondsAfterFinished: 900 # 1/4 hour
@@ -13,13 +13,14 @@ dotcmsClusterPvcs:
 
 # Backup configuration
 backupJobName: backup-job
+backupFileName: backup-complete.tar.gz
 backupPvcName: backup-pvc
 backupPvcSize: 5Gi
 backupOutputPath: /backup
-backupHostPath: /Users/dcolina/k8s-backup
-backupStorageClassName: hostpath
+backupHostPath: /private/tmp
+# backupStorageClassName: hostpath
 
 # Restore configuration
 restoreJobName: restore-job
 restoreFileName: backup-complete.tar.gz
-restoreHostPath: /Users/dcolina/k8s-backup
+restoreHostPath: /private/tmp
