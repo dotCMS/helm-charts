@@ -1,13 +1,25 @@
 namespace: dotcms-dev
-backupPvcName: backup-pvc
-backupPvcSize: 5Gi
-pvcToBackup:
+# Operation to perform: "backup" or "restore"
+operation: restore
+# Jobs configuration
+jobRetries: 3
+ttlSecondsAfterFinished: 900 # 1/4 hour
+
+# List of PVCs to backup/restore
+dotcmsClusterPvcs:
   - database-pvc
   - dotcms-pvc
   - opensearch-pvc
+
+# Backup configuration
+backupJobName: backup-job
+backupPvcName: backup-pvc
+backupPvcSize: 5Gi
 backupOutputPath: /backup
 backupHostPath: /Users/dcolina/k8s-backup
-backupJobName: backup-job
 backupStorageClassName: hostpath
-jobRetries: 3
-ttlSecondsAfterFinished: 900 # 1/4 hour
+
+# Restore configuration
+restoreJobName: restore-job
+restoreFileName: backup-complete.tar.gz
+restoreHostPath: /Users/dcolina/k8s-backup

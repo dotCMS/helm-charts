@@ -1,0 +1,58 @@
+{{- if eq .Values.operation "restore" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Values.restoreJobName }}-{{ now | date "20060102-150405" }}"
+  namespace: {{ .Values.namespace }}
+spec:
+  backoffLimit: {{ .Values.jobRetries }}
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: restore
+        image: busybox
+        command:
+          - sh
+          - -c
+          - >
+            echo "Starting restore process...";
+            RESTORE_FILE="/restore/{{ .Values.restoreFileName }}";
+            if [ ! -f $RESTORE_FILE ]; then
+              echo "Error: Backup file $RESTORE_FILE not found!";
+              exit 1;
+            fi;
+
+            echo "Extracting backup from $RESTORE_FILE...";
+            mkdir -p /tmp/restore-temp;
+            tar xzf $RESTORE_FILE -C /tmp/restore-temp || exit 1;
+
+            {{- range .Values.dotcmsClusterPvcs }}
+            echo "Restoring content to /mnt/{{ . }}...";
+            mkdir -p /tmp/restore-temp/{{ . }};
+            tar xzf /tmp/restore-temp/{{ . }}.tar.gz -C /tmp/restore-temp/{{ . }} || exit 1;
+            cp -r /tmp/restore-temp/{{ . }}/* /mnt/{{ . }} || exit 1;
+            {{- end }}
+
+            ls -lthR /tmp/restore-temp;
+            rm -rf /tmp/restore-temp;
+            echo "Restore process completed successfully!";            
+
+        volumeMounts:
+          {{- range .Values.dotcmsClusterPvcs }}
+          - name: {{ . }}
+            mountPath: /mnt/{{ . }}
+          {{- end }}
+          - name: restore-volume
+            mountPath: /restore          
+      volumes:
+        {{- range .Values.dotcmsClusterPvcs }}
+        - name: {{ . }}
+          persistentVolumeClaim:
+            claimName: {{ . }}
+        {{- end }}
+        - name: restore-volume
+          hostPath:
+            path: {{ .Values.restoreHostPath }}
+            type: Directory        
+{{- end }}

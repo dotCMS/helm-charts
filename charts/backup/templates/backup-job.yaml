@@ -1,3 +1,4 @@
+{{- if eq .Values.operation "backup" }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -22,7 +23,7 @@ spec:
               TEMP_DIR="/tmp/backup-temp";
               mkdir -p $TEMP_DIR;
 
-              {{- range .Values.pvcToBackup }}
+              {{- range .Values.dotcmsClusterPvcs }}
               echo "Creating archive for /mnt/{{ . }}...";
               tar czf $TEMP_DIR/{{ . }}.tar.gz -C /mnt/{{ . }} . || exit 1;
               {{- end }}
@@ -38,22 +39,20 @@ spec:
               echo "Backup completed at $BACKUP_DIR/backup-complete.tar.gz";
               ls -lh $BACKUP_DIR;         
           volumeMounts:
-            {{- range .Values.pvcToBackup }}
+            {{- range .Values.dotcmsClusterPvcs }}
             - name: {{ . }}
               mountPath: /mnt/{{ . }}
             {{- end }}
-            - name: vol-backup
+            - name: backup-volume
               mountPath: {{ .Values.backupOutputPath }}
       volumes:
-        {{- range .Values.pvcToBackup }}
+        {{- range .Values.dotcmsClusterPvcs }}
         - name: {{ . }}
           persistentVolumeClaim:
             claimName: {{ . }}
         {{- end }}
-        # - name: backup
-        #   persistentVolumeClaim:
-        #     claimName: {{ .Values.backupPvcName }}
-        - name: vol-backup
+        - name: backup-volume
           hostPath:
-            path: /Users/dcolina/k8s-backup
+            path: {{ .Values.backupHostPath }}
             type: DirectoryOrCreate
+{{- end }}            
