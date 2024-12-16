@@ -1,0 +1,13 @@
+namespace: dotcms-dev
+backupPvcName: backup-pvc
+backupPvcSize: 5Gi
+pvcToBackup:
+  - database-pvc
+  - dotcms-pvc
+  - opensearch-pvc
+backupOutputPath: /backup
+backupHostPath: /Users/dcolina/k8s-backup
+backupJobName: backup-job
+backupStorageClassName: hostpath
+jobRetries: 3
+ttlSecondsAfterFinished: 900 # 1/4 hour

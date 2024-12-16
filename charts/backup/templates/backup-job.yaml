@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.backupJobName }}-{{ now | date "20060102-150405" }}
+  namespace: {{ .Values.namespace }}
+spec:
+  backoffLimit: {{ .Values.jobRetries }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: backup
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              echo "Starting backup...";
+              mkdir -p {{ .Values.backupOutputPath }};
+              BACKUP_DIR="{{ .Values.backupOutputPath }}";
+              TEMP_DIR="/tmp/backup-temp";
+              mkdir -p $TEMP_DIR;
+
+              {{- range .Values.pvcToBackup }}
+              echo "Creating archive for /mnt/{{ . }}...";
+              tar czf $TEMP_DIR/{{ . }}.tar.gz -C /mnt/{{ . }} . || exit 1;
+              {{- end }}
+
+              ls -lth $TEMP_DIR;
+
+              echo "Combining all archives into one...";
+              tar czf $BACKUP_DIR/backup-complete.tar.gz -C $TEMP_DIR . || exit 1;
+
+              echo "Cleanup temporary files...";
+              rm -rf $TEMP_DIR;
+
+              echo "Backup completed at $BACKUP_DIR/backup-complete.tar.gz";
+              ls -lh $BACKUP_DIR;         
+          volumeMounts:
+            {{- range .Values.pvcToBackup }}
+            - name: {{ . }}
+              mountPath: /mnt/{{ . }}
+            {{- end }}
+            - name: vol-backup
+              mountPath: {{ .Values.backupOutputPath }}
+      volumes:
+        {{- range .Values.pvcToBackup }}
+        - name: {{ . }}
+          persistentVolumeClaim:
+            claimName: {{ . }}
+        {{- end }}
+        # - name: backup
+        #   persistentVolumeClaim:
+        #     claimName: {{ .Values.backupPvcName }}
+        - name: vol-backup
+          hostPath:
+            path: /Users/dcolina/k8s-backup
+            type: DirectoryOrCreate
