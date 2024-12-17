@@ -1,26 +1,38 @@
-namespace: dotcms-dev
-# Operation to perform: "backup" or "restore"
-operation: backup
-# Jobs configuration
-jobRetries: 3
-ttlSecondsAfterFinished: 900 # 1/4 hour
+namespace: dotcms-dev # Namespace for the deployment
+operation: backup # Either "backup" or "restore"
+retries: 3 # Number of retries for Jobs
+ttlSecondsAfterFinished: 900 # Time before completed Jobs are cleaned up
+hostPath: /private/tmp # HostPath for storing or restoring the backup file
+fileName: backup-complete # Backup file name
 
-# List of PVCs to backup/restore
-dotcmsClusterPvcs:
+pvcList: # List of PVCs for both backup and restore
   - database-pvc
   - dotcms-pvc
   - opensearch-pvc
 
-# Backup configuration
-backupJobName: backup-job
-backupFileName: backup-complete.tar.gz
-backupPvcName: backup-pvc
-backupPvcSize: 5Gi
-backupOutputPath: /backup
-backupHostPath: /private/tmp
-# backupStorageClassName: hostpath
+# namespace: dotcms-dev
+# # Operation to perform: "backup" or "restore"
+# operation: backup
+# # Jobs configuration
+# jobRetries: 3
+# ttlSecondsAfterFinished: 900 # 1/4 hour
 
-# Restore configuration
-restoreJobName: restore-job
-restoreFileName: backup-complete.tar.gz
-restoreHostPath: /private/tmp
+# # List of PVCs to backup/restore
+# dotcmsClusterPvcs:
+#   - database-pvc
+#   - dotcms-pvc
+#   - opensearch-pvc
+
+# # Backup configuration
+# backupJobName: backup-job
+# backupFileName: backup-complete.tar.gz
+# backupPvcName: backup-pvc
+# backupPvcSize: 5Gi
+# backupOutputPath: /backup
+# backupHostPath: /private/tmp
+# # backupStorageClassName: hostpath
+
+# # Restore configuration
+# restoreJobName: restore-job
+# restoreFileName: backup-complete.tar.gz
+# restoreHostPath: /private/tmp

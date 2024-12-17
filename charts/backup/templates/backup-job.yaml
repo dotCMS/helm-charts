@@ -2,10 +2,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.backupJobName }}-{{ now | date "20060102-150405" }}
+  name: backup-job-{{ now | date "20060102-150405" }}
   namespace: {{ .Values.namespace }}
 spec:
-  backoffLimit: {{ .Values.jobRetries }}
+  backoffLimit: {{ .Values.retries }}
   ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
   template:
     spec:
@@ -18,39 +18,39 @@ spec:
             - -c
             - >
               echo "Starting backup...";
-              BACKUP_DIR="{{ .Values.backupOutputPath }}";
+              BACKUP_DIR="/backup";
               mkdir -p $BACKUP_DIR;
               
               TEMP_DIR="/tmp/backup-temp";
               mkdir -p $TEMP_DIR;
 
-              {{- range .Values.dotcmsClusterPvcs }}
+              {{- range .Values.pvcList }}
               echo "Creating archive for /mnt/{{ . }}...";
               tar czf $TEMP_DIR/{{ . }}.tar.gz -C /mnt/{{ . }} . || exit 1;
               {{- end }}
 
               echo "Combining all archives into one...";
-              tar czf $BACKUP_DIR/{{ .Values.backupFileName }}.tar.gz -C $TEMP_DIR . || exit 1;
+              tar czf $BACKUP_DIR/{{ .Values.fileName }}.tar.gz -C $TEMP_DIR . || exit 1;
 
               echo "Cleanup temporary files...";
               rm -rf $TEMP_DIR;
 
-              echo "Backup completed at $BACKUP_DIR/{{ .Values.backupFileName }}.tar.gz";      
+              echo "Backup completed at $BACKUP_DIR/{{ .Values.fileName }}.tar.gz";      
           volumeMounts:
-            {{- range .Values.dotcmsClusterPvcs }}
+            {{- range .Values.pvcList }}
             - name: {{ . }}
               mountPath: /mnt/{{ . }}
             {{- end }}
             - name: backup-volume
-              mountPath: {{ .Values.backupOutputPath }}
+              mountPath: /backup
       volumes:
-        {{- range .Values.dotcmsClusterPvcs }}
+        {{- range .Values.pvcList }}
         - name: {{ . }}
           persistentVolumeClaim:
             claimName: {{ . }}
         {{- end }}
         - name: backup-volume
           hostPath:
-            path: {{ .Values.backupHostPath }}
+            path: {{ .Values.hostPath }}
             type: DirectoryOrCreate
 {{- end }}            
