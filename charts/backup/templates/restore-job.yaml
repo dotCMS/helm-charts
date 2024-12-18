@@ -18,7 +18,7 @@ spec:
           - -c
           - >
             echo "Starting restore process...";
-            RESTORE_FILE="/restore/{{ .Values.fileName }}";
+            RESTORE_FILE="/restore/{{ .Values.fileName }}.tar.gz";
             if [ ! -f $RESTORE_FILE ]; then
               echo "Error: Backup file $RESTORE_FILE not found!";
               exit 1;
