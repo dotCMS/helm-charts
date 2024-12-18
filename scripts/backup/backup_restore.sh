@@ -219,8 +219,8 @@ run_restore() {
 cleanup_releases() {
   echo "🧹 Cleaning up backup and restore releases in $namespace..."
   
-  helm uninstall dotcms-backup --namespace "$namespace" || echo "⚠️ Backup release not found."
-  helm uninstall dotcms-restore --namespace "$namespace" || echo "⚠️ Restore release not found."
+  helm uninstall dotcms-backup --namespace "$namespace" 2>/dev/null || echo "⚠️ Backup release not found."
+  helm uninstall dotcms-restore --namespace "$namespace" 2>/dev/null || echo "⚠️ Restore release not found."
 
   echo "✅ Cleanup completed successfully."
 }
