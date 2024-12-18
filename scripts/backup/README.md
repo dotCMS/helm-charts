@@ -29,45 +29,47 @@ Before using the script, ensure the following tools are installed:
 ## Usage
 
 ```bash
-./backup_restore.sh <operation> <hostpath> <filename> [namespace]
+./backup_restore.sh --operation <backup|restore|cleanup> [--hostpath <path>] [--filename <name>] [--namespace <namespace>] [--help]
 ```
 
 ## Parameters
 
-| **Parameter** | **Required** | **Description**                                                       |
-|---------------|--------------|-----------------------------------------------------------------------|
-| `<operation>` | Yes          | Operation to perform: `backup`, `restore`, or `cleanup`.             |
-| `<hostpath>`  | Yes (backup/restore) | Path to the host directory for backup or restore files.            |
-| `<filename>`  | Yes (backup/restore) | Name of the backup file to create (backup) or restore from (restore). |
-| `[namespace]` | No           | Kubernetes namespace where dotCMS is deployed (default: `dotcms-dev`).|
+| Parameter     | Description                                                                 | Default Value       |
+|---------------|-----------------------------------------------------------------------------|---------------------|
+| `--operation` | Operation to perform (`backup`, `restore`, `cleanup`). **Required**.        | -                   |
+| `--hostpath`  | Path for backup/restore files. Required for `restore`.                      | `/private/tmp`      |
+| `--filename`  | Backup file name (without extension). Required for `restore`.               | `backup-<timestamp>`|
+| `--namespace` | Kubernetes namespace where the services are deployed.                       | `dotcms-dev`        |
+| `--help`      | Displays usage information and exits.                                       | -                   |
 
-## Operations
+
+## Examples
 
 ### Backup
 
 Performs a backup of dotCMS persistent data into a .tar.gz file.
 
-Example Command:
-
 ```bash
-./backup_restore.sh backup /tmp/backup backup-latest.tar.gz
+./backup_restore.sh --operation backup --hostpath /path/to/backup --filename my-backup
 ```
+> **Note**: If `filename` is not provided, it defaults to `backup-<timestamp>`. If `hostpath` is not provided, it defaults to `/private/tmp`.
 
 Steps:
 
 1. Creates a Helm release dotcms-backup.
 2. Backs up persistent data to the specified hostpath.
-3. The resulting backup file is named as specified (e.g., backup-latest.tar.gz).
+3. The resulting backup file is named as specified (e.g., my-backup.tar.gz).
+
 
 ### Restore
 
 Restores data from a specified backup file.
 
-Example Command:
-
 ```bash
-./backup_restore.sh restore /tmp/backup backup-latest.tar.gz
+./backup_restore.sh --operation restore --hostpath /path/to/backup --filename my-backup
 ```
+
+> **Note**: The provided file (my-backup.tar.gz) must exist in the specified `hostpath`.
 
 Steps:
 
@@ -85,36 +87,15 @@ Steps:
 
 Removes Helm releases related to the backup and restore operations.
 
-Example Command:
 
 ```bash
-./backup_restore.sh cleanup
+./backup_restore.sh --operation cleanup
 ```
 
 Steps:
 
 1. Uninstalls the dotcms-backup Helm release.
 2. Uninstalls the dotcms-restore Helm release.
-
-## Example Use Cases
-
-1. Run a Backup
-
-```bash
-./backup_restore.sh backup /tmp/backup backup-20231216.tar.gz
-```
-
-2. Restore Data
-
-```bash
-./backup_restore.sh restore /tmp/backup backup-20231216.tar.gz
-```
-3. Cleanup Helm Releases
-
-```bash
-./backup_restore.sh cleanup
-```
-
 
 ## Error handling
 
