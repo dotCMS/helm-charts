@@ -6,6 +6,11 @@ default_backup_path="/private/tmp" # Updated default backup path
 default_filename="backup"
 timestamp=$(date +%Y%m%d-%H%M%S)
 
+# Services
+dotcms_service="dotcms-cluster"
+opensearch_service="opensearch"
+db_service="db"
+
 # Get the directory of the script
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -48,6 +53,7 @@ fi
 
 # Set default values for optional inputs
 namespace=${namespace:-$default_namespace}
+hostpath=${hostpath:-$default_backup_path}
 
 # Validate inputs for restore
 if [[ "$operation" == "restore" ]]; then
@@ -103,13 +109,27 @@ check_prerequisites() {
   echo ""
 }
 
+# Function to get and store the current replicas of deployments and statefulsets
+store_replicas() {
+  echo "🔍 Storing current replicas for services in namespace '$namespace'..."
+  db_replicas=$(kubectl get deployment "$db_service" -n "$namespace" -o jsonpath='{.spec.replicas}')
+  opensearch_replicas=$(kubectl get deployment "$opensearch_service" -n "$namespace" -o jsonpath='{.spec.replicas}')
+  dotcms_replicas=$(kubectl get statefulset "$dotcms_service" -n "$namespace" -o jsonpath='{.spec.replicas}')
+  
+  echo "$db_replicas" > /tmp/db_replicas.txt
+  echo "$opensearch_replicas" > /tmp/opensearch_replicas.txt
+  echo "$dotcms_replicas" > /tmp/dotcms_replicas.txt
+  
+  echo "✅ Replicas stored: $db_service=$db_replicas, $opensearch_service=$opensearch_replicas, $dotcms_service=$dotcms_replicas"
+}
+
 # Function to scale down services
 scale_down_services() {
   echo "⬇️  Scaling down services in namespace '$namespace'..."
   echo ""
-  kubectl scale statefulset dotcms-cluster --replicas=0 -n "$namespace"
-  kubectl scale deployment opensearch --replicas=0 -n "$namespace"
-  kubectl scale deployment db --replicas=0 -n "$namespace"
+  kubectl scale statefulset "$dotcms_service" --replicas=0 -n "$namespace"
+  kubectl scale deployment "$opensearch_service" --replicas=0 -n "$namespace"
+  kubectl scale deployment "$db_service" --replicas=0 -n "$namespace"
   echo ""
   echo "✅ Services scaled down."
   echo ""
@@ -119,11 +139,15 @@ scale_down_services() {
 scale_up_services() {
   echo "⬆️  Scaling up services in namespace '$namespace'..."
   echo ""
-  kubectl scale deployment db --replicas=1 -n "$namespace"
-  kubectl scale deployment opensearch --replicas=1 -n "$namespace"
-  kubectl scale statefulset dotcms-cluster --replicas=1 -n "$namespace"
+  db_replicas=$(cat /tmp/db_replicas.txt)
+  opensearch_replicas=$(cat /tmp/opensearch_replicas.txt)
+  dotcms_replicas=$(cat /tmp/dotcms_replicas.txt)
+
+  kubectl scale deployment "$db_service" --replicas="$db_replicas" -n "$namespace"
+  kubectl scale deployment "$opensearch_service" --replicas="$opensearch_replicas" -n "$namespace"
+  kubectl scale statefulset "$dotcms_service" --replicas="$dotcms_replicas" -n "$namespace"
   echo ""
-  echo "✅ Services scaled up."
+  echo "✅ Services scaled up to previous states: $db_service=$db_replicas, $opensearch_service=$opensearch_replicas, $dotcms_service=$dotcms_replicas"
   echo ""
 }
 
@@ -133,19 +157,19 @@ wait_for_scale_down() {
   echo ""
   while true; do
     # Check dotcms-cluster (StatefulSet)
-    dotcms_ready=$(kubectl get statefulset dotcms-cluster -n "$namespace" -o jsonpath='{.status.readyReplicas}')
+    dotcms_ready=$(kubectl get statefulset "$dotcms_service" -n "$namespace" -o jsonpath='{.status.readyReplicas}')
     dotcms_ready=${dotcms_ready:-0}
 
     # Check opensearch (Deployment)
-    opensearch_ready=$(kubectl get deployment opensearch -n "$namespace" -o jsonpath='{.status.readyReplicas}')
+    opensearch_ready=$(kubectl get deployment "$opensearch_service" -n "$namespace" -o jsonpath='{.status.readyReplicas}')
     opensearch_ready=${opensearch_ready:-0}
 
     # Check db (Deployment)
-    db_ready=$(kubectl get deployment db -n "$namespace" -o jsonpath='{.status.readyReplicas}')
+    db_ready=$(kubectl get deployment "$db_service" -n "$namespace" -o jsonpath='{.status.readyReplicas}')
     db_ready=${db_ready:-0}
 
     # Print status
-    echo "📋 Status: dotcms-cluster: $dotcms_ready, opensearch: $opensearch_ready, db: $db_ready"
+    echo "📋 Status: $dotcms_service: $dotcms_ready, $opensearch_service: $opensearch_ready, $db_service: $db_ready"
 
     # Check if all are scaled down (readyReplicas = 0)
     if [[ $dotcms_ready -eq 0 && $opensearch_ready -eq 0 && $db_ready -eq 0 ]]; then
@@ -165,6 +189,7 @@ run_backup() {
   echo ""
 
   # Scale down services before backup
+  store_replicas
   scale_down_services
   wait_for_scale_down  
 
@@ -193,6 +218,7 @@ run_restore() {
   echo ""
 
   # Scale down services before restore
+  store_replicas
   scale_down_services
   wait_for_scale_down
 
