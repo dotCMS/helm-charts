@@ -4,3 +4,6 @@ description: A Helm chart for DotCMS cluster
 type: application
 version: 1.0.1
 appVersion: 1.0.0
+maintainers:
+  - name: dcolina
+    email: daniel.colina@dotcms.com
