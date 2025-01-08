@@ -42,5 +42,9 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Create custom namespace
+        run: |
+          kubectl create namespace dotcms-dev        
+
       - name: Run chart-testing (install)
         run: ct install --config ct.yaml          
