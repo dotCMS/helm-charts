@@ -19,7 +19,7 @@ serviceAccountName: dotcms-sa
 ingress:
   tlsSecretName: developer-certificate-secret
   host: dotcms.local
-    
+
 dotcms:
   enabled: true
   port: 8080
@@ -29,7 +29,7 @@ dotcms:
   storageSize: 3Gi
   javaOpts: '-Xmx1G'
   lang: 'C.UTF-8'
-  timezone: 'UTC'  
+  timezone: 'UTC'
   customEnvVars:
     DOT_ES_AUTH_BASIC_PASSWORD: "admin"
     DOT_INITIAL_ADMIN_PASSWORD: "admin"
@@ -37,7 +37,7 @@ dotcms:
   container:
     ports:
       - containerPort: 8082
-      - containerPort: 8443  
+      - containerPort: 8443
     lifecycle:
       postStart:
         command:

@@ -1,11 +1,17 @@
-namespace: dotcms-dev # Namespace for the deployment
-operation: backup # Either "backup" or "restore"
-retries: 3 # Number of retries for Jobs
-ttlSecondsAfterFinished: 900 # Time before completed Jobs are cleaned up
-hostPath: /tmp # HostPath for storing or restoring the backup file
-fileName: backup-complete # Backup file name
-
-pvcList: # List of PVCs for both backup and restore
+# Namespace for the deployment
+namespace: dotcms-dev
+# Either "backup" or "restore"
+operation: backup
+# Number of retries for Jobs
+retries: 3
+# Time before completed Jobs are cleaned up
+ttlSecondsAfterFinished: 900
+# HostPath for storing or restoring the backup file
+hostPath: /tmp
+# Backup file name
+fileName: backup-complete
+# List of PVCs for both backup and restore
+pvcList:
   - database-pvc
   - dotcms-pvc
   - opensearch-pvc
