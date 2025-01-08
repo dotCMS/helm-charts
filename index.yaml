@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  backup:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-01-08T11:41:45.140413911Z"
+    description: A Helm chart for backing up a DotCMS cluster data
+    digest: 32998ecc8b5c20596e9605c947210ed6e1cde0f9e73407031ec981838ca2be02
+    name: backup
+    type: application
+    urls:
+    - https://github.com/dotCMS/helm-charts/releases/download/backup-1.0.0/backup-1.0.0.tgz
+    version: 1.0.0
+  dotcms:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-01-08T11:41:45.24996826Z"
+    description: A Helm chart for DotCMS cluster
+    digest: b8c025d58e8c2ca2bd0dd24edc7195ca25383aabbcf4a648902d9a2c058ea938
+    name: dotcms
+    type: application
+    urls:
+    - https://github.com/dotCMS/helm-charts/releases/download/dotcms-1.0.0/dotcms-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-01-08T11:41:45.24997372Z"
