@@ -78,7 +78,7 @@ dotcms:
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 1
-      timeoutSeconds: 5    
+      timeoutSeconds: 5
 
 redis:
   image: redis:latest
@@ -89,7 +89,7 @@ redis:
   port: 6379
   sessionEnabled: true
   sessionHost: redis
-  sessionPersistentPolicies: DEFAULT  
+  sessionPersistentPolicies: DEFAULT
   sslEnabled: false
 
 database:
