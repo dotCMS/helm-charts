@@ -42,9 +42,14 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Install local-path-provisioner
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+          kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
       - name: Create custom namespace
         run: |
           kubectl create namespace dotcms-dev        
 
       - name: Run chart-testing (install)
-        run: ct install --config ct.yaml          
+        run: ct install --config ct.yaml --timeout 10m --debug
