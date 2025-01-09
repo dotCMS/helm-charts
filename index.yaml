@@ -3,6 +3,19 @@ entries:
   backup:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-01-09T15:27:04.620396404Z"
+    description: A Helm chart for backing up a DotCMS cluster data
+    digest: 1cb2aac0c027696fc3af4d3712d37e60d5c4604d1c98953cc10d05e42c0a4041
+    maintainers:
+    - email: daniel.colina@dotcms.com
+      name: dcolina
+    name: backup
+    type: application
+    urls:
+    - https://github.com/dotCMS/helm-charts/releases/download/backup-1.0.2/backup-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-01-08T11:41:45.140413911Z"
     description: A Helm chart for backing up a DotCMS cluster data
     digest: 32998ecc8b5c20596e9605c947210ed6e1cde0f9e73407031ec981838ca2be02
@@ -14,6 +27,19 @@ entries:
   dotcms:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-01-09T15:27:04.725770106Z"
+    description: A Helm chart for DotCMS cluster
+    digest: e8926bf0e1c9243e0ccd2b3bbc211a1f0ee804d1e13dc89601d98d45f9dfe1e8
+    maintainers:
+    - email: daniel.colina@dotcms.com
+      name: dcolina
+    name: dotcms
+    type: application
+    urls:
+    - https://github.com/dotCMS/helm-charts/releases/download/dotcms-1.0.2/dotcms-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-01-08T11:41:45.24996826Z"
     description: A Helm chart for DotCMS cluster
     digest: b8c025d58e8c2ca2bd0dd24edc7195ca25383aabbcf4a648902d9a2c058ea938
@@ -22,4 +48,4 @@ entries:
     urls:
     - https://github.com/dotCMS/helm-charts/releases/download/dotcms-1.0.0/dotcms-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-08T11:41:45.24997372Z"
+generated: "2025-01-09T15:27:04.725780015Z"
