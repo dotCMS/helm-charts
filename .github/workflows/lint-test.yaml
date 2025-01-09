@@ -52,4 +52,4 @@ jobs:
           kubectl create namespace dotcms-dev        
 
       - name: Run chart-testing (install)
-        run: ct install --config ct.yaml --timeout 10m --debug
+        run: ct install --config ct.yaml --debug
