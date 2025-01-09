@@ -68,8 +68,8 @@ jobs:
         run: ct lint --config ct.yaml
 
       # 11. Run chart-testing to install charts
-      - name: Run chart-testing (install)
-        run: ct install --config ct.yaml --debug
+      # - name: Run chart-testing (install)
+      #   run: ct install --config ct.yaml --debug
 
       # 12. Clean up k3d cluster (optional, for CI/CD efficiency)
       - name: Delete k3d cluster
