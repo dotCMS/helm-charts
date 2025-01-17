@@ -1,38 +1,68 @@
 {{- if .Values.dotcms.enabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dotcms-pvc
+  name: {{ include "dotcms.volume.shared" . }}
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: {{ include "dotcms.storageClassName" . }}
+  resources:
+    requests:
+      storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
+{{- if and (eq .Values.cloud_provider "aws") (not (empty .Values.dotcms.volumes.shared.volume_handle)) }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{ .Values.customer_name }}
+  name: {{ include "dotcms.volume.shared" . }}
+spec:
+  capacity:
+    storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
+  volumeMode: Filesystem
+  mountOptions:
+    - accesspoint={{ .Values.dotcms.volumes.shared.access_point }}  # Mount options, if applicable
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ include "dotcms.storageClassName" . }}
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: {{ .Values.dotcms.volumes.shared.volume_handle }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+---
+{{- if .Values.database.local.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "db") }}
 spec:
   accessModes:
   - ReadWriteOnce
+  storageClassName: {{ include "dotcms.storageClassName" . }}
   resources:
     requests:
-      storage: {{ .Values.dotcms.storageSize }}
+      storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
 {{- end }}
 ---
-{{- if .Values.database.local }}
+{{- if .Values.opensearch.local.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: database-pvc
+  name: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "opensearch") }}
 spec:
   accessModes:
   - ReadWriteOnce
+  storageClassName: {{ include "dotcms.storageClassName" . }}
   resources:
     requests:
-      storage: {{ .Values.database.storageSize }}
-{{- end }}
----
-{{- if .Values.opensearch.local }}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: opensearch-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.opensearch.storageSize }}
+      storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
 {{- end }}

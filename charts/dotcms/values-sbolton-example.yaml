@@ -1,0 +1,17 @@
+customer_name: sbolton
+
+environments:
+  auth:
+    dotcms:
+      enabled: true
+    volumes:
+      shared:
+        accesspoint: "fsap-0f76fe78fba0299dd"
+        volume_handle: "fs-0a09e87c192a8234a"
+  prod:
+    dotcms:
+      enabled: true
+    volumes:
+      shared:
+        accesspoint: "fsap-008f14a40f35e8fad"
+        volume_handle: "fs-0a09e87c192a8234a"

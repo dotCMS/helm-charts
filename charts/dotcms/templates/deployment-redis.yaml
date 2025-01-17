@@ -1,9 +1,9 @@
-{{- if .Values.redis.local }}
+{{- if .Values.redis.local.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.customer_name }}
 spec:
   replicas: 1
   selector:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: redis
-          image: {{ .Values.redis.image }}
+          image: {{ .Values.redis.local.image }}
           ports:
             - containerPort: {{ .Values.redis.port }}
           command: ["redis-server", "--requirepass", "{{ .Values.redis.password }}"]

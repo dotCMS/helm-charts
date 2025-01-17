@@ -1,0 +1,63 @@
+environment-type: staff-sandbox
+cloud_provider: aws
+
+aws:
+  region: us-east-1
+  serviceAccount:
+    roleArn: "arn:aws:iam::948170117212:role/EKS_sbolton_ReadSecretsRole"
+  secrets:
+    secretsArn: "arn:aws:secretsmanager:us-east-1:948170117212:secret:corp/sbolton/awssecret-A8vmpu"
+
+linkerd:
+  enabled: true
+database:
+  local:
+    enabled: false
+  host: dotcms-internal.cafdyqpndbn1.us-east-1.rds.amazonaws.com
+  name: sbolton_auth_db # check
+
+opensearch:
+  local:
+    enabled: false
+  host: internal-2-es.dotcms.cloud
+  port: 443
+  protocol: https
+redis:
+  local:
+    enabled: false
+  host: dotcms-redis.sbolton.0001.use1.cache.amazonaws.com
+  port: 6379
+
+mail:
+  enabled: true
+  host: email-smtp.us-east-1.amazonaws.com
+  port: 587
+
+secrets:
+  useSecretsStoreCSI: true
+  createSecrets: false
+
+dotcms:
+  ingress:
+    hostSuffix: dotcms.cloud
+    type: alb
+    alb:
+      certificateArn: "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+      sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+      securityGroups: "sg-0a15e534fc091650c, sg-086c8508d689b4ba6"
+  affinity:
+    requireDifferentHosts: true
+  resources:
+    requests:
+      cpu: 0.5
+      memory: 3Gi
+    limits:
+      cpu: 0.5
+      memory: 3Gi
+
+environments:
+  prod:
+    dotcms:
+      enabled: true
+      replicas: 1
+      mapToTopLevelDomain: false

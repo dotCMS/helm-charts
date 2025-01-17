@@ -1,0 +1,10 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Values.customer_name }}
+  name: default-deny
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - podSelector: {}
