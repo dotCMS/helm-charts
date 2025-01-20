@@ -16,15 +16,98 @@ spec:
         app: {{ .Values.fullname }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      initContainers:
+        - name: startup
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              sleep 10
+           
+              BACKUP_DIR=/mnt/backup
+              
+              if [ "${OPERATION}" == "backup" ]; then
+                FINAL_BACKUP_FILE=$BACKUP_DIR/{{ .Values.fileName }}-$(date +%Y%m%d%H%M%S).tar.gz              
+                
+                echo "Creating backup..." > ${BACKUP_DIR}/backup.log
+
+                # Generate database dump
+                echo "Generating database dump..." >> ${BACKUP_DIR}/backup.log
+                echo "CMD: pg_dump -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -Fp -f ${BACKUP_DIR}/db-dump.sql" >> ${BACKUP_DIR}/backup.log
+                PGPASSWORD={{ .Values.database.password }} pg_dump -w -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -Fp -f ${BACKUP_DIR}/db-dump.sql
+
+                # Generate dotCMS data backup
+                echo "Generating dotCMS data backup..." >> ${BACKUP_DIR}/backup.log              
+                echo "CMD: tar czf $BACKUP_DIR/dotcms-data.tar.gz -C /data/shared ." >> ${BACKUP_DIR}/backup.log
+                tar czf $BACKUP_DIR/dotcms-data.tar.gz -C /data/shared .
+
+                # Create final backup file combining both backups
+                echo "Creating final backup file..." >> ${BACKUP_DIR}/backup.log
+                mkdir -p /tmp/full-backup
+                mv $BACKUP_DIR/db-dump.sql /tmp/full-backup
+                mv $BACKUP_DIR/dotcms-data.tar.gz /tmp/full-backup
+                tar czf $FINAL_BACKUP_FILE -C /tmp/full-backup .
+
+                # Cleanup
+                rm -rf /tmp/final-backup
+                echo "Backup completed: $FINAL_BACKUP_FILE"
+              fi
+
+              if [ "${OPERATION}" == "restore" ]; then
+                RESTORE_SOURCE_PATH=/mnt/backup
+                RESTORE_SOURCE_FILE={{ .Values.fileName }}.tar.gz
+                RESTORE_TMP_DIR=${RESTORE_SOURCE_PATH}/restore-temp
+                RESTORE_DOTCMS_DATA_FILE=dotcms-data.tar.gz
+                RESTORE_DOTCMS_DATA_PATH=/data/shared
+                RESTORE_DUMP_FILE=db-dump.sql
+
+                echo "Restoring backup..." > ${BACKUP_DIR}/backup.log
+                echo "Creating temporary restore directory..." >> ${BACKUP_DIR}/backup.log
+                mkdir -p $RESTORE_TMP_DIR
+
+                echo "Extracting backup from $RESTORE_SOURCE_PATH/$RESTORE_SOURCE_FILE..." >> ${BACKUP_DIR}/backup.log
+                tar xzf ${RESTORE_SOURCE_PATH}/${RESTORE_SOURCE_FILE} -C $RESTORE_TMP_DIR || exit 1
+                ls -ltrh $RESTORE_TMP_DIR
+
+                echo "Extracting dotcms data backup..." >> ${BACKUP_DIR}/backup.log
+                tar xzf ${RESTORE_TMP_DIR}/${RESTORE_DOTCMS_DATA_FILE} -C $RESTORE_DOTCMS_DATA_PATH || exit 1
+                cp ${RESTORE_TMP_DIR}/${RESTORE_DUMP_FILE} $RESTORE_DOTCMS_DATA_PATH
+                ls -ltrh $RESTORE_DOTCMS_DATA_PATH
+
+                echo "Setting up environment variables for restore through dotcms starter task ..." >> ${BACKUP_DIR}/backup.log              
+                echo "export DB_LOAD_DUMP_SQL=${RESTORE_DOTCMS_DATA_PATH}/${RESTORE_DUMP_FILE}" > ${RESTORE_DOTCMS_DATA_PATH}/env-vars
+                echo "export DB_NAME=${DB_NAME}" >> ${RESTORE_DOTCMS_DATA_PATH}/env-vars
+                echo "export DB_USERNAME=${DB_USERNAME}" >> ${RESTORE_DOTCMS_DATA_PATH}/env-vars
+                echo "export DB_HOST=${DB_HOST}" >> ${RESTORE_DOTCMS_DATA_PATH}/env-vars
+                echo "unset CUSTOM_STARTER_URL" >> ${RESTORE_DOTCMS_DATA_PATH}/env-vars
+              fi
+
+          env:
+            - name: OPERATION
+              value: {{ .Values.operation }}
+            {{- if eq .Values.operation "backup" }}   
+            - name: DB_HOST
+              value: 'db.{{ .Values.namespace }}.svc.cluster.local'
+            - name: DB_NAME
+              value: '{{ .Values.database.name }}'
+            - name: DB_USERNAME
+              value: '{{ .Values.database.username }}'
+            - name: DB_PASSWORD
+              value: '{{ .Values.database.password }}'
+            {{- end }}
+
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /data/shared        
+            - name: backup-volume
+              mountPath: /mnt/backup
       containers:
         - name: dotcms
           image: {{ .Values.dotcms.image }}
-          imagePullPolicy: {{ .Values.dotcms.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.dotcms.imagePullPolicy }}    
           ports: {{ toJson .Values.dotcms.container.ports }}
           lifecycle:
-            postStart:
-              exec:
-                command: {{ toJson .Values.dotcms.container.lifecycle.postStart.command }}
             preStop:
               exec:
                 command: {{ toJson .Values.dotcms.container.lifecycle.preStop.command }}
@@ -84,6 +167,17 @@ spec:
               value: '{{ .Values.clusterID }}'              
             - name: DOT_ES_ENDPOINTS
               value: 'http://opensearch:{{ .Values.opensearch.port }}'
+            {{- if eq .Values.operation "restore" }}
+            - name: DB_LOAD_DUMP_SQL
+              value: /data/shared/db-dump.sql
+            - name: DB_NAME
+              value: '{{ .Values.database.name }}'
+            - name: DB_USERNAME
+              value: '{{ .Values.database.username }}'
+            - name: DB_HOST
+              value: 'db.{{ .Values.namespace }}.svc.cluster.local'
+            {{- end }}           
+
 
             # Custom environment variables
             {{- range $key, $value := .Values.dotcms.customEnvVars }}
@@ -97,4 +191,8 @@ spec:
         - name: shared-volume
           persistentVolumeClaim:
             claimName: dotcms-pvc
+        - name: backup-volume
+          hostPath:
+            path: {{ .Values.hostPath }}
+            type: DirectoryOrCreate            
 {{- end }}

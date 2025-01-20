@@ -33,6 +33,8 @@ dotcms:
   customEnvVars:
     DOT_ES_AUTH_BASIC_PASSWORD: "admin"
     DOT_INITIAL_ADMIN_PASSWORD: "admin"
+    DOT_BACKUP_DIRECTORY_PATH: "/data/shared/assets/.backup"
+    # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release-local/com/dotcms/starter/20230712/starter-20230712.zip"
 
   container:
     ports:
@@ -115,3 +117,9 @@ opensearch:
   ports:
     - 9200
     - 9600
+
+# HostPath for storing or restoring the backup file
+hostPath: /private/tmp
+# Backup file name
+fileName: backup-complete
+operation: backup
