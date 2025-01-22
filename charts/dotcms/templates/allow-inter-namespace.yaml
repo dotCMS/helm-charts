@@ -1,0 +1,17 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Values.customer_name }}
+  name: allow-inter-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.app }}
+      cust: {{ .Values.customer_name }}
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Values.app }}
+              cust: {{ .Values.customer_name }}
+      ports: []

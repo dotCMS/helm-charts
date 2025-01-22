@@ -1,0 +1,21 @@
+{{- if .Values.dotcms.enabled }}
+{{- range $envName := keys .Values.environments }}
+{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- $fullName := include "dotcms.env.fullName" . }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.customer_name }}
+  name: {{ include "dotcms.env.serviceName" . }}
+spec:
+  selector:
+    fullname: {{ $fullName }}
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+  clusterIP: None
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,14 +1,13 @@
-{{- if .Values.opensearch.local }}
+{{- if .Values.opensearch.local.enabled }}
+{{- $fullName := include "dotcms.opensearch.fullName" . }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: opensearch
+  name: {{ $fullName }}
   namespace: {{ .Values.namespace }}
   labels:
-    app: opensearch
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ $fullName }}
 spec:
   type: ClusterIP
   ports:
@@ -21,5 +20,6 @@ spec:
       targetPort: 9600
       protocol: TCP
   selector:
-    app: opensearch
+    app: {{ $fullName }}
+
 {{- end }}

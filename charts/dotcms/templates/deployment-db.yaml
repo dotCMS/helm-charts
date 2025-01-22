@@ -1,9 +1,9 @@
-{{- if .Values.database.local }}
+{{- if .Values.database.local.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.customer_name }}
 spec:
   replicas: 1
   selector:
@@ -14,33 +14,177 @@ spec:
       labels:
         app: db
     spec:
+      securityContext:
+        fsGroup: 999
       initContainers:
-        - name: fix-permissions
+        - name: volume-permissions
           image: busybox
-          command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
+          command: [ "sh", "-c", "ls -al /var/lib/postgresql/data && chown -R 999:999 /var/lib/postgresql/data && ls -al /var/lib/postgresql/data" ]
           volumeMounts:
             - name: dbdata
               mountPath: /var/lib/postgresql/data
+          securityContext:
+            runAsUser: 0
       containers:
         - name: postgres
-          image: {{ .Values.database.image }}
+          image: {{ .Values.database.local.image }}
           securityContext:
             runAsUser: 999
             runAsGroup: 999
           ports:
-            - containerPort: {{ .Values.database.port }}
+            - name: postgres
+              containerPort: {{ .Values.database.port }}
+              protocol: TCP
+          resources:
+            requests:
+              cpu: {{ .Values.database.local.resources.requests.cpu | default "100m" | quote }}
+              memory: {{ .Values.database.local.resources.requests.memory | default "256Mi" | quote }}
+            limits:
+              cpu: {{ .Values.database.local.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.database.local.resources.limits.memory | default "1Gi" | quote }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U ${POSTGRES_USER} -d postgres
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U ${POSTGRES_USER} -d postgres
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U ${POSTGRES_USER} -d postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 30
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.database.username }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "db-local-admin" ) }}
+                  key: username
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.database.password }}
-            - name: POSTGRES_DB
-              value: {{ .Values.database.name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "db-local-admin" ) }}
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_INITDB_ARGS
+              value: "--auth-host=scram-sha-256"
+            {{- range $envName := keys $.Values.environments }}
+            {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+            - name: POSTGRES_USERNAME_{{ upper $envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                  key: username
+            - name: POSTGRES_PASSWORD_{{ upper $envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                  key: password
+            {{- end }}
+            {{- end }}
           volumeMounts:
             - name: dbdata
               mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: dbdata
           persistentVolumeClaim:
-            claimName: database-pvc
+            claimName: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "db") }}
+        - name: init-scripts
+          configMap:
+            name: db-init-scripts
 {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-scripts
+  namespace: {{ .Values.customer_name }}
+
+data:
+  init.sh: |
+    #!/bin/bash
+    set -e
+
+    # Wait for postgres to be ready
+    until pg_isready -U "${POSTGRES_USER:-postgres}"; do
+      echo "Waiting for postgres to be ready..."
+      sleep 2
+    done
+
+    {{- range $envName := keys $.Values.environments }}
+    {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+    {{- $dbName := include "dotcms.db.name" . }}
+    # Create user and set permissions for {{ $envName }}
+    psql -v ON_ERROR_STOP=1 -v username="$POSTGRES_USERNAME_{{ upper $envName }}" -v password="$POSTGRES_PASSWORD_{{ upper $envName }}" --username "${POSTGRES_USER:-postgres}" --dbname "postgres" <<EOSQL
+
+    CREATE DATABASE {{ $dbName }};
+    -- First set the variables in the session
+    SET SESSION my.username = :'username';
+    SET SESSION my.password = :'password';
+
+    DO \$\$
+    BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = current_setting('my.username')) THEN
+            EXECUTE format('CREATE USER %I WITH PASSWORD %L LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION CONNECTION LIMIT -1',
+                         current_setting('my.username'),
+                         current_setting('my.password'));
+        END IF;
+    END
+    \$\$;
+
+    SELECT format('GRANT CONNECT, TEMPORARY ON DATABASE {{ $dbName }} TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON DATABASE {{ $dbName }} TO %I', :'username')\gexec
+    EOSQL
+
+    # Set schema level privileges
+    psql -v ON_ERROR_STOP=1 -v username="$POSTGRES_USERNAME_{{ upper $envName }}" --username "${POSTGRES_USER:-postgres}" --dbname "{{ $dbName }}" <<EOSQL
+    CREATE SCHEMA IF NOT EXISTS public;
+
+    SELECT format('GRANT USAGE ON SCHEMA public TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO %I', :'username')\gexec
+
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TYPES TO %I', :'username')\gexec
+
+    SELECT format('ALTER SCHEMA public OWNER TO %I', :'username')\gexec
+
+    SELECT format('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO %I', :'username')\gexec
+    SELECT format('GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO %I', :'username')\gexec
+
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO %I', :'username')\gexec
+    SELECT format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TYPES TO %I', :'username')\gexec
+
+    SELECT format('ALTER SCHEMA public OWNER TO %I', :'username')\gexec
+    EOSQL
+    {{- end }}
+    {{- end }}

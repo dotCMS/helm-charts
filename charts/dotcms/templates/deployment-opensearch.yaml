@@ -1,41 +1,52 @@
-{{- if .Values.opensearch.local }}
+{{- if .Values.opensearch.local.enabled }}
+{{- $fullName := include "dotcms.opensearch.fullName" . }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opensearch
+  name: {{ $fullName }}
   namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opensearch
+      app: {{ $fullName }}
   template:
     metadata:
       labels:
-        app: opensearch
+        app: {{ $fullName }}
     spec:
       containers:
-        - name: opensearch
-          image: {{ .Values.opensearch.image }}
+        - name: {{ $fullName }}
+          image: {{ .Values.opensearch.local.image }}
           ports:
             - containerPort: 9200
             - containerPort: 9600
           env:
-            - name: cluster.name
-              value: {{ .Values.opensearch.clusterName }}
-            - name: discovery.type
-              value: single-node
-            - name: bootstrap.memory_lock
-              value: "true"
-            - name: OPENSEARCH_JAVA_OPTS
-              value: {{ .Values.opensearch.javaOpts }}
-            - name: plugins.security.disabled
-              value: "true"               
+          - name: discovery.type
+            value: single-node
+          - name: bootstrap.memory_lock
+            value: "true"
+          - name: OPENSEARCH_JAVA_OPTS
+            value: {{ $.Values.opensearch.javaOpts }}
+          - name: plugins.security.disabled
+            value: "true"
+          - name: OPENSEARCH_INITIAL_ADMIN_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                key: username
+          - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                key: password
           volumeMounts:
             - name: opensearch-volume
               mountPath: /usr/share/opensearch/data
       volumes:
         - name: opensearch-volume
           persistentVolumeClaim:
-            claimName: opensearch-pvc
+            claimName: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "opensearch") }}
+
 {{- end }}
