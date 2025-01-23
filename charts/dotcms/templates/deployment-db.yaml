@@ -78,12 +78,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "db-local-admin" ) }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin" ) }}
                   key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "db-local-admin" ) }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin" ) }}
                   key: password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
@@ -94,12 +94,12 @@ spec:
             - name: POSTGRES_USERNAME_{{ upper $envName }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
                   key: username
             - name: POSTGRES_PASSWORD_{{ upper $envName }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
                   key: password
             {{- end }}
             {{- end }}
@@ -115,7 +115,6 @@ spec:
         - name: init-scripts
           configMap:
             name: db-init-scripts
-{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -186,5 +185,6 @@ data:
 
     SELECT format('ALTER SCHEMA public OWNER TO %I', :'username')\gexec
     EOSQL
+    {{- end }}
     {{- end }}
     {{- end }}

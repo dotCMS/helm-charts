@@ -39,7 +39,6 @@ secrets:
       dotcms-admin:
         type: kubernetes.io/basic-auth
         keys:
-          - "username"
           - "password"
   createSecrets: true
 serviceAccount:
@@ -49,13 +48,12 @@ environments:
     enabled: true
     dotcms:
       mapToTopLevelDomain: true
-      replicas: 1
 dotcms:
   affinity:
     requireDifferentHosts: false
   telemetry:
-    enabled: true
-    telemetryClient: todo
+    enabled: false
+    telemetryClient: DEV
   opensearch:
     protocol: https
     host: external-host
@@ -74,7 +72,7 @@ dotcms:
   repository: dotcms/dotcms
   tag: latest
   imagePullPolicy: IfNotPresent
-  terminationGracePeriodSeconds: 40
+  terminationGracePeriodSeconds: 10
   replicas: 1
   resources:
     requests:
@@ -118,9 +116,11 @@ dotcms:
     shared:
       access_point: ""
       volume_handle: ""
+      create: true
+  defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
   additionalJavaOpts: ""
-  javaOpts: "-Xmx2g -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-  remote_call_subnet_blacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+  javaHeapMax: 2g
+  remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
   # customEnvVars:
   #   TEST_ENV_VAR: test
 linkerd:

@@ -3,9 +3,9 @@
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
-{{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s" .Values.database.host ( int .Values.database.port ) $dbName  }}
-{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "license") }}
-{{- $namespace := .Values.customer_name }}{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "license") }}
+{{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s?ssl.mode=prefer" .Values.database.host ( int .Values.database.port ) $dbName  }}
+{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+{{- $namespace := .Values.customer_name }}{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 ---
@@ -18,7 +18,7 @@ metadata:
     {{- if eq $.Values.cloud_provider "aws" }}
     app.dotcms.cloud/aws-region: {{ $.Values.aws.region }}
     {{- end }}
-    test: "{{ $useLicense }}"
+    app.kubernetes.io/instance: {{ $.Values.customer_name }}
 spec:
   selector:
     matchLabels:
@@ -53,7 +53,7 @@ spec:
               memory: {{ .Values.dotcms.resources.limits.memory }}
           env:
             - name: CMS_JAVA_OPTS
-              value: "{{ .Values.dotcms.javaOpts }} {{ .Values.dotcms.additionalJavaOpts }}"
+              value: "-Xmx{{ .Values.dotcms.javaHeapMax }} {{ .Values.dotcms.defaultjavaOpts }} {{ .Values.dotcms.additionalJavaOpts }}"
             - name: DOT_ES_ENDPOINTS
               value: "{{ include "dotcms.opensearch.endpoints" . }}"
             - name: DOT_ES_AUTH_TYPE
@@ -61,12 +61,12 @@ spec:
             - name: DOT_ES_AUTH_BASIC_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
                   key: username
             - name: DOT_ES_AUTH_BASIC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
                   key: password
             - name: DB_DNSNAME
               value: {{ $.Values.database.host }}
@@ -75,24 +75,24 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                   secretKeyRef:
-                    name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "database") }}
+                    name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
                     key: password
             {{- if $useLicense }}
             - name: LICENSE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "license") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
                   key: license
             {{- end }}
             - name: DOT_INITIAL_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" $.Values "secretName" "dotcms-admin") }}
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
                   key: password
             - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
               value: 'false'
@@ -110,9 +110,9 @@ spec:
               value: '10'
             - name: DOT_SYSTEM_STATUS_API_IP_ACL
               value: 0.0.0.0/0
-            {{ if eq $.Values.cloud_provider "aws" }}
+            {{- if eq $.Values.cloud_provider "aws" }}
             - name: DOT_REMOTE_CALL_SUBNET_BLACKLIST
-              value: {{ .Values.remote_call_subnet_blacklist }}
+              value: {{ .Values.dotcms.remoteCallSubnetBlacklist }}
             {{- end }}
             - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
               value: 'true'
@@ -132,17 +132,17 @@ spec:
               value: '1200'
             - name: DOT_ENABLE_SYSTEM_TABLE_CONFIG_SOURCE
               value: 'false'
-            {{ if $.Values.dotcms.telemetry.enabled }}
+            {{- if $.Values.dotcms.telemetry.enabled }}
             - name: DOT_FEATURE_FLAG_TELEMETRY
               value: 'true'
             - name: DOT_TELEMETRY_SAVE_SCHEDULE
               value: 0 0 */8 * * ?
             - name: DOT_TELEMETRY_CLIENT_CATEGORY
-              value: '{{ $.Values.dotcms.telemetry.telemetryClient }}'
+              value: {{ $.Values.dotcms.telemetry.telemetryClient | quote }}
             {{- end }}
-            {{ if .Values.dotcms.redisSessions.enabled }}
             - name: TOMCAT_REDIS_SESSION_ENABLED
               value: '{{ .Values.dotcms.redisSessions.enabled }}'
+            {{- if .Values.dotcms.redisSessions.enabled }}
             - name: TOMCAT_REDIS_SESSION_HOST
               value: '{{ $.Values.redis.sessionHost }}'
             - name: TOMCAT_REDIS_SESSION_PORT
@@ -154,13 +154,13 @@ spec:
             - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
               value: '{{ $.Values.redis.sessionPersistentPolicies }}'
             {{- end }}
-            {{ if .Values.mail.enabled }}
+            {{- if .Values.mail.enabled }}
             - name: DOT_MAIL_SMTP_HOST
               value: '{{ $.Values.mail.host }}'
             - name: DOT_MAIL_SMTP_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "ses") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
                   key: username
             - name: DOT_MAIL_SMTP_PASSWORD
               valueFrom:
@@ -225,11 +225,15 @@ spec:
             successThreshold: {{ .Values.dotcms.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.dotcms.readinessProbe.failureThreshold }}
             timeoutSeconds: {{ .Values.dotcms.readinessProbe.timeoutSeconds }}
-
           volumeMounts:
             - name: dotcms-shared
               mountPath: /data/shared
-      {{ if .Values.dotcms.affinity.requireDifferentHost }}
+            {{- if .Values.secrets.useSecretsStoreCSI }}
+            - mountPath: /mnt/{{ include "dotcms.secret.provider.className" .  }}
+              name: {{ include "dotcms.secret.provider.className" .  }}
+              readOnly: true
+            {{- end }}
+      {{- if .Values.dotcms.affinity.requireDifferentHosts }}
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -245,7 +249,7 @@ spec:
       - name: dotcms-shared
         persistentVolumeClaim:
           claimName: {{ include "dotcms.pvc.env.name" . }}
-      {{ if .Values.secrets.useSecretsStoreCSI }}
+      {{- if .Values.secrets.useSecretsStoreCSI }}
       - name: {{ include "dotcms.secret.provider.className"  . }}
         csi:
           driver: secrets-store.csi.k8s.io

@@ -1,6 +1,6 @@
 {{- if .Values.dotcms.enabled }}
 {{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 ---
 apiVersion: v1
@@ -9,13 +9,13 @@ metadata:
   namespace: {{ .Values.customer_name }}
   name: {{ include "dotcms.env.serviceName" . }}
 spec:
+  ports:
+    - port: 8082
+      targetPort: 8082
+      protocol: TCP
+  type: NodePort
   selector:
     fullname: {{ $fullName }}
-  ports:
-    - protocol: TCP
-      port: 8082
-      targetPort: 8082
-  clusterIP: None
 {{- end }}
 {{- end }}
 {{- end }}
