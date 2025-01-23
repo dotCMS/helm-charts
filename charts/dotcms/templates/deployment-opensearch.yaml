@@ -34,12 +34,12 @@ spec:
           - name: OPENSEARCH_INITIAL_ADMIN_USER
             valueFrom:
               secretKeyRef:
-                name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
                 key: username
           - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ include "dotcms.secret.shared.name" (dict "Values" $.Values "secretName" "elasticsearch") }}
+                name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
                 key: password
           volumeMounts:
             - name: opensearch-volume

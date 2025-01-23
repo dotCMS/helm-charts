@@ -1,25 +1,29 @@
 {{- if .Values.dotcms.enabled }}
 {{- range $envName := keys $.Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{ $pvName := include "dotcms.volume.shared.pv" . }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "dotcms.volume.shared" . }}
+  name: {{ include "dotcms.volume.shared.pvc" . }}
 spec:
   accessModes:
   - ReadWriteMany
+  {{- if and (eq .Values.cloud_provider "aws") (not (empty .Values.dotcms.volumes.shared.volume_handle)) }}
+  volumeName: {{ $pvName }}
+  {{- end }}
   storageClassName: {{ include "dotcms.storageClassName" . }}
   resources:
     requests:
       storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
-{{- if and (eq .Values.cloud_provider "aws") (not (empty .Values.dotcms.volumes.shared.volume_handle)) }}
+{{- if and (eq .Values.cloud_provider "aws") (not (empty .Values.dotcms.volumes.shared.volume_handle)) .Values.dotcms.volumes.shared.create }}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   namespace: {{ .Values.customer_name }}
-  name: {{ include "dotcms.volume.shared" . }}
+  name: {{ $pvName }}
 spec:
   capacity:
     storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
@@ -37,7 +41,6 @@ spec:
 {{- end }}
 {{- end }}
 {{- end }}
-
 ---
 {{- if .Values.database.local.enabled }}
 apiVersion: v1

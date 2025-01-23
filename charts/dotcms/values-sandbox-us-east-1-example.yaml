@@ -4,17 +4,18 @@ cloud_provider: aws
 aws:
   region: us-east-1
   serviceAccount:
-    roleArn: "arn:aws:iam::948170117212:role/EKS_sbolton_ReadSecretsRole"
+    roleArn: ""
   secrets:
-    secretsArn: "arn:aws:secretsmanager:us-east-1:948170117212:secret:corp/sbolton/awssecret-A8vmpu"
+    secretsArn: ""
 
 linkerd:
   enabled: true
+
 database:
   local:
     enabled: false
   host: dotcms-internal.cafdyqpndbn1.us-east-1.rds.amazonaws.com
-  name: sbolton_auth_db # check
+  #name: sbolton_auth_db
 
 opensearch:
   local:
@@ -38,22 +39,28 @@ secrets:
   createSecrets: false
 
 dotcms:
+  imagePullPolicy: Always
+  redisSessions:
+    enabled: false
+  opensearch:
+    host: internal-2-es.dotcms.cloud
+    port: 443
   ingress:
     hostSuffix: dotcms.cloud
     type: alb
     alb:
-      certificateArn: "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
-      sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
-      securityGroups: "sg-0a15e534fc091650c, sg-086c8508d689b4ba6"
+      certificateArn: ""
+      sslPolicy: ""
+      securityGroups: ""
   affinity:
     requireDifferentHosts: true
   resources:
     requests:
       cpu: 0.5
-      memory: 3Gi
+      memory: 2Gi
     limits:
-      cpu: 0.5
-      memory: 3Gi
+      cpu: 2
+      memory: 4Gi
 
 environments:
   prod:

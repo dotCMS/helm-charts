@@ -1,6 +1,6 @@
 {{- if .Values.dotcms.enabled }}
 {{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 ---
 apiVersion: v1

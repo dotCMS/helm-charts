@@ -2,7 +2,7 @@ apiVersion: v2
 name: dotcms
 description: A Helm chart for DotCMS cluster
 type: application
-version: 1.0.3
+version: 1.0.4
 appVersion: 1.0.0
 maintainers:
   - name: dcolina
