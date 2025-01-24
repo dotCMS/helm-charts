@@ -10,7 +10,7 @@ aws:
   secrets:
     secretsArn: ""
 argo:
-  enabled: true
+  enabled: false
   argo_app_path: ""
 secrets:
   useSecretsStoreCSI: false
@@ -48,6 +48,7 @@ environments:
   prod:
     enabled: true
     dotcms:
+      scaleDownBeforeUpgrade: false
       mapToTopLevelDomain: true
       replicas: 1
 dotcms:

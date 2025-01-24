@@ -1,0 +1,48 @@
+# templates/hooks/post-upgrade-scale.yaml
+{{- if .Values.dotcms.enabled }}
+{{- range $envName := keys .Values.environments }}
+{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.customer_name }}-{{ $envName }}-post-upgrade-scale-{{ now | date "20060102-150405" }}
+  namespace: {{ .Values.customer_name }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Checking for ConfigMap {{ .Values.customer_name }}-{{ $envName }}-scale-data in namespace {{ .Values.customer_name }}..."
+
+              # Check if ConfigMap exists
+              if kubectl get configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data -n {{ .Values.customer_name }} > /dev/null 2>&1; then
+                echo "ConfigMap found. Fetching replica count..."
+                REPLICAS=$(kubectl get configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data \
+                  -o jsonpath='{.data.replicas}' -n {{ .Values.customer_name }})
+
+                echo "Scaling up deployment {{ .Values.customer_name }}-{{ $envName }} to $REPLICAS replicas..."
+                kubectl scale deployment {{ .Values.customer_name }}-{{ $envName }} --replicas=$REPLICAS -n {{ .Values.customer_name }}
+
+                # Wait for the deployment to scale up
+                kubectl rollout status deployment/{{ .Values.customer_name }}-{{ $envName }} -n {{ .Values.customer_name }}
+
+                echo "Cleaning up ConfigMap..."
+                kubectl delete configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data -n {{ .Values.customer_name }}
+              else
+                echo "No ConfigMap found for {{ $envName }}. Scale down was not enabled. Skipping post-upgrade scaling."
+              fi
+      restartPolicy: Never
+{{- end }}
+{{- end }}
+{{- end }}
