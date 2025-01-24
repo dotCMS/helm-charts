@@ -1,7 +1,8 @@
 # templates/hooks/post-upgrade-scale.yaml
 {{- if .Values.dotcms.enabled }}
-{{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $fullName := include "dotcms.env.fullName" . }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -31,11 +32,11 @@ spec:
                 REPLICAS=$(kubectl get configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data \
                   -o jsonpath='{.data.replicas}' -n {{ .Values.customer_name }})
 
-                echo "Scaling up deployment {{ .Values.customer_name }}-{{ $envName }} to $REPLICAS replicas..."
-                kubectl scale deployment {{ .Values.customer_name }}-{{ $envName }} --replicas=$REPLICAS -n {{ .Values.customer_name }}
+                echo "Scaling up statefulset {{ .Values.customer_name }}-{{ $envName }} to $REPLICAS replicas..."
+                kubectl scale statefulset {{ $fullName }} --replicas=$REPLICAS -n {{ .Values.customer_name }}
 
                 # Wait for the deployment to scale up
-                kubectl rollout status deployment/{{ .Values.customer_name }}-{{ $envName }} -n {{ .Values.customer_name }}
+                kubectl rollout status statefulset {{ $fullName }} -n {{ .Values.customer_name }}
 
                 echo "Cleaning up ConfigMap..."
                 kubectl delete configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data -n {{ .Values.customer_name }}

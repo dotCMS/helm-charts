@@ -1,7 +1,7 @@
 # templates/hooks/pre-upgrade-scale.yaml
 {{- if .Values.dotcms.enabled }}
-{{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 apiVersion: batch/v1
 kind: Job
@@ -29,8 +29,8 @@ spec:
                 kubectl create configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data \
                   --namespace {{ .Values.customer_name }} \
                   --from-literal=replicas="{{ $.Values.dotcms.replicas }}"
-                kubectl scale statefulset {{ $fullName }} --replicas=0
-                kubectl rollout status statefulset {{ $fullName }}
+                kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ .Values.customer_name }}
+                kubectl rollout status statefulset {{ $fullName }} --namespace {{ .Values.customer_name }}
               else
                 echo "Scale down not enabled for {{ $envName }}. Skipping..."
               fi
