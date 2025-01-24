@@ -1,0 +1,9 @@
+customer_name: sbolton
+# Additional temporary overrides can go in here without mofifying the original values file
+#environments:
+#  auth:
+#    dotcms:
+#      replicas: 2
+#  prod:
+#    dotcms:
+#      replicas: 1

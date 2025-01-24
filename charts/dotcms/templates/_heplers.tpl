@@ -36,7 +36,7 @@ Secret naming helpers
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- printf "%s-%s-awssecret-%s-%s" .Values.host_type .Values.customer_name .Values.environment .secretName -}}
+{{- printf "%s-%s-awssecret-%s-%s" $.Values.host_type .Values.customer_name .Values.environment .secretName -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
@@ -50,7 +50,11 @@ Secret naming helpers
 {{/*
 Volume naming helpers
 */}}
-{{- define "dotcms.volume.shared" -}}
+{{- define "dotcms.volume.shared.pvc" -}}
+{{- printf "%s-%s-efs-pvc" .Values.customer_name .Values.environment -}}
+{{- end -}}
+
+{{- define "dotcms.volume.shared.pv" -}}
 {{- printf "%s-%s-efs-pv" .Values.customer_name .Values.environment -}}
 {{- end -}}
 
@@ -85,7 +89,7 @@ Service account helpers
 
 
 {{- define "dotcms.pvc.env.name" -}}
-{{- printf "%s-%s-efs-pv" .Values.customer_name .Values.environment -}}
+{{- printf "%s-%s-efs-pvc" .Values.customer_name .Values.environment -}}
 {{- end -}}
 
 
@@ -113,9 +117,11 @@ Usage:
 */}}
 {{- define "myapp.mergeEnvironment" -}}
 {{- $envConfig := index $.Values.environments .envName -}}
-{{- $overrides := dict "Values" $envConfig -}}
-{{- $newRoot := mergeOverwrite . $overrides -}}
-{{- $_ := set (index $newRoot "Values") "environment" .envName }}
+{{- $baseValues := omit $.Values "environments" -}}
+{{- $mergedValues := mergeOverwrite (deepCopy $baseValues) $envConfig -}}
+{{- $newRoot := deepCopy $ -}}
+{{- $_ := set $newRoot "Values" $mergedValues -}}
+{{- $_ := set $newRoot.Values "environment" .envName -}}
 {{- $newRoot | toYaml -}}
 {{- end -}}
 

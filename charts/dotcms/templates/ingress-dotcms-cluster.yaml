@@ -1,5 +1,5 @@
 {{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" (dict "Values" $.Values "envName" $envName ) | fromYaml }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -12,7 +12,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-internal: 'false'
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/tags: dotcms.client.name.short={{ .Values.customer_name }}, VantaOwner=example@dotcms.com, VantaDescription=ALB for {{ .Values.customer_name }} {{ .Values.env_name }}, VantaNonProd=true
+    alb.ingress.kubernetes.io/tags: dotcms.client.name.short={{ .Values.customer_name }}, VantaOwner=example@dotcms.com, VantaDescription=ALB for {{ .Values.customer_name }} {{ .Values.environment }}, VantaNonProd=true
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: '8082'
@@ -41,15 +41,23 @@ spec:
   ingressClassName: {{ .Values.dotcms.ingress.type }}
   rules:
     - host: {{ include "dotcms.ingress.externalHost" . | quote }}
-      http:
+    - http:
         paths:
-          - path: /
+          - backend:
+              service:
+                name: ssl-redirect
+                port:
+                  name: use-annotation
+            path: /
             pathType: Prefix
-            backend:
+          - backend:
               service:
                 name: {{ include "dotcms.env.serviceName" . }}
                 port:
-                  number: 8082
+                  number:
+                    8082
+            path: /
+            pathType: Prefix
   defaultBackend:
     service:
       name: {{ include "dotcms.env.serviceName" . }}
