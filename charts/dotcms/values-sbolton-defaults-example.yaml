@@ -1,34 +1,31 @@
-customer_name: sbolton
-environment-type: staff-sandbox
-cloud_provider: aws
-
+customerName: sbolton
+environmentType: staff-sandbox
+storage:
+  shared:
+    volume:
+      accessPoint: "fsap-0f76fe78fba0299dd"
+      volumeHandle: "fs-0a09e87c192a8234a"
+ingress:
+  alb:
+    certificateArn: "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+    sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+    securityGroups: "sg-0a15e534fc091650c, sg-086c8508d689b4ba6"
+telemetry:
+  enabled: true
+  telemetryClient: TEST
 aws:
   serviceAccount:
     roleArn: "arn:aws:iam::948170117212:role/EKS_sbolton_ReadSecretsRole"
   secrets:
-    secretsArn: "arn:aws:secretsmanager:us-east-1:948170117212:secret:corp/sbolton/awssecret-A8vmpu"# check
-
-dotcms:
-  javaHeapMax: "3g"
-  ingress:
-    hostSuffix: dotcms.cloud
-    alb:
-      certificateArn: "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
-      sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
-      securityGroups: "sg-0a15e534fc091650c, sg-086c8508d689b4ba6"
-  telemetry:
-    enabled: true
-    telemetryClient: TEST
+    secretsArn: "arn:aws:secretsmanager:us-east-1:948170117212:secret:corp/sbolton/awssecret-A8vmpu"
 environments:
   auth:
-    dotcms:
-      volumes:
-        shared:
-          access_point: "fsap-0f76fe78fba0299dd"
-          volume_handle: "fs-0a09e87c192a8234a"
+    volumes:
+      shared:
+        accessPoint: "fsap-0f76fe78fba0299dd"
+        volumeHandle: "fs-0a09e87c192a8234a"
   prod:
-    dotcms:
-      volumes:
-        shared:
-          access_point: "fsap-008f14a40f35e8fad"
-          volume_handle: "fs-0a09e87c192a8234a"
+    volumes:
+      shared:
+        accessPoint: "fsap-008f14a40f35e8fad"
+        volumeHandle: "fs-0a09e87c192a8234a"

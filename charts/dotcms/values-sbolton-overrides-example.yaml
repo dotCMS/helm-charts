@@ -1,9 +1,12 @@
-customer_name: sbolton
+customerName: sbolton
 # Additional temporary overrides can go in here without mofifying the original values file
-#environments:
-#  auth:
-#    dotcms:
-#      replicas: 2
-#  prod:
-#    dotcms:
-#      replicas: 1
+environments:
+  auth:
+    tag: 24.12.27_lts_v1_f3e9257
+    # Change to trunk_2c8ae1a to upgrade to trunk
+    replicas: 2
+    scaleDownBeforeUpgrade: false
+  prod:
+    tag: 24.12.27_lts_v1_f3e9257
+    replicas: 2
+    scaleDownBeforeUpgrade: false
