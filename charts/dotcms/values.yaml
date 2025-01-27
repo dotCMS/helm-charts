@@ -10,7 +10,7 @@ aws:
   secrets:
     secretsArn: ""
 argo:
-  enabled: true
+  enabled: false
   argo_app_path: ""
 secrets:
   useSecretsStoreCSI: false
@@ -73,6 +73,7 @@ dotcms:
   tag: latest
   imagePullPolicy: IfNotPresent
   terminationGracePeriodSeconds: 10
+  scaleDownBeforeUpgrade: false
   replicas: 1
   resources:
     requests:

@@ -1,0 +1,40 @@
+# templates/hooks/pre-upgrade-scale.yaml
+{{- if .Values.dotcms.enabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $fullName := include "dotcms.env.fullName" . }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dotcms.preUpgradeJobName" . }}
+  namespace: {{ .Values.customer_name }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ "{{ $.Values.dotcms.scaleDownBeforeUpgrade }}" = "true" ]; then
+                echo "Scaling down dotCMS statefulset for {{ $envName }}..."
+                kubectl create configmap {{ .Values.customer_name }}-{{ $envName }}-scale-data \
+                  --namespace {{ .Values.customer_name }} \
+                  --from-literal=replicas="{{ $.Values.dotcms.replicas }}"
+                kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ .Values.customer_name }}
+                kubectl rollout status statefulset {{ $fullName }} --namespace {{ .Values.customer_name }}
+              else
+                echo "Scale down not enabled for {{ $envName }}. Skipping..."
+              fi
+      restartPolicy: Never
+{{- end }}
+{{- end }}
+{{- end }}

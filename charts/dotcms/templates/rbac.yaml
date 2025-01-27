@@ -1,0 +1,33 @@
+# templates/rbac.yaml
+{{- if .Values.dotcms.enabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.customer_name }}-{{ $envName }}-hook-role
+  namespace: {{ .Values.customer_name }}
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create", "get", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "statefulsets/scale"]
+    verbs: ["get", "list", "patch", "update", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.customer_name }}-{{ $envName }}-hook-rolebinding
+  namespace: {{ .Values.customer_name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dotcms.serviceaccount" . }}
+roleRef:
+  kind: Role
+  name: {{ .Values.customer_name }}-{{ $envName }}-hook-role
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}
+{{- end }}
