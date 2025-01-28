@@ -1,7 +1,8 @@
 # templates/rbac.yaml
 {{- if .Values.dotcms.enabled }}
-{{- range $envName := keys $.Values.environments }}
+{{- range $envName := keys .Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
