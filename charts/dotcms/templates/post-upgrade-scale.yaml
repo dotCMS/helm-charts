@@ -14,7 +14,7 @@ metadata:
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  ttlSecondsAfterFinished: 3600
+  ttlSecondsAfterFinished: 7200
   template:
     spec:
       serviceAccountName: {{ include "dotcms.serviceaccount" . }}
