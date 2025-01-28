@@ -1,8 +1,9 @@
 # templates/hooks/pre-upgrade-scale.yaml
 {{- if .Values.dotcms.enabled }}
-{{- range $envName := keys $.Values.environments }}
+{{- range $envName := keys .Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,7 +12,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   ttlSecondsAfterFinished: 3600
   template:

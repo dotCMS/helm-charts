@@ -1,4 +1,3 @@
----
 # templates/hooks/post-upgrade-scale.yaml
 {{- if .Values.dotcms.enabled }}
 {{- range $envName := keys .Values.environments }}
