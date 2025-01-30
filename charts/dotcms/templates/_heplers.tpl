@@ -112,11 +112,11 @@ Service account helpers
 Jobs helpers
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
-{{ .Values.customer_name }}-{{ .Values.environment }}-pre-upgrade-job-{{ now | date "20060102-150405" }}
+{{ .Values.customer_name }}-{{ .Values.environment }}-pre-upgrade
 {{- end }}
 
 {{- define "dotcms.postUpgradeJobName" -}}
-{{ .Values.customer_name }}-{{ .Values.environment }}-post-upgrade-job-{{ now | date "20060102-150405" }}
+{{ .Values.customer_name }}-{{ .Values.environment }}-post-upgrade
 {{- end }}
 
 {{/*
