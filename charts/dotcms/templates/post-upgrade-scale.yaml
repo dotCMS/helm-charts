@@ -21,6 +21,7 @@ spec:
       containers:
         - name: kubectl
           image: bitnami/kubectl:latest
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
             - -c

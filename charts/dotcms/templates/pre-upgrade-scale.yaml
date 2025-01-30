@@ -21,6 +21,7 @@ spec:
       containers:
         - name: kubectl
           image: bitnami/kubectl:latest
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
             - -c
@@ -32,7 +33,7 @@ spec:
                 kubectl create configmap {{ .Values.customerName }}-{{ $envName }}-scale-data \
                   --namespace {{ .Values.customerName }} \
                   --from-literal=replicas="{{ .Values.replicas }}" \
-                  --from-literal=imageVersion="{{ .Values.tag }}" \
+                  --from-literal=image="{{ include "dotcms.image" . }}" \
                   --from-literal=startTime="$(date)" \
                   --from-literal=environmentName="{{ $envName }}" \
                   --from-literal=kubernetesVersion="$(kubectl version --short | grep Server | awk '{print $3}')"

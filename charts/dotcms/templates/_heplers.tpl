@@ -153,11 +153,11 @@
 Jobs helpers
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
-{{ .Values.customer_name }}-{{ .Values.environment }}-pre-upgrade
+{{ .Values.customerName }}-{{ .Values.environment }}-pre-upgrade
 {{- end }}
 
 {{- define "dotcms.postUpgradeJobName" -}}
-{{ .Values.customer_name }}-{{ .Values.environment }}-post-upgrade
+{{ .Values.customerName }}-{{ .Values.environment }}-post-upgrade
 {{- end }}
 
 {{/*

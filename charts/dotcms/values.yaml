@@ -81,11 +81,11 @@ startupProbe:
   httpGet:
     path: /api/v1/appconfiguration
     port: 8082
-  initialDelaySeconds: 30
+  initialDelaySeconds: 60
   periodSeconds: 5
   successThreshold: 1
   failureThreshold: 60
-  timeoutSeconds: 1
+  timeoutSeconds: 20
 livenessProbe:
   httpGet:
     path: /api/v1/appconfiguration

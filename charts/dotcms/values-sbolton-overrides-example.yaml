@@ -3,7 +3,7 @@ customerName: sbolton
 environments:
   auth:
     tag: 24.12.27_lts_v1_f3e9257
-    # Change to trunk_2c8ae1a to upgrade to trunk
+    #tag: trunk_4e5e552
     replicas: 2
     scaleDownBeforeUpgrade: false
   prod:
