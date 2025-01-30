@@ -1,0 +1,23 @@
+name: sbolton
+namespace: sbolton
+environmentType: staff-sandbox # customer-sandbox, staff-sandbox, qa
+hostType: corp # corp, sh
+region: us-east-1
+cloudProvider: aws
+environments:
+  auth:
+    image: dotcms/dotcms:latest
+    replicas: 1
+    resources:
+      cpu: '.5'
+      cpuLimit: '2'
+      memory: 2Gi
+      memoryLimit: 4Gi
+  prod:
+    image: dotcms/dotcms:latest
+    replicas: 2
+    resources:
+      cpu: '.5'
+      cpuLimit: '2'
+      memory: 2Gi
+      memoryLimit: 4Gi

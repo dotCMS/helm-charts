@@ -1,17 +1,14 @@
 app: dotcms
-customer_name: dotcms-dev
-environment-type: local-dev
-cloud_provider: local
-host_type: corp  # corp, sh
+customerName: dotcms-dev
+environmentType: local-dev
+cloudProvider: local
+hostType: corp  # corp, sh
 aws:
   region: us-east-1
   serviceAccount:
     roleArn: ""
   secrets:
     secretsArn: ""
-argo:
-  enabled: false
-  argo_app_path: ""
 secrets:
   useSecretsStoreCSI: false
   sync:
@@ -43,90 +40,86 @@ secrets:
   createSecrets: true
 serviceAccount:
   create: false
+
+coreServiceEnabled: true
 environments:
   prod:
-    enabled: true
-    dotcms:
-      mapToTopLevelDomain: true
-dotcms:
-  affinity:
-    requireDifferentHosts: false
-  telemetry:
-    enabled: false
-    telemetryClient: DEV
-  opensearch:
-    protocol: https
-    host: external-host
-    port: 9200
-    endpointUrl: "{{ .Values.dotcms.opensearch.protocol }}://{{ .Values.dotcms.opensearch.host }}:{{ .Values.dotcms.opensearch.port }}"
-  ingress:
-    tlsSecretName: developer-certificate-secret
-    host: ""
-    hostSuffix: dotcms.local
-    type: nginx
-    alb:
-      certificateArn: ""
-      sslPolicy: ""
-      securityGroups: ""
+    mapToTopLevelDomain: true
+affinity:
+  requireDifferentHosts: false
+telemetry:
+  enabled: false
+  telemetryClient: DEV
+ingress:
+  tlsSecretName: developer-certificate-secret
+  host: ""
+  hostSuffix: dotcms.local
+  type: nginx
+  alb:
+    certificateArn: ""
+    sslPolicy: ""
+    securityGroups: ""
+enabled: true
+repository: dotcms/dotcms_test
+tag: 1.0.0-SNAPSHOT
+imagePullPolicy: IfNotPresent
+terminationGracePeriodSeconds: 10
+scaleDownBeforeUpgrade: false
+replicas: 1
+resources:
+  requests:
+    cpu: 0.5
+    memory: 5Gi
+  limits:
+    cpu: 2
+    memory: 5Gi
+envVariables: {}
+javaMemory: 2
+redisSessions:
   enabled: true
-  repository: dotcms/dotcms
-  tag: latest
-  imagePullPolicy: IfNotPresent
-  terminationGracePeriodSeconds: 10
-  scaleDownBeforeUpgrade: false
-  replicas: 1
-  resources:
-    requests:
-      cpu: 0.5
-      memory: 5Gi
-    limits:
-      cpu: 2
-      memory: 5Gi
-  env_variables: {}
-  java_memory: 2
-  redisSessions:
-    enabled: true
-  startupProbe:
-    httpGet:
-      path: /api/v1/appconfiguration
-      port: 8082
-    initialDelaySeconds: 300
-    periodSeconds: 5
-    successThreshold: 1
-    failureThreshold: 18
-    timeoutSeconds: 1
-  livenessProbe:
-    httpGet:
-      path: /api/v1/appconfiguration
-      port: 8082
-    initialDelaySeconds: 1
-    periodSeconds: 30
-    successThreshold: 1
-    failureThreshold: 1
-    timeoutSeconds: 10
-  readinessProbe:
-    httpGet:
-      path: /api/v1/appconfiguration
-      port: 8082
-    initialDelaySeconds: 1
-    periodSeconds: 10
-    successThreshold: 1
-    failureThreshold: 1
-    timeoutSeconds: 5
-  volumes:
-    shared:
-      access_point: ""
-      volume_handle: ""
-      create: true
-  defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-  additionalJavaOpts: ""
-  javaHeapMax: 2g
-  remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-  # customEnvVars:
-  #   TEST_ENV_VAR: test
+startupProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  successThreshold: 1
+  failureThreshold: 60
+  timeoutSeconds: 20
+livenessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 30
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 5
+volumes:
+  shared:
+    accessPoint: ""
+    volumeHandle: ""
+    create: true
+defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+additionalJavaOpts: ""
+javaHeapMax: 2g
+remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+# customEnvVars:
+#   TEST_ENV_VAR: test
 linkerd:
   enabled: false
 opensearch:
+  host: external-host
+  endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
   local:
     enabled: true
     image: opensearchproject/opensearch:1
@@ -149,8 +142,8 @@ database:
   host: db
   port: 5432
   name: dotcms
-  ssl_mode: prefer
-  base_url: "jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode={{ .Values.database.ssl_mode }}"
+  sslMode: prefer
+  baseUrl: "jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode={{ .Values.database.sslMode }}"
 redis:
   enabled: true
   local:

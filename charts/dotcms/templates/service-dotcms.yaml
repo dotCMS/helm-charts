@@ -1,4 +1,4 @@
-{{- if .Values.dotcms.enabled }}
+{{- if .Values.coreServiceEnabled }}
 {{- range $envName := keys .Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: {{ .Values.customer_name }}
+  namespace: {{ .Values.customerName }}
   name: {{ include "dotcms.env.serviceName" . }}
 spec:
   ports:
