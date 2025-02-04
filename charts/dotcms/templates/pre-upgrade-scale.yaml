@@ -3,6 +3,8 @@
 {{- range $envName := keys $.Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
+{{- $namespace := .Values.customerName }}
+{{- $configMapName := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -10,7 +12,7 @@ metadata:
   name: {{ include "dotcms.preUpgradeJobName" . }}
   namespace: {{ .Values.customerName }}
   annotations:
-    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook": pre-upgrade,pre-install
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
@@ -26,27 +28,46 @@ spec:
             - /bin/sh
             - -c
             - |
+              echo "Ensuring ConfigMap for upgrade tracking and metadata exists..."
+              CONFIGMAP_NAME="{{ $configMapName }}"
+
+              if kubectl get configmap $CONFIGMAP_NAME -n {{ $namespace }} >/dev/null 2>&1; then
+                PREV_VERSION=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.configVersion}' -n {{ $namespace }} 2>/dev/null || echo "")
+              else
+                PREV_VERSION=""
+              fi
+
+              CURR_VERSION="{{ .Values.configVersion }}"
+              echo "Current Version: $CURR_VERSION, Previous Version: $PREV_VERSION"
+
+              if [ "$PREV_VERSION" != "$CURR_VERSION" ]; then
+                echo "Version changed. Upgrade required."
+                UPGRADE_REQUIRED="true"
+              else
+                echo "No version change detected. Upgrade not required."
+                UPGRADE_REQUIRED="false"
+              fi
+              
+              kubectl create configmap $CONFIGMAP_NAME \
+                --namespace {{ $namespace }} \
+                --from-literal=upgradeRequired="$UPGRADE_REQUIRED" \
+                --from-literal=configVersion="$CURR_VERSION" \
+                --from-literal=replicas="{{ .Values.replicas }}" \
+                --from-literal=image="{{ include "dotcms.image" . }}" \
+                --from-literal=startTime="$(date)" \
+                --from-literal=environmentName="{{ $envName }}" \
+                --from-literal=kubernetesVersion="$(kubectl version --client | grep 'Client Version' | awk '{print $3}')" \
+                --dry-run=client -o yaml | kubectl apply -f -
+
+              echo "ConfigMap $CONFIGMAP_NAME created successfully."
+              
               if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" ]; then
                 echo "Scaling down dotCMS statefulset for {{ $envName }}..."
-
-                # Creating ConfigMap with additional information
-                kubectl create configmap {{ .Values.customerName }}-{{ $envName }}-scale-data \
-                  --namespace {{ .Values.customerName }} \
-                  --from-literal=replicas="{{ .Values.replicas }}" \
-                  --from-literal=image="{{ include "dotcms.image" . }}" \
-                  --from-literal=startTime="$(date)" \
-                  --from-literal=environmentName="{{ $envName }}" \
-                  --from-literal=kubernetesVersion="$(kubectl version --short | grep Server | awk '{print $3}')"
-
-                echo "Capturing StatefulSet status..."
-                kubectl get statefulset {{ $fullName }} -n {{ .Values.customerName }} -o yaml > /tmp/statefulset-status.yaml
-
-                echo "Scaling down statefulset {{ $fullName }} to 0 replicas..."
-                kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ .Values.customerName }}
-                kubectl rollout status statefulset {{ $fullName }} --namespace {{ .Values.customerName }}
+                kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ $namespace }}
+                kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}
               else
                 echo "Scale down not enabled for {{ $envName }}. Skipping..."
-              fi
+              fi                 
       restartPolicy: Never
 {{- end }}
 {{- end }}

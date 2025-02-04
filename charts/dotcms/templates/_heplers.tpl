@@ -153,11 +153,15 @@
 Jobs helpers
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
-{{ .Values.customerName }}-{{ .Values.environment }}-pre-upgrade
+{{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}
 
 {{- define "dotcms.postUpgradeJobName" -}}
-{{ .Values.customerName }}-{{ .Values.environment }}-post-upgrade
+{{- printf "%s-%s-post-upgrade" .Values.customerName .Values.environment -}}
+{{- end }}
+
+{{- define "dotcms.dbUpgradeJobName" -}}
+{{- printf "%s-%s-db-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}
 
 {{/*
