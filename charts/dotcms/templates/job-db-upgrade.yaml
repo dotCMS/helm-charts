@@ -1,7 +1,13 @@
 {{- if .Values.coreServiceEnabled }}
 {{- range $envName := keys $.Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $fullName := include "dotcms.env.fullName" . }}
+{{- $dbName := include "dotcms.db.name" . }}
+{{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s?ssl.mode=prefer" .Values.database.host ( int .Values.database.port ) $dbName  }}
 {{- $namespace := .Values.customerName }}
+{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+{{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
+{{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 {{- $configMapName := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
 {{- $configMap := lookup "v1" "ConfigMap" $namespace $configMapName }}
 ---
@@ -13,26 +19,228 @@ metadata:
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
     helm.sh/hook-weight: "0"
-    # helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   template:
     spec:
       restartPolicy: Never
       serviceAccountName: {{ include "dotcms.serviceaccount" . }}
-      containers:
-        - name: kubectl
+      initContainers:
+        - name: check-upgrade
           image: bitnami/kubectl:latest
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "Checking upgrade status from ConfigMap {{ $configMapName }} ..."
-              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapName }} -o=jsonpath='{.data.upgradeRequired}' -n {{ $namespace }} 2>/dev/null || echo "false")
-
-              echo "Upgrade required. Exiting. SHUTDOWN_ON_STARTUP=$SHUTDOWN_ON_STARTUP & UPGRADE_REQUIRED=$UPGRADE_REQUIRED"
+              if [ -f /tmp/skip ]; then
+                rm /tmp/skip
+              fi
+              echo "Checking upgrade status from ConfigMap {{ $configMapName }} in namespace {{ $namespace }}..."
+              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapName }} -n {{ $namespace }} -o=jsonpath='{.data.upgradeRequired}' 2>/dev/null || echo "false")
+              echo "Upgrade required value: $UPGRADE_REQUIRED"
+              if [ "$UPGRADE_REQUIRED" != "true" ]; then
+                echo "Upgrade not required. Marking skip..."
+                echo "skip" > /tmp/skip
+              fi
+          volumeMounts:
+            - name: shared-skip
+              mountPath: /tmp
+      containers:
+        - name: dotcms-upgrade
+          image: {{ include "dotcms.image" . }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          resources:
+            requests:
+              cpu: '{{ .Values.resources.requests.cpu }}'
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: '{{ .Values.resources.limits.cpu }}'
+              memory: {{ .Values.resources.limits.memory }}          
           env:
-            - name: SHUTDOWN_ON_STARTUP
-              value: "true"
+            - name: DOT_SHUTDOWN_ON_STARTUP
+              value: "true" 
+            - name: CMS_JAVA_OPTS
+              value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"
+            - name: DOT_ES_ENDPOINTS
+              value: "{{ include "dotcms.opensearch.endpoints" . }}"
+            - name: DOT_ES_AUTH_TYPE
+              value: {{ $.Values.opensearch.auth.type }}
+            - name: DOT_ES_AUTH_BASIC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+                  key: username
+            - name: DOT_ES_AUTH_BASIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+                  key: password
+            - name: DB_DNSNAME
+              value: {{ $.Values.database.host }}
+            - name: DB_BASE_URL
+              value: {{ $baseUrl }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                    key: password
+            {{- if $useLicense }}
+            - name: LICENSE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+                  key: license
+            {{- end }}
+            - name: DOT_INITIAL_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
+                  key: password
+            - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
+              value: 'false'
+            - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
+              value: '120'
+            - name: DOT_DOTGENERATED_DEFAULT_PATH
+              value: shared
+            - name: DOT_DOTCMS_CLUSTER_ID
+              value: {{ include "dotcms.opensearch.cluster" . }}
+            - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE
+              value: '5'
+            - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS
+              value: '1'
+            - name: DOT_REINDEX_RECORDS_TO_FETCH
+              value: '10'
+            - name: DOT_SYSTEM_STATUS_API_IP_ACL
+              value: 0.0.0.0/0
+            {{- if eq $.Values.cloudProvider "aws" }}
+            - name: DOT_REMOTE_CALL_SUBNET_BLACKLIST
+              value: {{ .Values.remoteCallSubnetBlacklist }}
+            {{- end }}
+            - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
+              value: 'true'
+            - name: DOT_URI_NORMALIZATION_FORBIDDEN_REGEX
+              value: \/\/html\/.*
+            - name: DOT_COOKIES_HTTP_ONLY
+              value: 'true'
+            - name: COOKIES_SECURE_FLAG
+              value: always
+            - name: CACHE_CATEGORYPARENTSCACHE_SIZE
+              value: '25000'
+            - name: CACHE_CONTENTLETCACHE_SIZE
+              value: '15000'
+            - name: CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS
+              value: '60000'
+            - name: DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS
+              value: '1200'
+            - name: DOT_ENABLE_SYSTEM_TABLE_CONFIG_SOURCE
+              value: 'false'
+            {{- if $.Values.telemetry.enabled }}
+            - name: DOT_FEATURE_FLAG_TELEMETRY
+              value: 'true'
+            - name: DOT_TELEMETRY_SAVE_SCHEDULE
+              value: 0 0 */8 * * ?
+            - name: DOT_TELEMETRY_CLIENT_CATEGORY
+              value: {{ .Values.telemetry.telemetryClient | quote }}
+            {{- end }}
+            - name: TOMCAT_REDIS_SESSION_ENABLED
+              value: '{{ .Values.redisSessions.enabled }}'
+            {{- if .Values.redisSessions.enabled }}
+            - name: TOMCAT_REDIS_SESSION_HOST
+              value: '{{ $.Values.redis.sessionHost }}'
+            - name: TOMCAT_REDIS_SESSION_PORT
+              value: '{{ $.Values.redis.port }}'
+            - name: TOMCAT_REDIS_SESSION_PASSWORD
+              value: '{{ $.Values.redis.password }}'
+            - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
+              value: '{{ $.Values.redis.sslEnabled }}'
+            - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
+              value: '{{ $.Values.redis.sessionPersistentPolicies }}'
+            {{- end }}
+            {{- if .Values.mail.enabled }}
+            - name: DOT_MAIL_SMTP_HOST
+              value: '{{ $.Values.mail.host }}'
+            - name: DOT_MAIL_SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+                  key: username
+            - name: DOT_MAIL_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+                  key: password
+            {{- end }}
+            # Custom environment variables
+            {{- range $key, $value := .Values.envVariables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          ports:
+          - containerPort: 8080
+            name: api
+          - containerPort: 8081
+            name: web-insecure
+          - containerPort: 8082
+            name: web-secure
+          - containerPort: 5701
+            name: hazelcast
+          lifecycle:
+            postStart:
+              {{- if $useLicense }}
+              exec:
+                command: # This functionality should be moved to core.
+                  - /bin/sh
+                  - -c
+                  - |
+                    mkdir -p /data/shared/assets
+                    echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
+              {{- end }}
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '20'
+          volumeMounts:
+            - name: shared-skip
+              mountPath: /tmp
+            - name: dotcms-shared
+              mountPath: /data/shared
+            {{- if .Values.secrets.useSecretsStoreCSI }}
+            - mountPath: /mnt/{{ include "dotcms.secret.provider.className" .  }}
+              name: {{ include "dotcms.secret.provider.className" .  }}
+              readOnly: true
+            {{- end }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              if [ -f /tmp/skip ]; then
+                echo "Upgrade not required. Skipping container execution."                
+              else
+                echo "Upgrade required. Launching original entrypoint..."
+                echo "env DOT_SHUTDOWN_ON_STARTUP=$DOT_SHUTDOWN_ON_STARTUP"
+                exec /srv/entrypoint.sh dotcms
+              fi
+              exit 0
+      volumes:
+      - name: shared-skip
+        emptyDir: {}
+      - name: dotcms-shared
+        persistentVolumeClaim:
+          claimName: {{ include "dotcms.pvc.env.name" . }}
+      {{- if .Values.secrets.useSecretsStoreCSI }}
+      - name: {{ include "dotcms.secret.provider.className"  . }}
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
+      {{- end }}
+      serviceAccountName: {{ include "dotcms.serviceaccount" .  }}
 {{- end }}
 {{- end }}
 {{- end }}

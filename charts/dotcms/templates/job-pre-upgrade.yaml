@@ -60,7 +60,7 @@ spec:
 
               echo "ConfigMap $CONFIGMAP_NAME created successfully."
               
-              if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" ]; then
+              if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" == "true"]; then
                 echo "Scaling down dotCMS statefulset for {{ $envName }}..."
                 kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ $namespace }}
                 kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}
