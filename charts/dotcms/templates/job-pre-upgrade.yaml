@@ -1,4 +1,3 @@
-# templates/hooks/pre-upgrade-scale.yaml
 {{- if .Values.coreServiceEnabled }}
 {{- range $envName := keys $.Values.environments }}
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
