@@ -1,9 +1,11 @@
 {{- if .Values.database.local.enabled }}
+{{- $namespace := .Values.customerName }}
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: db
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $namespace }}
   labels:
     app: db
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
