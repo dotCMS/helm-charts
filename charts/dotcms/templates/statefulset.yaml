@@ -4,8 +4,8 @@
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
 {{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s?ssl.mode=prefer" .Values.database.host ( int .Values.database.port ) $dbName  }}
+{{- $namespace := .Values.customerName }}
 {{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
-{{- $namespace := .Values.customerName }}{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 ---
@@ -46,11 +46,11 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           resources:
             requests:
-              cpu: '{{ .Values.resources.cpu }}'
-              memory: {{ .Values.resources.memory }}
+              cpu: '{{ .Values.resources.requests.cpu }}'
+              memory: {{ .Values.resources.requests.memory }}
             limits:
-              cpu: '{{ .Values.resources.cpuLimit }}'
-              memory: {{ .Values.resources.memoryLimit }}
+              cpu: '{{ .Values.resources.limits.cpu }}'
+              memory: {{ .Values.resources.limits.memory }}
           env:
             - name: CMS_JAVA_OPTS
               value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"

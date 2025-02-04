@@ -1,0 +1,38 @@
+{{- if .Values.coreServiceEnabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $namespace := .Values.customerName }}
+{{- $configMapName := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
+{{- $configMap := lookup "v1" "ConfigMap" $namespace $configMapName }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dotcms.dbUpgradeJobName" . }}
+  namespace: {{ $namespace }}
+  annotations:
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-weight: "0"
+    # helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Checking upgrade status from ConfigMap {{ $configMapName }} ..."
+              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapName }} -o=jsonpath='{.data.upgradeRequired}' -n {{ $namespace }} 2>/dev/null || echo "false")
+
+              echo "Upgrade required. Exiting. SHUTDOWN_ON_STARTUP=$SHUTDOWN_ON_STARTUP & UPGRADE_REQUIRED=$UPGRADE_REQUIRED"
+          env:
+            - name: SHUTDOWN_ON_STARTUP
+              value: "true"
+{{- end }}
+{{- end }}
+{{- end }}
