@@ -26,9 +26,9 @@ spec:
       serviceAccountName: {{ include "dotcms.serviceaccount" . }}
       initContainers:
         - name: check-upgrade
-          image: bitnami/kubectl:latest
+          image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "-c"]
+          command: ["/bin/bash", "-c"]
           args:
             - |
               if [ -f /tmp/skip ]; then
@@ -45,8 +45,9 @@ spec:
             - name: shared-skip
               mountPath: /tmp
       containers:
-        - name: dotcms-upgrade
-          command: ["/bin/sh", "-c"]
+        - name: dotcms-upgrade      
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+          command: ["/bin/bash", "-c"]
           args:
             - |
               if [ -f /tmp/skip ]; then
@@ -56,23 +57,23 @@ spec:
                 echo "env DOT_SHUTDOWN_ON_STARTUP=$DOT_SHUTDOWN_ON_STARTUP"
                 exec /srv/entrypoint.sh dotcms
               fi
-              exit 0       
-          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" "true" "EnableProbes" "false" "ShutdownOnStartupValue" "true") .) | nindent 10 }}
+              exit 0
       volumes:
+        - name: shared-skip
+          emptyDir: {}      
         - name: dotcms-shared
           persistentVolumeClaim:
             claimName: {{ include "dotcms.pvc.env.name" . }}
-        - name: shared-skip
-          emptyDir: {}
         {{- if .Values.secrets.useSecretsStoreCSI }}
-        - name: {{ include "dotcms.secret.provider.className" .  }}
+        - name: {{ include "dotcms.secret.provider.className"  . }}
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
               secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
         {{- end }}
-       
+      serviceAccountName: {{ include "dotcms.serviceaccount" .  }}
+
 {{- end }}
 {{- end }}
 {{- end }}

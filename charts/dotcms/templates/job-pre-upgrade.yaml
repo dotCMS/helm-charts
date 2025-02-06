@@ -21,10 +21,10 @@ spec:
       serviceAccountName: {{ include "dotcms.serviceaccount" . }}
       containers:
         - name: kubectl
-          image: bitnami/kubectl:latest
+          image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
+            - /bin/bash
             - -c
             - |
               echo "Ensuring ConfigMap for upgrade tracking and metadata exists..."
@@ -60,7 +60,7 @@ spec:
 
               echo "ConfigMap $CONFIGMAP_NAME created successfully."
               
-              if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" == "true"]; then
+              if [[ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" = "true" ]]; then
                 echo "Scaling down dotCMS statefulset for {{ $envName }}..."
                 kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ $namespace }}
                 kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}

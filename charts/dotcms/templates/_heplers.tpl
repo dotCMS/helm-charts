@@ -166,9 +166,21 @@ Jobs helpers
 
 {{/*
 ###########################################################
-# dotCMS container specification helpers
+# dotcms.container.spec - Container specification helper
+#
+# Parameters:
+# - IsUpgradeJob (bool): true for db-upgrade Job, false for StatefulSet.
+# - EnableProbes (bool): Enables (true) or disables (false) probes.
+# - ShutdownOnStartupValue (bool): Sets DOT_SHUTDOWN_ON_STARTUP env var.
+#
+# Usage in StatefulSet:
+# {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false) .) | nindent 10 }}
+#
+# Usage in db-upgrade Job:
+# {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
 ###########################################################
 */}}
+}
 {{- define "dotcms.container.spec.resources" -}}
 resources:
   requests:
@@ -183,7 +195,6 @@ resources:
 {{- define "dotcms.container.spec" -}}
 image: {{ include "dotcms.image" . }}
 imagePullPolicy: {{ .Values.imagePullPolicy }}
-serviceAccountName: {{ include "dotcms.serviceaccount" . }}
 resources:
   requests:
     cpu: '{{ .Values.resources.requests.cpu }}'
