@@ -1,11 +1,12 @@
 {{- if .Values.opensearch.local.enabled }}
 {{- $fullName := include "dotcms.opensearch.fullName" . }}
+{{- $namespace := .Values.customerName }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $namespace }}
   labels:
     app: {{ $fullName }}
 spec:

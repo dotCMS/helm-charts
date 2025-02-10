@@ -8,10 +8,13 @@ kind: Role
 metadata:
   name: {{ .Values.customerName }}-{{ $envName }}-hook-role
   namespace: {{ .Values.customerName }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-10"    
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
-    verbs: ["create", "get", "delete"]
+    verbs: ["get", "list", "create", "update", "patch"]
   - apiGroups: ["apps"]
     resources: ["statefulsets", "statefulsets/scale"]
     verbs: ["get", "list", "patch", "update", "watch"]
@@ -21,9 +24,13 @@ kind: RoleBinding
 metadata:
   name: {{ .Values.customerName }}-{{ $envName }}-hook-rolebinding
   namespace: {{ .Values.customerName }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-10"    
 subjects:
   - kind: ServiceAccount
     name: {{ include "dotcms.serviceaccount" . }}
+    namespace: {{ .Values.customerName }}
 roleRef:
   kind: Role
   name: {{ .Values.customerName }}-{{ $envName }}-hook-role

@@ -153,11 +153,153 @@
 Jobs helpers
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
-{{ .Values.customerName }}-{{ .Values.environment }}-pre-upgrade
+{{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}
 
 {{- define "dotcms.postUpgradeJobName" -}}
-{{ .Values.customerName }}-{{ .Values.environment }}-post-upgrade
+{{- printf "%s-%s-post-upgrade" .Values.customerName .Values.environment -}}
+{{- end }}
+
+{{- define "dotcms.dbUpgradeJobName" -}}
+{{- printf "%s-%s-db-upgrade" .Values.customerName .Values.environment -}}
+{{- end }}
+
+{{/*
+###########################################################
+# dotcms.container.spec - Container specification helper
+#
+# Parameters:
+# - IsUpgradeJob (bool): true for db-upgrade Job, false for StatefulSet.
+# - EnableProbes (bool): Enables (true) or disables (false) probes.
+# - ShutdownOnStartupValue (bool): Sets DOT_SHUTDOWN_ON_STARTUP env var.
+#
+# Usage in StatefulSet:
+# {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false) .) | nindent 10 }}
+#
+# Usage in db-upgrade Job:
+# {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+###########################################################
+*/}}
+}
+{{- define "dotcms.container.spec.resources" -}}
+resources:
+  requests:
+    cpu: '{{ .Values.resources.requests.cpu }}'
+    memory: {{ .Values.resources.requests.memory }}
+  limits:
+    cpu: '{{ .Values.resources.limits.cpu }}'
+    memory: {{ .Values.resources.limits.memory }}
+{{- end }}
+
+
+{{- define "dotcms.container.spec" -}}
+image: {{ include "dotcms.image" . }}
+imagePullPolicy: {{ .Values.imagePullPolicy }}
+resources:
+  requests:
+    cpu: '{{ .Values.resources.requests.cpu }}'
+    memory: {{ .Values.resources.requests.memory }}
+  limits:
+    cpu: '{{ .Values.resources.limits.cpu }}'
+    memory: {{ .Values.resources.limits.memory }}
+env:
+  - name: DOT_SHUTDOWN_ON_STARTUP
+    value: "{{ .ShutdownOnStartupValue }}"
+  - name: CMS_JAVA_OPTS
+    value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"
+  - name: DOT_ES_ENDPOINTS
+    value: "{{ include "dotcms.opensearch.endpoints" . }}"
+  - name: DOT_ES_AUTH_TYPE
+    value: {{ $.Values.opensearch.auth.type }}
+  - name: DB_DNSNAME
+    value: {{ $.Values.database.host }}
+  - name: DB_BASE_URL
+    value: "{{ printf "jdbc:postgresql://%s:%v/%s?sslmode=prefer" .Values.database.host (int .Values.database.port) (include "dotcms.db.name" .) }}"
+  - name: DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+        key: username
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+        key: password
+  {{- if $.Values.telemetry.enabled }}
+  - name: DOT_FEATURE_FLAG_TELEMETRY
+    value: 'true'
+  - name: DOT_TELEMETRY_SAVE_SCHEDULE
+    value: 0 0 */8 * * ?
+  - name: DOT_TELEMETRY_CLIENT_CATEGORY
+    value: {{ .Values.telemetry.telemetryClient | quote }}
+  {{- end }}
+volumeMounts:
+  - name: dotcms-shared
+    mountPath: /data/shared
+  {{- if .IsUpgradeJob }}
+  - name: shared-skip
+    mountPath: /tmp
+  {{- end }}
+  {{- if .Values.secrets.useSecretsStoreCSI }}
+  - mountPath: /mnt/{{ include "dotcms.secret.provider.className" .  }}
+    name: {{ include "dotcms.secret.provider.className" .  }}
+    readOnly: true
+  {{- end }}
+ports:
+  - containerPort: 8080
+    name: api
+  - containerPort: 8081
+    name: web-insecure
+  - containerPort: 8082
+    name: web-secure
+  - containerPort: 5701
+    name: hazelcast
+{{- if .EnableProbes }}
+startupProbe:
+  httpGet:
+    path: {{ .Values.startupProbe.httpGet.path }}
+    port: {{ .Values.startupProbe.httpGet.port }}
+  initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+  periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+  successThreshold: {{ .Values.startupProbe.successThreshold }}
+  failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+  timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+livenessProbe:
+  httpGet:
+    path: {{ .Values.livenessProbe.httpGet.path }}
+    port: {{ .Values.livenessProbe.httpGet.port }}
+  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+  periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+  successThreshold: {{ .Values.livenessProbe.successThreshold }}
+  failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+readinessProbe:
+  httpGet:
+    path: {{ .Values.readinessProbe.httpGet.path }}
+    port: {{ .Values.readinessProbe.httpGet.port }}
+  initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+  periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+  successThreshold: {{ .Values.readinessProbe.successThreshold }}
+  failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+  timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+{{- end }}
+lifecycle:
+  postStart:
+    {{- if .Values.useLicense }}
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - |
+          mkdir -p /data/shared/assets
+          echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
+    {{- end }}
+  preStop:
+    exec:
+      command:
+        - sleep
+        - '20'
+
 {{- end }}
 
 {{/*
