@@ -181,17 +181,6 @@ Jobs helpers
 ###########################################################
 */}}
 }
-{{- define "dotcms.container.spec.resources" -}}
-resources:
-  requests:
-    cpu: '{{ .Values.resources.requests.cpu }}'
-    memory: {{ .Values.resources.requests.memory }}
-  limits:
-    cpu: '{{ .Values.resources.limits.cpu }}'
-    memory: {{ .Values.resources.limits.memory }}
-{{- end }}
-
-
 {{- define "dotcms.container.spec" -}}
 image: {{ include "dotcms.image" . }}
 imagePullPolicy: {{ .Values.imagePullPolicy }}
