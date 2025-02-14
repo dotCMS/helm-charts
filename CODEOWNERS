@@ -1,0 +1,4 @@
+# CODEOWNERS file 
+# Requires review from any of these users for all changes
+
+* @dotcms/core-workflow-developers @cobbg @dcolina @sfreudenthaler @dsantos-dcms @manuel-miranda @notmattmonroe @spbolton @wezell @yolabingo
