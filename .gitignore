@@ -1,6 +1,36 @@
+# Potenital Sensitive files
+**/application.properties
+**/application.yml
+**/application-*.yml
+**/application-*.properties
+**/*.env
+**/*.key
+**/*.pem
+**/*.crt
+**/*.p12
+**/*.jks
+**/secrets
+**/credentials
+**/config
+**/certificates
+**/keys
+
 # Chart dependencies
 /charts/*/charts
 .idea
 .vscode
 .DS_Store
 local_files
+
+# Node modules and dependencies
+/node_modules
+/.npm
+
+# Logs and temp files
+*.log
+*.tmp
+
+# IDE specific files
+*.iml
+*.ipr
+*.iws
