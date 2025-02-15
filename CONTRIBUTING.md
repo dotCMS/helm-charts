@@ -29,17 +29,20 @@ For detailed installation instructions, refer to the [Local Development Setup](.
 ## Development Setup
 
 1. Fork the repository and clone your fork:
+
    ```bash
    git clone git@github.com:YOUR_USERNAME/helm-charts.git
    cd helm-charts
    ```
 
 2. Add the upstream repository as a remote:
+
    ```bash
    git remote add upstream git@github.com:dotCMS/helm-charts.git
    ```
 
 3. Create a new branch for your changes:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -58,16 +61,19 @@ For detailed installation instructions, refer to the [Local Development Setup](.
 Before submitting a pull request, ensure your changes pass all tests:
 
 1. Lint your changes:
+
    ```bash
    helm lint charts/*
    ```
 
 2. Run chart-testing:
+
    ```bash
    ct lint --config ct.yaml
    ```
 
 3. Test the chart installation locally:
+
    ```bash
    helm install test-release ./charts/dotcms --namespace dotcms-dev --create-namespace
    ```
@@ -117,6 +123,7 @@ If you need help with your contribution, you can:
 | Main Site       | [dotCMS.com](https://www.dotcms.com/)                                 |
 
 Additionally:
+
 1. Check existing issues and documentation
 2. Create a new issue for questions or problems
 3. Reach out to the maintainers
