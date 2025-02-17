@@ -7,6 +7,9 @@ kind: Service
 metadata:
   name: {{ $fullName }}
   namespace: {{ $namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "-20"  
   labels:
     app: {{ $fullName }}
 spec:

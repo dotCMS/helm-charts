@@ -1,0 +1,84 @@
+{{- if .Values.coreServiceEnabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $configMapName := printf "%s-%s-backup-restore-cm" .Values.customerName .Values.environment }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $configMapName }}
+  namespace: {{ .Values.customerName }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-40"   
+data:
+  job-backup-restore.yaml: |
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: {{ include "dotcms.backupRestoreJobName" . }}
+      namespace: {{ .Values.customerName }}
+      annotations:
+        "helm.sh/hook": pre-upgrade,pre-install
+        "helm.sh/hook-weight": "0"
+        "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded
+    spec:
+      ttlSecondsAfterFinished: 7200
+      template:
+        spec:
+          serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+          containers:
+            - name: backup-restore
+              image: postgres:16-alpine
+              imagePullPolicy: IfNotPresent
+              command:
+                - bash
+                - -c
+                - |                          
+                  {{ include "dotcms.backupRestoreScript" . | nindent 18 }}
+              env:
+                - name: OPERATION
+                  value: {{ .Values.operation }}
+                {{- if eq .Values.operation "backup" }}   
+                - name: DB_HOST
+                  value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
+                - name: DB_NAME
+                  value: {{ include "dotcms.db.name" . }}
+                - name: DB_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                      key: username
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                      key: password
+                {{- end }}
+
+              volumeMounts:
+                - name: dotcms-shared
+                  mountPath: /data/shared
+                - name: backup-volume
+                  mountPath: /mnt/backup
+                  
+          volumes:
+          - name: dotcms-shared
+            persistentVolumeClaim:
+              claimName: {{ include "dotcms.pvc.env.name" . }}
+          - name: backup-volume
+            hostPath:
+              path: {{ .Values.hostPath }}
+              type: DirectoryOrCreate          
+          {{- if .Values.secrets.useSecretsStoreCSI }}
+          - name: {{ include "dotcms.secret.provider.className"  . }}
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
+          {{- end }} 
+          restartPolicy: Never
+{{- end }}
+{{- end }}
+{{- end }} 

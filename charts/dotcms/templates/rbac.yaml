@@ -10,8 +10,17 @@ metadata:
   namespace: {{ .Values.customerName }}
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-10"    
+    "helm.sh/hook-weight": "-60"
 rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "create", "delete", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list", "create", "update", "patch"]
@@ -23,10 +32,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ .Values.customerName }}-{{ $envName }}-hook-rolebinding
-  namespace: {{ .Values.customerName }}
+  namespace: {{ .Values.customerName }}  
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-10"    
+    "helm.sh/hook-weight": "-60"    
 subjects:
   - kind: ServiceAccount
     name: {{ include "dotcms.serviceaccount" . }}
