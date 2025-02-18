@@ -6,9 +6,6 @@ kind: Deployment
 metadata:
   name: {{ $fullName }}
   namespace: {{ .Values.namespace }}
-  annotations:
-    "helm.sh/hook": pre-upgrade,pre-install
-    "helm.sh/hook-weight": "-20"  
 spec:
   replicas: 1
   selector:

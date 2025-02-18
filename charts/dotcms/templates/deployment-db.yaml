@@ -4,9 +4,6 @@ kind: Deployment
 metadata:
   name: db
   namespace: {{ .Values.customerName }}
-  annotations:
-    "helm.sh/hook": pre-upgrade,pre-install
-    "helm.sh/hook-weight": "-20"  
 spec:
   replicas: 1
   selector:
@@ -124,9 +121,6 @@ kind: ConfigMap
 metadata:
   name: db-init-scripts
   namespace: {{ .Values.customerName }}
-  annotations:
-    "helm.sh/hook": pre-upgrade,pre-install
-    "helm.sh/hook-weight": "-20"
 data:
   init.sh: |
     #!/bin/bash

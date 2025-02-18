@@ -47,7 +47,8 @@ data:
                     echo "skip" > /tmp/skip
                   else
                     echo "Upgrade required. Proceeding..."
-                    while [[ $(kubectl get pod -l app=db -n dcolina -o jsonpath='{.items[0].status.containerStatuses[0].ready}') != "true" ]]; do
+                    while [[ $(kubectl get pod -l app=db -n dcolina -o jsonpath='{.items[0].status.containerStatuses[0].ready}') != "true" || \
+                            $(kubectl get pod -l app=opensearch -n dcolina -o jsonpath='{.items[0].status.containerStatuses[0].ready}') != "true" ]]; do                    
                       echo "DB is not ready. Waiting..."
                       sleep 5
                     done                    
