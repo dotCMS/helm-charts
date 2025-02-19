@@ -40,6 +40,18 @@ spec:
         fullname: {{ $fullName }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      initContainers:
+        - name: init
+          image: bitnami/kubectl:1.32.0
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              until kubectl get pod -l app=db -n {{ $namespace }} -o jsonpath='{.items[0].status.containerStatuses[0].ready}' | grep "true"; do
+                echo "Waiting for DB..."
+                sleep 2
+              done
+
       containers:
         - name: dotcms
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false) .) | nindent 10 }}

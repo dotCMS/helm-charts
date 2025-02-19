@@ -12,17 +12,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dotcms.orchestratorJobName" . }}
+  name: {{ include "dotcms.orchestratorJobName" . }}-{{ .Release.Revision }}
   namespace: {{ .Values.customerName }}
+  labels:
+    helm.sh-revision: "{{ .Release.Revision }}"
   annotations:
     "helm.sh/hook": pre-upgrade,pre-install
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   ttlSecondsAfterFinished: 7200
   template:
     spec:
-      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      serviceAccountName: {{ include "dotcms.serviceaccount" . }}              
       containers:
         - name: kubectl
           image: bitnami/kubectl:1.32.0
@@ -140,11 +142,10 @@ spec:
                 kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}
               else
                 echo "Scale up not enabled for {{ $envName }}. Skipping..."
-              fi
+              fi     
           volumeMounts:
             - name: job-backup-restore
               mountPath: /tmp/job-backup-restore
-          volumeMounts:
             - name: job-db-upgrade
               mountPath: /tmp/job-db-upgrade
       volumes:

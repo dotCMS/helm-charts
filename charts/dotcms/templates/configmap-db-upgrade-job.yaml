@@ -9,7 +9,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ $configMapName }}
-  namespace: {{ $namespace }}
+  namespace: {{ $namespace }} 
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-40"     
@@ -18,8 +18,10 @@ data:
     apiVersion: batch/v1
     kind: Job
     metadata:
-      name: {{ include "dotcms.dbUpgradeJobName" . }}
+      name: {{ include "dotcms.dbUpgradeJobName" . }}-{{ .Release.Revision }}
       namespace: {{ $namespace }}
+      labels:
+        helm.sh-revision: "{{ .Release.Revision }}"      
       annotations:
         helm.sh/hook: pre-upgrade,pre-install
         helm.sh/hook-weight: "5"
@@ -30,6 +32,17 @@ data:
           restartPolicy: Never
           serviceAccountName: {{ include "dotcms.serviceaccount" . }}
           initContainers:
+            - name: wait-for-db
+              image: bitnami/kubectl:1.32.0
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "Waiting for DB and OpenSearch to be ready..."
+                  kubectl wait --for=condition=Ready pod -l app=db -n {{ $namespace }} --timeout=300s
+                  kubectl wait --for=condition=Ready pod -l app=opensearch -n {{ $namespace }} --timeout=300s
+                  echo "DB and OpenSearch are ready."
+
             - name: check-upgrade
               image: bitnami/kubectl:1.32.0
               imagePullPolicy: IfNotPresent
@@ -44,14 +57,7 @@ data:
                   echo "Upgrade required value: $UPGRADE_REQUIRED"
                   if [ "$UPGRADE_REQUIRED" != "true" ]; then
                     echo "Upgrade not required. Marking skip..."
-                    echo "skip" > /tmp/skip
-                  else
-                    echo "Upgrade required. Proceeding..."
-                    while [[ $(kubectl get pod -l app=db -n dcolina -o jsonpath='{.items[0].status.containerStatuses[0].ready}') != "true" || \
-                            $(kubectl get pod -l app=opensearch -n dcolina -o jsonpath='{.items[0].status.containerStatuses[0].ready}') != "true" ]]; do                    
-                      echo "DB is not ready. Waiting..."
-                      sleep 5
-                    done                    
+                    echo "skip" > /tmp/skip                   
                   fi            
               volumeMounts:
                 - name: shared-skip
