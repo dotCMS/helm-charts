@@ -7,9 +7,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "dotcms.volume.shared.pvc" . }}
-  annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-20"
 spec:
   accessModes:
   - ReadWriteMany
@@ -27,9 +24,6 @@ kind: PersistentVolume
 metadata:
   namespace: {{ .Values.customerName }}
   name: {{ $pvName }}
-  annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-20"  
 spec:
   capacity:
     storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
@@ -53,9 +47,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "db") }}
-  annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-20"  
 spec:
   accessModes:
   - ReadWriteOnce
@@ -70,9 +61,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "dotcms.volume.shared.local" (dict "Values" $.Values "type" "opensearch") }}
-  annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-20"  
 spec:
   accessModes:
   - ReadWriteOnce

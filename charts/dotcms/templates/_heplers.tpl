@@ -244,6 +244,7 @@ volumeMounts:
     name: {{ include "dotcms.secret.provider.className" .  }}
     readOnly: true
   {{- end }}
+{{- if not .IsUpgradeJob }}
 ports:
   - containerPort: 8080
     name: api
@@ -253,6 +254,7 @@ ports:
     name: web-secure
   - containerPort: 5701
     name: hazelcast
+{{- end }}
 {{- if .EnableProbes }}
 startupProbe:
   httpGet:
@@ -282,9 +284,10 @@ readinessProbe:
   failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
 {{- end }}
+{{- if not .IsUpgradeJob }}
 lifecycle:
+  {{- if .Values.useLicense }}
   postStart:
-    {{- if .Values.useLicense }}
     exec:
       command:
         - /bin/sh
@@ -292,13 +295,13 @@ lifecycle:
         - |
           mkdir -p /data/shared/assets
           echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
-    {{- end }}
+  {{- end }}
   preStop:
     exec:
       command:
         - sleep
         - '1'
-
+{{- end }}
 {{- end }}
 
 {{/*

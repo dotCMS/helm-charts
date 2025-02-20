@@ -4,15 +4,11 @@
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $namespace := .Values.customerName }}
 {{- $configMapName := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
-{{- $backupRestoreJob := include "dotcms.backupRestoreJobName" . }}
-{{- $configMapBackupRestore := printf "%s-%s-backup-restore-cm" .Values.customerName .Values.environment }}
-{{- $dbUpgradeJob := include "dotcms.dbUpgradeJobName" . }}
-{{- $configMapDbUpgrade := printf "%s-%s-db-upgrade-cm" .Values.customerName .Values.environment }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dotcms.orchestratorJobName" . }}-{{ .Release.Revision }}
+  name: {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
   namespace: {{ .Values.customerName }}
   labels:
     helm.sh-revision: "{{ .Release.Revision }}"
@@ -106,55 +102,6 @@ spec:
                 echo "Scale down not enabled for {{ $envName }}. Skipping..."
               fi
 
-              if [[ "$BACKUP_RESTORE_ENABLED" = "true" ]]; then
-                echo "Starting Backup/Restore Job."
-                if [ -f /tmp/job-backup-restore/job-backup-restore.yaml ]; then
-                  cat /tmp/job-backup-restore/job-backup-restore.yaml
-                  kubectl apply -f /tmp/job-backup-restore/job-backup-restore.yaml
-                  kubectl wait --for=condition=complete job/{{ $backupRestoreJob }} --timeout=300s
-                else
-                  echo "ERROR: Job YAML not found in ConfigMap!"
-                  exit 1
-                fi             
-              fi
-
-              echo "Checking if DB Upgrade is needed..."
-              if [[ "$UPGRADE_REQUIRED" = "true" ]]; then
-                echo "Starting DB Upgrade Job."
-                if [ -f /tmp/job-db-upgrade/job-db-upgrade.yaml ]; then
-                  cat /tmp/job-db-upgrade/job-db-upgrade.yaml
-                  kubectl apply -f /tmp/job-db-upgrade/job-db-upgrade.yaml
-                  kubectl wait --for=condition=complete job/{{ $dbUpgradeJob }} --timeout=300s
-                else
-                  echo "ERROR: Job YAML not found in ConfigMap!"
-                  exit 1
-                fi
-              else
-                echo "No DB Upgrade required."
-              fi
-
-              echo "Checking if scale up is needed..."
-              if [[ "$HELM_ACTION" = "install" ]]; then
-                echo "This is a fresh installation. Skipping scale up..."
-              elif [[ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" = "true" || "$BACKUP_RESTORE_ENABLED" = "true" ]]; then
-                echo "Scaling up dotCMS statefulset for {{ $envName }}..."
-                kubectl scale statefulset {{ $fullName }} --replicas={{ .Values.replicas }} --namespace {{ $namespace }}
-                kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}
-              else
-                echo "Scale up not enabled for {{ $envName }}. Skipping..."
-              fi     
-          volumeMounts:
-            - name: job-backup-restore
-              mountPath: /tmp/job-backup-restore
-            - name: job-db-upgrade
-              mountPath: /tmp/job-db-upgrade
-      volumes:
-        - name: job-backup-restore
-          configMap:
-            name: {{ $configMapBackupRestore }}
-        - name: job-db-upgrade
-          configMap:
-            name: {{ $configMapDbUpgrade }}            
       restartPolicy: Never
 {{- end }}
 {{- end }}
