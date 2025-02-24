@@ -20,7 +20,7 @@ spec:
   ttlSecondsAfterFinished: 7200
   template:
     spec:
-      serviceAccountName: {{ include "dotcms.serviceaccount" . }}              
+      serviceAccountName: {{ include "dotcms.serviceaccount.admin" . }}              
       containers:
         - name: kubectl
           image: bitnami/kubectl:1.32.0

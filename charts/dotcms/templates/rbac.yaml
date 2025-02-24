@@ -6,44 +6,74 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ .Values.customerName }}-{{ $envName }}-hook-role
+  name: {{ .Values.customerName }}-{{ $envName }}-admin-role
   namespace: {{ .Values.customerName }}
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-60"
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
+    resources: ["pods", "configmaps", "persistentvolumeclaims", "services", "secrets"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["batch"]
     resources: ["jobs"]
-    verbs: ["get", "list", "create", "delete", "watch"]
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get", "list", "create", "update", "patch"]
+    verbs: ["get", "list", "create", "delete", "patch"]
   - apiGroups: ["apps"]
-    resources: ["statefulsets", "statefulsets/scale"]
-    verbs: ["get", "list", "patch", "update", "watch"]
+    resources: ["statefulsets", "deployments"]
+    verbs: ["get", "list", "create", "delete", "update", "patch", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ .Values.customerName }}-{{ $envName }}-hook-rolebinding
+  name: {{ .Values.customerName }}-{{ $envName }}-admin-rolebinding
   namespace: {{ .Values.customerName }}  
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-60"    
 subjects:
   - kind: ServiceAccount
-    name: {{ include "dotcms.serviceaccount" . }}
+    name: {{ include "dotcms.serviceaccount.admin" . }}
     namespace: {{ .Values.customerName }}
 roleRef:
   kind: Role
-  name: {{ .Values.customerName }}-{{ $envName }}-hook-role
+  name: {{ .Values.customerName }}-{{ $envName }}-admin-role
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.customerName }}-{{ $envName }}-app-role
+  namespace: {{ .Values.customerName }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-60"
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "statefulsets/scale"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.customerName }}-{{ $envName }}-app-rolebinding
+  namespace: {{ .Values.customerName }}  
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-60"    
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dotcms.serviceaccount.app" . }}
+    namespace: {{ .Values.customerName }}
+roleRef:
+  kind: Role
+  name: {{ .Values.customerName }}-{{ $envName }}-app-role
+  apiGroup: rbac.authorization.k8s.io    
 {{- end }}
 {{- end }}
 {{- end }}

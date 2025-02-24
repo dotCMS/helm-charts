@@ -116,7 +116,7 @@ spec:
           volumeAttributes:
             secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
       {{- end }}
-      serviceAccountName: {{ include "dotcms.serviceaccount" .  }}
+      serviceAccountName: {{ include "dotcms.serviceaccount.app" .  }}
 
 {{- end }}
 

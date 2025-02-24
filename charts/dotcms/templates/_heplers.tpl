@@ -119,8 +119,12 @@
 ###########################################################
 */}}
 
-{{- define "dotcms.serviceaccount" -}}
-{{- .Values.serviceAccountName | default (printf "%s-sa" .Values.customerName) -}}
+{{- define "dotcms.serviceaccount.app" -}}
+{{- .Values.serviceAccountName | default (printf "%s-app-sa" .Values.customerName) -}}
+{{- end -}}
+
+{{- define "dotcms.serviceaccount.admin" -}}
+{{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
 {{- end -}}
 
 {{/*
