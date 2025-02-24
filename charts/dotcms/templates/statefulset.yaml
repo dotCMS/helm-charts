@@ -49,6 +49,99 @@ spec:
             - job
             - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
 
+        - name: check-backup-restore
+          image: bitnami/kubectl:1.32.0
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ -f /tmp/backupRestore ]; then
+                rm /tmp/backupRestore
+              fi
+
+              echo "Checking backup/restore operation status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
+              BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupRestoreEnabled}' 2>/dev/null || echo "false")
+
+              if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
+                echo "true" > /tmp/backupRestore
+              else
+                echo "Backup/Restore operation not detected. Skipping container"
+              fi
+          volumeMounts:
+            - name: admin-shared
+              mountPath: /tmp
+
+        - name: backup-restore
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ -f /tmp/backupRestore ]; then
+                echo "Backup/Restore operation detected. Launching original entrypoint..."
+              else
+                echo "Backup/Restore operation not detected. Skipping container"
+                exit 0
+              fi
+
+              echo "Operation: ${OPERATION}"
+              BACKUP_DIR=/mnt/backup
+              DOTCMS_DATA_DIR=/data/shared
+              RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
+
+              echo "Operation set to: $OPERATION"
+
+              if [[ "$OPERATION" == "none" ]]; then
+                echo "No backup/restore required."
+                exit 0
+              fi
+
+              if [[ "${OPERATION}" == "backup" ]]; then
+                echo "Starting backup process..."
+                DB_DUMP=${BACKUP_DIR}/db-dump.sql
+                DOTCMS_DATA=${BACKUP_DIR}/dotcms-data.tar.gz
+                FINAL_BACKUP=${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}-$(date +%Y%m%d%H%M%S).tar.gz
+
+                echo "Dumping database..."
+                PGPASSWORD=${DB_PASSWORD} pg_dump -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -Fp -f ${DB_DUMP}
+
+                echo "Archiving DotCMS data..."
+                tar czf ${DOTCMS_DATA} -C ${DOTCMS_DATA_DIR} .
+
+                echo "Creating final backup..."
+                tar czf ${FINAL_BACKUP} -C ${BACKUP_DIR} db-dump.sql dotcms-data.tar.gz
+
+                echo "Backup completed successfully: ${FINAL_BACKUP}"
+
+                rm -rf ${DB_DUMP} ${DOTCMS_DATA}
+              fi
+          env:
+            - name: OPERATION
+              value: {{ .Values.operation }}
+            {{- if eq .Values.operation "backup" }}   
+            - name: DB_HOST
+              value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
+            - name: DB_NAME
+              value: {{ include "dotcms.db.name" . }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  key: password
+            {{- end }}
+
+          volumeMounts:
+            - name: admin-shared
+              mountPath: /tmp
+            - name: backup-volume
+              mountPath: /mnt/backup
+            - name: dotcms-shared
+              mountPath: /data/shared
+
         - name: check-upgrade
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
@@ -66,7 +159,7 @@ spec:
                 echo "skip" > /tmp/skip                   
               fi            
           volumeMounts:
-            - name: shared-skip
+            - name: admin-shared
               mountPath: /tmp
 
         - name: dotcms-upgrade      
@@ -99,11 +192,15 @@ spec:
               topologyKey: kubernetes.io/hostname
         {{- end }}
       volumes:
-      - name: shared-skip
+      - name: admin-shared
         emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
           claimName: {{ include "dotcms.pvc.env.name" . }}
+      - name: backup-volume
+        hostPath:
+          path: {{ .Values.hostPath }}
+          type: DirectoryOrCreate          
       {{- if .Values.secrets.useSecretsStoreCSI }}
       - name: {{ include "dotcms.secret.provider.className"  . }}
         csi:

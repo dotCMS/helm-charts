@@ -170,6 +170,10 @@
 {{- printf "%s-%s-db-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}
 
+{{- define "dotcms.backupRestoreJobName" -}}
+{{- printf "%s-%s-backup-restore" .Values.customerName .Values.environment -}}
+{{- end }}
+
 {{/*
 ###########################################################
 # dotcms.container.spec - Container specification helper
@@ -232,7 +236,7 @@ volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
   {{- if .IsUpgradeJob }}
-  - name: shared-skip
+  - name: admin-shared
     mountPath: /tmp
   {{- end }}
   {{- if .Values.secrets.useSecretsStoreCSI }}
@@ -299,6 +303,79 @@ lifecycle:
         - '1'
 {{- end }}
 {{- end }}
+
+{{/*
+###########################################################
+# dotcms.backupRestoreScript - Backup and Restore script
+#
+# Parameters:
+# - fileName (string): Name of the backup file.
+#
+# Usage:
+# {{ include "dotcms.backupRestoreScript" . | nindent 14 }}
+###########################################################
+*/}}
+{{- define "dotcms.backupRestoreScript" -}}
+#!/bin/bash
+set -e
+
+if [ -f /tmp/backupRestore ]; then
+  echo "Backup/Restore operation detected. Launching original entrypoint..."
+else
+  echo "Backup/Restore operation not detected. Skipping container"
+  OPERATION=none
+fi
+
+echo "Operation: ${OPERATION}"
+BACKUP_DIR=/mnt/backup
+DOTCMS_DATA_DIR=/data/shared
+RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
+
+echo "Operation set to: $OPERATION"
+
+if [[ "$OPERATION" == "none" ]]; then
+  echo "No backup/restore required."
+  exit 0
+fi
+
+if [[ "${OPERATION}" == "backup" ]]; then
+  echo "Starting backup process..."
+  DB_DUMP=${BACKUP_DIR}/db-dump.sql
+  DOTCMS_DATA=${BACKUP_DIR}/dotcms-data.tar.gz
+  FINAL_BACKUP=${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}-$(date +%Y%m%d%H%M%S).tar.gz
+
+  echo "Dumping database..."
+  PGPASSWORD=${DB_PASSWORD} pg_dump -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -Fp -f ${DB_DUMP}
+
+  echo "Archiving DotCMS data..."
+  tar czf ${DOTCMS_DATA} -C ${DOTCMS_DATA_DIR} .
+
+  echo "Creating final backup..."
+  tar czf ${FINAL_BACKUP} -C ${BACKUP_DIR} db-dump.sql dotcms-data.tar.gz
+
+  echo "Backup completed successfully: ${FINAL_BACKUP}"
+
+  rm -rf ${DB_DUMP} ${DOTCMS_DATA}
+
+elif [[ "${OPERATION}" == "restore" ]]; then
+  echo "Starting restore process..."
+  mkdir -p ${RESTORE_TMP_DIR}
+
+  echo "Extracting backup..."
+  tar xzf ${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}.tar.gz -C ${RESTORE_TMP_DIR}
+
+  echo "Restoring database..."
+  PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql
+
+  echo "Restoring DotCMS data..."
+  tar xzf ${RESTORE_TMP_DIR}/dotcms-data.tar.gz -C ${DOTCMS_DATA_DIR}
+
+  echo "Restore completed successfully."
+
+else
+  echo "No valid operation specified. Exiting."
+fi
+{{- end -}}
 
 {{/*
 ###########################################################
