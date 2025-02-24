@@ -119,8 +119,12 @@
 ###########################################################
 */}}
 
-{{- define "dotcms.serviceaccount" -}}
-{{- .Values.serviceAccountName | default (printf "%s-sa" .Values.customerName) -}}
+{{- define "dotcms.serviceaccount.app" -}}
+{{- .Values.serviceAccountName | default (printf "%s-app-sa" .Values.customerName) -}}
+{{- end -}}
+
+{{- define "dotcms.serviceaccount.admin" -}}
+{{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
 {{- end -}}
 
 {{/*
@@ -150,7 +154,9 @@
 {{- end -}}
 
 {{/*
-Jobs helpers
+###########################################################
+# Job Naming Helpers
+###########################################################
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
 {{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
@@ -181,17 +187,6 @@ Jobs helpers
 ###########################################################
 */}}
 }
-{{- define "dotcms.container.spec.resources" -}}
-resources:
-  requests:
-    cpu: '{{ .Values.resources.requests.cpu }}'
-    memory: {{ .Values.resources.requests.memory }}
-  limits:
-    cpu: '{{ .Values.resources.limits.cpu }}'
-    memory: {{ .Values.resources.limits.memory }}
-{{- end }}
-
-
 {{- define "dotcms.container.spec" -}}
 image: {{ include "dotcms.image" . }}
 imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -245,6 +240,7 @@ volumeMounts:
     name: {{ include "dotcms.secret.provider.className" .  }}
     readOnly: true
   {{- end }}
+{{- if not .IsUpgradeJob }}
 ports:
   - containerPort: 8080
     name: api
@@ -254,6 +250,7 @@ ports:
     name: web-secure
   - containerPort: 5701
     name: hazelcast
+{{- end }}
 {{- if .EnableProbes }}
 startupProbe:
   httpGet:
@@ -283,9 +280,10 @@ readinessProbe:
   failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
 {{- end }}
+{{- if not .IsUpgradeJob }}
 lifecycle:
+  {{- if .Values.useLicense }}
   postStart:
-    {{- if .Values.useLicense }}
     exec:
       command:
         - /bin/sh
@@ -293,13 +291,13 @@ lifecycle:
         - |
           mkdir -p /data/shared/assets
           echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
-    {{- end }}
+  {{- end }}
   preStop:
     exec:
       command:
         - sleep
-        - '20'
-
+        - '1'
+{{- end }}
 {{- end }}
 
 {{/*

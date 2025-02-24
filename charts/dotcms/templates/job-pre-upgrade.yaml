@@ -8,8 +8,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dotcms.preUpgradeJobName" . }}
+  name: {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
   namespace: {{ .Values.customerName }}
+  labels:
+    helm.sh-revision: "{{ .Release.Revision }}"
   annotations:
     "helm.sh/hook": pre-upgrade,pre-install
     "helm.sh/hook-weight": "-5"
@@ -18,7 +20,7 @@ spec:
   ttlSecondsAfterFinished: 7200
   template:
     spec:
-      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      serviceAccountName: {{ include "dotcms.serviceaccount.admin" . }}              
       containers:
         - name: kubectl
           image: bitnami/kubectl:1.32.0
@@ -27,6 +29,34 @@ spec:
             - /bin/bash
             - -c
             - |
+              echo "Detecting Helm Action..."
+              RELEASE_NAME="{{ .Release.Name }}"
+              REVISION_COUNT=$(kubectl get secrets -n {{ $namespace }} -o name | grep "sh.helm.release.v1.$RELEASE_NAME" | wc -l)
+
+              if [[ "$REVISION_COUNT" -eq 1 ]]; then
+                echo "This is a fresh installation (helm install)."
+                HELM_ACTION="install"
+              else
+                echo "This is an upgrade (helm upgrade)."
+                HELM_ACTION="upgrade"
+              fi              
+              
+              echo "Detecting Backup/Restore operation..."
+              OPERATION="{{ .Values.operation }}"
+              if [[ "$OPERATION" == "none" ]]; then
+                echo "No operation specified. Skipping Backup/Restore."
+                BACKUP_RESTORE_ENABLED="false"
+              elif [[ "$OPERATION" == "backup" && "$HELM_ACTION" == "upgrade" ]]; then
+                echo "Backup operation detected during an upgrade. Allowing execution."
+                BACKUP_RESTORE_ENABLED="true"
+              elif [[ "$OPERATION" == "restore" ]]; then
+                echo "Restore operation detected. Allowing execution."
+                BACKUP_RESTORE_ENABLED="true"
+              else
+                echo "Backup operation is not allowed during an installation process. Skipping..."
+                BACKUP_RESTORE_ENABLED="false"
+              fi
+
               echo "Ensuring ConfigMap for upgrade tracking and metadata exists..."
               CONFIGMAP_NAME="{{ $configMapName }}"
 
@@ -50,6 +80,7 @@ spec:
               kubectl create configmap $CONFIGMAP_NAME \
                 --namespace {{ $namespace }} \
                 --from-literal=upgradeRequired="$UPGRADE_REQUIRED" \
+                --from-literal=backupRestoreEnabled="$BACKUP_RESTORE_ENABLED" \
                 --from-literal=configVersion="$CURR_VERSION" \
                 --from-literal=replicas="{{ .Values.replicas }}" \
                 --from-literal=image="{{ include "dotcms.image" . }}" \
@@ -58,15 +89,19 @@ spec:
                 --from-literal=kubernetesVersion="$(kubectl version --client | grep 'Client Version' | awk '{print $3}')" \
                 --dry-run=client -o yaml | kubectl apply -f -
 
-              echo "ConfigMap $CONFIGMAP_NAME created successfully."
-              
-              if [[ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" = "true" ]]; then
+              echo "ConfigMap $CONFIGMAP_NAME created successfully."              
+                         
+              echo "Checking if scale down is needed..."
+              if [[ "$HELM_ACTION" = "install" ]]; then
+                echo "This is a fresh installation. Skipping scale down..."
+              elif [[ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" || "$UPGRADE_REQUIRED" = "true" || "$BACKUP_RESTORE_ENABLED" = "true" ]]; then
                 echo "Scaling down dotCMS statefulset for {{ $envName }}..."
                 kubectl scale statefulset {{ $fullName }} --replicas=0 --namespace {{ $namespace }}
                 kubectl rollout status statefulset {{ $fullName }} --namespace {{ $namespace }}
               else
                 echo "Scale down not enabled for {{ $envName }}. Skipping..."
-              fi                 
+              fi
+
       restartPolicy: Never
 {{- end }}
 {{- end }}
