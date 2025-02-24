@@ -43,15 +43,11 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       initContainers:
         - name: wait-for-db-and-opensearch
-          image: bitnami/kubectl:1.32.0
+          image: groundnuty/k8s-wait-for:no-root-v1.7
           imagePullPolicy: IfNotPresent
-          command: ["/bin/bash", "-c"]
           args:
-            - |
-              echo "Waiting for DB and OpenSearch to be ready..."
-              kubectl wait --for=condition=Ready pod -l app=db -n {{ $namespace }} --timeout=300s
-              kubectl wait --for=condition=Ready pod -l app=opensearch -n {{ $namespace }} --timeout=300s
-              echo "DB and OpenSearch are ready."
+            - job
+            - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
 
         - name: check-upgrade
           image: bitnami/kubectl:1.32.0
