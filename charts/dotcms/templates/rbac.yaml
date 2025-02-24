@@ -11,6 +11,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-60"
+    "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
 rules:
   - apiGroups: [""]
     resources: ["pods", "configmaps", "persistentvolumeclaims", "services", "secrets"]
@@ -26,10 +27,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ .Values.customerName }}-{{ $envName }}-admin-rolebinding
-  namespace: {{ .Values.customerName }}  
+  namespace: {{ .Values.customerName }}
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-60"    
+    "helm.sh/hook-weight": "-60"
+    "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
 subjects:
   - kind: ServiceAccount
     name: {{ include "dotcms.serviceaccount.admin" . }}
