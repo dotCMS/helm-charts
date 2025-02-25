@@ -42,7 +42,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       initContainers:
-        - name: wait-for-db-and-opensearch
+        - name: wait-for-job
           image: groundnuty/k8s-wait-for:no-root-v1.7
           imagePullPolicy: IfNotPresent
           args:
@@ -72,12 +72,15 @@ spec:
               mountPath: /tmp
 
         - name: backup-restore
-          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
           command: ["/bin/bash", "-c"]
           args:
             - |
+              set -ex
+              
               if [ -f /tmp/backupRestore ]; then
-                echo "Backup/Restore operation detected. Launching original entrypoint..."
+                echo "Backup/Restore operation detected."
               else
                 echo "Backup/Restore operation not detected. Skipping container"
                 exit 0
@@ -87,8 +90,6 @@ spec:
               BACKUP_DIR=/mnt/backup
               DOTCMS_DATA_DIR=/data/shared
               RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
-
-              echo "Operation set to: $OPERATION"
 
               if [[ "$OPERATION" == "none" ]]; then
                 echo "No backup/restore required."
@@ -113,11 +114,29 @@ spec:
                 echo "Backup completed successfully: ${FINAL_BACKUP}"
 
                 rm -rf ${DB_DUMP} ${DOTCMS_DATA}
+
+              elif [[ "${OPERATION}" == "restore" ]]; then
+                echo "Starting restore process..."
+                mkdir -p ${RESTORE_TMP_DIR}
+
+                echo "Extracting backup..."
+                tar xzf ${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}.tar.gz -C ${RESTORE_TMP_DIR}
+
+                echo "Restoring database..."
+                echo "PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql"
+                PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql
+
+                echo "Restoring DotCMS data..."
+                tar xzf ${RESTORE_TMP_DIR}/dotcms-data.tar.gz -C ${DOTCMS_DATA_DIR}
+
+                echo "Restore completed successfully."
+
+              else
+                echo "No valid operation specified. Exiting."
               fi
           env:
             - name: OPERATION
               value: {{ .Values.operation }}
-            {{- if eq .Values.operation "backup" }}   
             - name: DB_HOST
               value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
             - name: DB_NAME
@@ -132,7 +151,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
                   key: password
-            {{- end }}
 
           volumeMounts:
             - name: admin-shared
@@ -163,7 +181,7 @@ spec:
               mountPath: /tmp
 
         - name: dotcms-upgrade      
-          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true "UseLicense" $useLicense) .) | nindent 10 }}
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -178,7 +196,7 @@ spec:
 
       containers:
         - name: dotcms
-          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false) .) | nindent 10 }}
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
       {{- if .Values.affinity.requireDifferentHosts }}
       affinity:
         podAntiAffinity:

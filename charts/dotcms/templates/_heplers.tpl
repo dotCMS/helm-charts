@@ -210,6 +210,16 @@ env:
     value: "{{ include "dotcms.opensearch.endpoints" . }}"
   - name: DOT_ES_AUTH_TYPE
     value: {{ $.Values.opensearch.auth.type }}
+  - name: DOT_ES_AUTH_BASIC_USER
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: username
+  - name: DOT_ES_AUTH_BASIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: password        
   - name: DB_DNSNAME
     value: {{ $.Values.database.host }}
   - name: DB_BASE_URL
@@ -224,6 +234,56 @@ env:
       secretKeyRef:
         name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
         key: password
+  {{- if .UseLicense }}
+  - name: LICENSE
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+        key: license
+  {{- end }}
+  - name: DOT_INITIAL_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
+        key: password
+  - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
+    value: 'false'
+  - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
+    value: '120'
+  - name: DOT_DOTGENERATED_DEFAULT_PATH
+    value: shared
+  - name: DOT_DOTCMS_CLUSTER_ID
+    value: {{ include "dotcms.opensearch.cluster" . }}
+  - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE
+    value: '5'
+  - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS
+    value: '1'
+  - name: DOT_REINDEX_RECORDS_TO_FETCH
+    value: '10'
+  - name: DOT_SYSTEM_STATUS_API_IP_ACL
+    value: 0.0.0.0/0
+  {{- if eq $.Values.cloud_provider "aws" }}
+  - name: DOT_REMOTE_CALL_SUBNET_BLACKLIST
+    value: {{ .Values.remoteCallSubnetBlacklist }}
+  {{- end }}
+  - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
+    value: 'true'
+  - name: DOT_URI_NORMALIZATION_FORBIDDEN_REGEX
+    value: \/\/html\/.*
+  - name: DOT_COOKIES_HTTP_ONLY
+    value: 'true'
+  - name: COOKIES_SECURE_FLAG
+    value: always
+  - name: CACHE_CATEGORYPARENTSCACHE_SIZE
+    value: '25000'
+  - name: CACHE_CONTENTLETCACHE_SIZE
+    value: '15000'
+  - name: CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS
+    value: '60000'
+  - name: DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS
+    value: '1200'
+  - name: DOT_ENABLE_SYSTEM_TABLE_CONFIG_SOURCE
+    value: 'false'  
   {{- if $.Values.telemetry.enabled }}
   - name: DOT_FEATURE_FLAG_TELEMETRY
     value: 'true'
@@ -232,6 +292,39 @@ env:
   - name: DOT_TELEMETRY_CLIENT_CATEGORY
     value: {{ .Values.telemetry.telemetryClient | quote }}
   {{- end }}
+  - name: TOMCAT_REDIS_SESSION_ENABLED
+    value: '{{ .Values.redisSessions.enabled }}'
+  {{- if .Values.redisSessions.enabled }}
+  - name: TOMCAT_REDIS_SESSION_HOST
+    value: '{{ $.Values.redis.sessionHost }}'
+  - name: TOMCAT_REDIS_SESSION_PORT
+    value: '{{ $.Values.redis.port }}'
+  - name: TOMCAT_REDIS_SESSION_PASSWORD
+    value: '{{ $.Values.redis.password }}'
+  - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
+    value: '{{ $.Values.redis.sslEnabled }}'
+  - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
+    value: '{{ $.Values.redis.sessionPersistentPolicies }}'
+  {{- end }}
+  {{- if .Values.mail.enabled }}
+  - name: DOT_MAIL_SMTP_HOST
+    value: '{{ $.Values.mail.host }}'
+  - name: DOT_MAIL_SMTP_USER
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+        key: username
+  - name: DOT_MAIL_SMTP_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+        key: password
+  {{- end }}
+  # Custom environment variables
+  {{- range $key, $value := .Values.customEnvVars }}
+  - name: {{ $key }}
+    value: {{ $value | quote }}
+  {{- end }}  
 volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
