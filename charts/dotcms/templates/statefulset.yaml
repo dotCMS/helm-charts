@@ -72,13 +72,13 @@ spec:
               mountPath: /tmp
 
         - name: backup-restore
-          image: postgres:16-alpine
+          image: pgvector/pgvector:pg16
           imagePullPolicy: IfNotPresent
           command: ["/bin/bash", "-c"]
           args:
             - |
               set -ex
-              
+
               if [ -f /tmp/backupRestore ]; then
                 echo "Backup/Restore operation detected."
               else
