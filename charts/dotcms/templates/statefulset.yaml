@@ -49,6 +49,17 @@ spec:
             - job
             - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
 
+        - name: wait-for-db-and-opensearch
+          image: bitnami/kubectl:1.32.0
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              echo "Waiting for DB and OpenSearch to be ready..."
+              kubectl wait --for=condition=Ready pod -l app=db -n {{ $namespace }} --timeout=300s
+              kubectl wait --for=condition=Ready pod -l app=opensearch -n {{ $namespace }} --timeout=300s
+              echo "DB and OpenSearch are ready."            
+
         - name: check-backup-restore
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
@@ -122,8 +133,23 @@ spec:
                 echo "Extracting backup..."
                 tar xzf ${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}.tar.gz -C ${RESTORE_TMP_DIR}
 
+                DB_EXISTS=$(PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';")
+
+                if [ "$DB_EXISTS" == "1" ]; then
+                  echo "Database $DB_NAME exists. Dropping it..."
+                  PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "DROP DATABASE \"$DB_NAME\";"
+                else
+                  echo "Database $DB_NAME does not exist. Skipping drop."
+                fi
+
+                if ! grep -q "CREATE DATABASE" ${RESTORE_TMP_DIR}/db-dump.sql; then
+                  echo "Recreating database $DB_NAME since it's not in the backup..."
+                  PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USERNAME\";"
+                else
+                  echo "Backup already includes CREATE DATABASE. Skipping creation."
+                fi                
+
                 echo "Restoring database..."
-                echo "PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql"
                 PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql
 
                 echo "Restoring DotCMS data..."
@@ -140,16 +166,16 @@ spec:
             - name: DB_HOST
               value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
             - name: DB_NAME
-              value: {{ include "dotcms.db.name" . }}
+              value: {{ $dbName }}
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   key: password
 
           volumeMounts:
