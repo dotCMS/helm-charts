@@ -49,17 +49,18 @@ spec:
             - job
             - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
 
-        - name: wait-for-db-and-opensearch
+        {{- if .Values.database.local.enabled }}
+        - name: wait-for-db
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/bash", "-c"]
           args:
             - |
-              echo "Waiting for DB and OpenSearch to be ready..."
+              echo "Waiting for DB to be ready..."
               kubectl wait --for=condition=Ready pod -l app=db -n {{ $namespace }} --timeout=300s
-              kubectl wait --for=condition=Ready pod -l app=opensearch -n {{ $namespace }} --timeout=300s
-              echo "DB and OpenSearch are ready."            
-
+              echo "DB is ready."            
+        {{- end }}
+        
         - name: check-backup-restore
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
