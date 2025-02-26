@@ -121,7 +121,6 @@ kind: ConfigMap
 metadata:
   name: db-init-scripts
   namespace: {{ .Values.customerName }}
-
 data:
   init.sh: |
     #!/bin/bash

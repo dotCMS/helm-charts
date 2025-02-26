@@ -8,6 +8,7 @@
 {{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
+{{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -40,6 +41,48 @@ spec:
         fullname: {{ $fullName }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      initContainers:
+        - name: wait-for-db-and-opensearch
+          image: groundnuty/k8s-wait-for:no-root-v1.7
+          imagePullPolicy: IfNotPresent
+          args:
+            - job
+            - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
+
+        - name: check-upgrade
+          image: bitnami/kubectl:1.32.0
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ -f /tmp/skip ]; then
+                rm /tmp/skip
+              fi
+              echo "Checking upgrade status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
+              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.upgradeRequired}' 2>/dev/null || echo "false")
+              echo "Upgrade required value: $UPGRADE_REQUIRED"
+              if [ "$UPGRADE_REQUIRED" != "true" ]; then
+                echo "Upgrade not required. Marking skip..."
+                echo "skip" > /tmp/skip                   
+              fi            
+          volumeMounts:
+            - name: shared-skip
+              mountPath: /tmp
+
+        - name: dotcms-upgrade      
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ -f /tmp/skip ]; then
+                echo "Upgrade not required. Skipping container execution."
+              else
+                echo "Upgrade required. Launching original entrypoint..."
+                echo "env DOT_SHUTDOWN_ON_STARTUP=$DOT_SHUTDOWN_ON_STARTUP"
+                exec /srv/entrypoint.sh dotcms
+              fi
+              exit 0
+
       containers:
         - name: dotcms
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false) .) | nindent 10 }}
@@ -56,6 +99,8 @@ spec:
               topologyKey: kubernetes.io/hostname
         {{- end }}
       volumes:
+      - name: shared-skip
+        emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
           claimName: {{ include "dotcms.pvc.env.name" . }}
@@ -67,7 +112,7 @@ spec:
           volumeAttributes:
             secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
       {{- end }}
-      serviceAccountName: {{ include "dotcms.serviceaccount" .  }}
+      serviceAccountName: {{ include "dotcms.serviceaccount.app" .  }}
 
 {{- end }}
 

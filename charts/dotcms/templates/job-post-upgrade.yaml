@@ -8,8 +8,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dotcms.postUpgradeJobName" . }}
+  name: {{ include "dotcms.postUpgradeJobName" . }}-{{ .Release.Revision }}
   namespace: {{ .Values.customerName }}
+  labels:
+    helm.sh-revision: "{{ .Release.Revision }}"  
   annotations:
     "helm.sh/hook": post-upgrade,post-install
     "helm.sh/hook-weight": "5"
@@ -18,7 +20,7 @@ spec:
   ttlSecondsAfterFinished: 7200
   template:
     spec:
-      serviceAccountName: {{ include "dotcms.serviceaccount" . }}
+      serviceAccountName: {{ include "dotcms.serviceaccount.admin" . }}
       containers:
         - name: kubectl
           image: bitnami/kubectl:1.32.0
@@ -38,11 +40,14 @@ spec:
 
                 UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapName }} \
                   -o jsonpath='{.data.upgradeRequired}' -n {{ $namespace }})
+
+                BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapName }} \
+                  -o jsonpath='{.data.backupRestoreEnabled}' -n {{ $namespace }})
               else
                 echo "No ConfigMap found for {{ $envName }}. Assuming no upgrade required."
               fi
 
-              if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" ] || [ "$UPGRADE_REQUIRED" = "true" ]; then
+              if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" ] || [ "$UPGRADE_REQUIRED" = "true" ] || [ "$BACKUP_RESTORE_ENABLED" = "true" ]; then
                 echo "Scaling up statefulset {{ $fullName }} to $REPLICAS replicas..."
                 kubectl scale statefulset {{ $fullName }} --replicas=$REPLICAS -n {{ $namespace }}
 
