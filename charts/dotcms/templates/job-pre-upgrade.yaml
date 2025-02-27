@@ -69,13 +69,12 @@ spec:
               CURR_VERSION="{{ .Values.configVersion }}"
               echo "Current Version: $CURR_VERSION, Previous Version: $PREV_VERSION"
 
-              if [ "$PREV_VERSION" != "$CURR_VERSION" ]; then
-                echo "Version changed. Upgrade required."
+              if [[ "$PREV_VERSION" != "$CURR_VERSION" || ("$BACKUP_RESTORE_ENABLED" == "true" && "$OPERATION" == "restore") ]]; then
                 UPGRADE_REQUIRED="true"
               else
-                echo "No version change detected. Upgrade not required."
                 UPGRADE_REQUIRED="false"
               fi
+              echo "Upgrade Required: $UPGRADE_REQUIRED"
               
               kubectl create configmap $CONFIGMAP_NAME \
                 --namespace {{ $namespace }} \
