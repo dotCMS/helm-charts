@@ -157,9 +157,6 @@
 ###########################################################
 # Job Naming Helpers
 ###########################################################
-###########################################################
-# Job Naming Helpers
-###########################################################
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
 {{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
@@ -212,7 +209,7 @@ env:
   - name: DOT_ES_ENDPOINTS
     value: "{{ include "dotcms.opensearch.endpoints" . }}"
   - name: DOT_ES_AUTH_TYPE
-    value: {{ $.Values.opensearch.auth.type }}
+    value: {{ $.Values.opensearch.auth.type }}       
   - name: DOT_ES_AUTH_BASIC_USER
     valueFrom:
       secretKeyRef:
@@ -244,6 +241,11 @@ env:
         name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
         key: license
   {{- end }}
+  - name: DOT_INITIAL_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
+        key: password  
   - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
     value: 'false'
   - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
@@ -327,7 +329,7 @@ volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
   {{- if .IsUpgradeJob }}
-  - name: admin-shared
+  - name: admin-shared-{{ .Values.environment }}
     mountPath: /tmp
   {{- end }}
   {{- if .Values.secrets.useSecretsStoreCSI }}
@@ -376,9 +378,7 @@ readinessProbe:
   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
 {{- end }}
 {{- if not .IsUpgradeJob }}
-{{- if not .IsUpgradeJob }}
 lifecycle:
-  {{- if .Values.useLicense }}
   {{- if .Values.useLicense }}
   postStart:
     exec:
@@ -389,13 +389,10 @@ lifecycle:
           mkdir -p /data/shared/assets
           echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
   {{- end }}
-  {{- end }}
   preStop:
     exec:
       command:
         - sleep
-        - '1'
-{{- end }}
         - '1'
 {{- end }}
 {{- end }}
