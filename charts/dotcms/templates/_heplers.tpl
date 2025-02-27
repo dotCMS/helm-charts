@@ -327,7 +327,7 @@ volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
   {{- if .IsUpgradeJob }}
-  - name: admin-shared
+  - name: admin-shared-{{ .Values.environment }}
     mountPath: /tmp
   {{- end }}
   {{- if .Values.secrets.useSecretsStoreCSI }}

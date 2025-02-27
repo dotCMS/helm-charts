@@ -113,8 +113,10 @@ defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
 additionalJavaOpts: ""
 javaHeapMax: 2g
 remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-# customEnvVars:
-#   TEST_ENV_VAR: test
+customEnvVars:
+  DOT_INITIAL_ADMIN_PASSWORD: "admin"
+  # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release-local/com/dotcms/starter/20230712/starter-20230712.zip"  
+  # DOT_BACKUP_DIRECTORY_PATH: "/data/shared/assets/.backup"
 linkerd:
   enabled: false
 opensearch:
@@ -161,3 +163,10 @@ mail:
     enabled: false
   host: smtp.gmail.com
   port: 587
+
+# HostPath for storing or restoring the backup file
+hostPath: /tmp
+# Backup file name
+fileName: backup-complete
+# Posible values: backup, restore, none
+operation: none

@@ -81,7 +81,7 @@ spec:
                 echo "Backup/Restore operation not detected. Skipping container"
               fi
           volumeMounts:
-            - name: admin-shared
+            - name: admin-shared-{{ $envName }}
               mountPath: /tmp
 
         - name: backup-restore
@@ -181,9 +181,9 @@ spec:
                   key: password
 
           volumeMounts:
-            - name: admin-shared
+            - name: admin-shared-{{ $envName }}
               mountPath: /tmp
-            - name: backup-volume
+            - name: backup-volume-{{ $envName }}
               mountPath: /mnt/backup
             - name: dotcms-shared
               mountPath: /data/shared
@@ -205,7 +205,7 @@ spec:
                 echo "skip" > /tmp/skip                   
               fi            
           volumeMounts:
-            - name: admin-shared
+            - name: admin-shared-{{ $envName }}
               mountPath: /tmp
 
         - name: dotcms-upgrade      
@@ -238,12 +238,12 @@ spec:
               topologyKey: kubernetes.io/hostname
         {{- end }}
       volumes:
-      - name: admin-shared
+      - name: admin-shared-{{ $envName }}
         emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
           claimName: {{ include "dotcms.pvc.env.name" . }}
-      - name: backup-volume
+      - name: backup-volume-{{ $envName }}
         hostPath:
           path: {{ .Values.hostPath }}
           type: DirectoryOrCreate          
