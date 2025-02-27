@@ -65,6 +65,7 @@ tag: 1.0.0-SNAPSHOT
 imagePullPolicy: IfNotPresent
 terminationGracePeriodSeconds: 10
 scaleDownBeforeUpgrade: false
+configVersion: 1
 replicas: 1
 resources:
   requests:
@@ -113,10 +114,8 @@ defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
 additionalJavaOpts: ""
 javaHeapMax: 2g
 remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-customEnvVars:
-  DOT_INITIAL_ADMIN_PASSWORD: "admin"
-  # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release-local/com/dotcms/starter/20230712/starter-20230712.zip"  
-  # DOT_BACKUP_DIRECTORY_PATH: "/data/shared/assets/.backup"
+# customEnvVars:
+#   TEST_ENV_VAR: test
 linkerd:
   enabled: false
 opensearch:

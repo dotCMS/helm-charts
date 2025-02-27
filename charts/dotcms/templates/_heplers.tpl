@@ -241,6 +241,11 @@ env:
         name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
         key: license
   {{- end }}
+  - name: DOT_INITIAL_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
+        key: password  
   - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
     value: 'false'
   - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
