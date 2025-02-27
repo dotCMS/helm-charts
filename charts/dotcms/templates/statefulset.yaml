@@ -9,7 +9,6 @@
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 {{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
-{{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -43,6 +42,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       initContainers:
+        - name: wait-for-job
         - name: wait-for-job
           image: groundnuty/k8s-wait-for:no-root-v1.7
           imagePullPolicy: IfNotPresent
@@ -224,6 +224,7 @@ spec:
 
       containers:
         - name: dotcms
+          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
       {{- if .Values.affinity.requireDifferentHosts }}
       affinity:

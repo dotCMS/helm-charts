@@ -157,9 +157,6 @@
 ###########################################################
 # Job Naming Helpers
 ###########################################################
-###########################################################
-# Job Naming Helpers
-###########################################################
 */}}
 {{- define "dotcms.preUpgradeJobName" -}}
 {{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
@@ -213,6 +210,16 @@ env:
     value: "{{ include "dotcms.opensearch.endpoints" . }}"
   - name: DOT_ES_AUTH_TYPE
     value: {{ $.Values.opensearch.auth.type }}
+  - name: DOT_ES_AUTH_BASIC_USER
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: username
+  - name: DOT_ES_AUTH_BASIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: password        
   - name: DOT_ES_AUTH_BASIC_USER
     valueFrom:
       secretKeyRef:
@@ -376,9 +383,7 @@ readinessProbe:
   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
 {{- end }}
 {{- if not .IsUpgradeJob }}
-{{- if not .IsUpgradeJob }}
 lifecycle:
-  {{- if .Values.useLicense }}
   {{- if .Values.useLicense }}
   postStart:
     exec:
@@ -389,13 +394,10 @@ lifecycle:
           mkdir -p /data/shared/assets
           echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
   {{- end }}
-  {{- end }}
   preStop:
     exec:
       command:
         - sleep
-        - '1'
-{{- end }}
         - '1'
 {{- end }}
 {{- end }}
