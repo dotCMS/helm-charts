@@ -125,12 +125,6 @@
 
 {{- define "dotcms.serviceaccount.admin" -}}
 {{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
-{{- define "dotcms.serviceaccount.app" -}}
-{{- .Values.serviceAccountName | default (printf "%s-app-sa" .Values.customerName) -}}
-{{- end -}}
-
-{{- define "dotcms.serviceaccount.admin" -}}
-{{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
 {{- end -}}
 
 {{/*
@@ -341,7 +335,6 @@ volumeMounts:
     name: {{ include "dotcms.secret.provider.className" .  }}
     readOnly: true
   {{- end }}
-{{- if not .IsUpgradeJob }}
 {{- if not .IsUpgradeJob }}
 ports:
   - containerPort: 8080
