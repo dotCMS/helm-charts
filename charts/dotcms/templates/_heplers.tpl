@@ -125,6 +125,12 @@
 
 {{- define "dotcms.serviceaccount.admin" -}}
 {{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
+{{- define "dotcms.serviceaccount.app" -}}
+{{- .Values.serviceAccountName | default (printf "%s-app-sa" .Values.customerName) -}}
+{{- end -}}
+
+{{- define "dotcms.serviceaccount.admin" -}}
+{{- .Values.serviceAccountName | default (printf "%s-admin-sa" .Values.customerName) -}}
 {{- end -}}
 
 {{/*
@@ -154,6 +160,9 @@
 {{- end -}}
 
 {{/*
+###########################################################
+# Job Naming Helpers
+###########################################################
 ###########################################################
 # Job Naming Helpers
 ###########################################################
@@ -333,6 +342,7 @@ volumeMounts:
     readOnly: true
   {{- end }}
 {{- if not .IsUpgradeJob }}
+{{- if not .IsUpgradeJob }}
 ports:
   - containerPort: 8080
     name: api
@@ -373,7 +383,9 @@ readinessProbe:
   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
 {{- end }}
 {{- if not .IsUpgradeJob }}
+{{- if not .IsUpgradeJob }}
 lifecycle:
+  {{- if .Values.useLicense }}
   {{- if .Values.useLicense }}
   postStart:
     exec:
@@ -384,10 +396,13 @@ lifecycle:
           mkdir -p /data/shared/assets
           echo "$LICENSE" | base64 -d > /data/shared/assets/license.zip
   {{- end }}
+  {{- end }}
   preStop:
     exec:
       command:
         - sleep
+        - '1'
+{{- end }}
         - '1'
 {{- end }}
 {{- end }}

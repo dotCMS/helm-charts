@@ -9,6 +9,7 @@
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 {{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
+{{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet

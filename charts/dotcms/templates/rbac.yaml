@@ -7,13 +7,21 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ .Values.customerName }}-{{ $envName }}-admin-role
+  name: {{ .Values.customerName }}-{{ $envName }}-admin-role
   namespace: {{ .Values.customerName }}
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-60"
     "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
+    "helm.sh/hook-weight": "-60"
+    "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
 rules:
   - apiGroups: [""]
+    resources: ["pods", "configmaps", "persistentvolumeclaims", "services", "secrets"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "create", "delete", "patch"]
     resources: ["pods", "configmaps", "persistentvolumeclaims", "services", "secrets"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["batch"]
@@ -30,6 +38,8 @@ metadata:
   namespace: {{ .Values.customerName }}
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-60"
+    "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
     "helm.sh/hook-weight": "-60"
     "helm.sh/resource-policy": {{ if .Values.hookDebug }}before-hook-creation{{ else }}hook-succeeded{{ end }}
 subjects:
