@@ -209,17 +209,7 @@ env:
   - name: DOT_ES_ENDPOINTS
     value: "{{ include "dotcms.opensearch.endpoints" . }}"
   - name: DOT_ES_AUTH_TYPE
-    value: {{ $.Values.opensearch.auth.type }}
-  - name: DOT_ES_AUTH_BASIC_USER
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-        key: username
-  - name: DOT_ES_AUTH_BASIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-        key: password        
+    value: {{ $.Values.opensearch.auth.type }}       
   - name: DOT_ES_AUTH_BASIC_USER
     valueFrom:
       secretKeyRef:

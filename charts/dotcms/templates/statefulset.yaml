@@ -43,7 +43,6 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       initContainers:
         - name: wait-for-job
-        - name: wait-for-job
           image: groundnuty/k8s-wait-for:no-root-v1.7
           imagePullPolicy: IfNotPresent
           args:
@@ -224,7 +223,6 @@ spec:
 
       containers:
         - name: dotcms
-          {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
       {{- if .Values.affinity.requireDifferentHosts }}
       affinity:
