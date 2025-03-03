@@ -99,8 +99,8 @@ spec:
               fi
 
               echo "Operation: ${OPERATION}"
-              BACKUP_DIR=/mnt/backup
-              DOTCMS_DATA_DIR=/data/shared
+              BACKUP_DIR={{ .Values.backup.path }}
+              DOTCMS_DATA_DIR=/data/shared/assets
               RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
 
               if [[ "$OPERATION" == "none" ]]; then
@@ -112,16 +112,20 @@ spec:
                 echo "Starting backup process..."
                 DB_DUMP=${BACKUP_DIR}/db-dump.sql
                 DOTCMS_DATA=${BACKUP_DIR}/dotcms-data.tar.gz
-                FINAL_BACKUP=${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}-$(date +%Y%m%d%H%M%S).tar.gz
+                FINAL_BACKUP=${BACKUP_DIR}/{{ .Values.backup.fileName | default "backup" }}-$(date +%Y%m%d%H%M%S).tar.gz
 
                 echo "Dumping database..."
                 PGPASSWORD=${DB_PASSWORD} pg_dump -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -Fp -f ${DB_DUMP}
 
-                echo "Archiving DotCMS data..."
-                tar czf ${DOTCMS_DATA} -C ${DOTCMS_DATA_DIR} .
+                echo "Archiving DotCMS data with exclusions..."
 
-                echo "Creating final backup..."
-                tar czf ${FINAL_BACKUP} -C ${BACKUP_DIR} db-dump.sql dotcms-data.tar.gz
+                tar \
+                    {{- range .Values.backup.excludes }}
+                    --exclude="{{ . }}" \
+                    {{- end }}
+                    -czf assets.tar.gz -C ${DOTCMS_DATA_DIR}/.. assets
+
+                tar czf ${FINAL_BACKUP} -C ${BACKUP_DIR} db-dump.sql assets.tar.gz                    
 
                 echo "Backup completed successfully: ${FINAL_BACKUP}"
 
@@ -132,7 +136,7 @@ spec:
                 mkdir -p ${RESTORE_TMP_DIR}
 
                 echo "Extracting backup..."
-                tar xzf ${BACKUP_DIR}/{{ .Values.fileName | default "backup" }}.tar.gz -C ${RESTORE_TMP_DIR}
+                tar xzf ${BACKUP_DIR}/{{ .Values.backup.fileName | default "backup" }}.tar.gz -C ${RESTORE_TMP_DIR}
 
                 DB_EXISTS=$(PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';")
 
@@ -154,7 +158,7 @@ spec:
                 PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_NAME} -f ${RESTORE_TMP_DIR}/db-dump.sql
 
                 echo "Restoring DotCMS data..."
-                tar xzf ${RESTORE_TMP_DIR}/dotcms-data.tar.gz -C ${DOTCMS_DATA_DIR}
+                tar xzf ${RESTORE_TMP_DIR}/assets.tar.gz -C /data/shared/
 
                 echo "Restore completed successfully."
 
@@ -163,7 +167,7 @@ spec:
               fi
           env:
             - name: OPERATION
-              value: {{ .Values.operation }}
+              value: {{ .Values.backup.operation }}
             - name: DB_HOST
               value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
             - name: DB_NAME
@@ -190,8 +194,6 @@ spec:
           volumeMounts:
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
-            - name: backup-volume-{{ $envName }}
-              mountPath: /mnt/backup
             - name: dotcms-shared
               mountPath: /data/shared
 
@@ -249,11 +251,7 @@ spec:
         emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
-          claimName: {{ include "dotcms.pvc.env.name" . }}
-      - name: backup-volume-{{ $envName }}
-        hostPath:
-          path: {{ .Values.hostPath }}
-          type: DirectoryOrCreate          
+          claimName: {{ include "dotcms.pvc.env.name" . }}       
       {{- if .Values.secrets.useSecretsStoreCSI }}
       - name: {{ include "dotcms.secret.provider.className"  . }}
         csi:
