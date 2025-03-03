@@ -89,7 +89,7 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - |
-              set -ex
+              {{ if .Values.hookDebug }}set -ex {{ end }}
 
               if [ -f /tmp/backupRestore ]; then
                 echo "Backup/Restore operation detected."
@@ -171,12 +171,20 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  name: {{ if .Values.database.local.enabled }}
+                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  {{ else }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  {{ end }}
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  name: {{ if .Values.database.local.enabled }}
+                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  {{ else }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  {{ end }}
                   key: password
 
           volumeMounts:
