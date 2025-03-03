@@ -16,7 +16,7 @@ spec:
   storageClassName: {{ include "dotcms.storageClassName" . }}
   resources:
     requests:
-      storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes
+      storage: 30Gi # This is an arbitrary number due to EFS not imposing any limitations but the field is mandatory for Kubernetes   
 {{- if and (eq .Values.cloudProvider "aws") (not (empty .Values.volumes.shared.volumeHandle)) .Values.volumes.shared.create }}
 ---
 apiVersion: v1
