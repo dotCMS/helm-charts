@@ -80,7 +80,7 @@ spec:
                 echo "Backup/Restore operation not detected. Skipping container"
               fi
           volumeMounts:
-            - name: admin-shared-{{ $envName }}
+            - name: admin-shared-{{ $envName }}-{{ $envName }}
               mountPath: /tmp
 
         - name: backup-restore
