@@ -42,7 +42,7 @@ spec:
               fi              
               
               echo "Detecting Backup/Restore operation..."
-              OPERATION="{{ .Values.operation }}"
+              OPERATION="{{ .Values.backup.operation }}"
               if [[ "$OPERATION" == "none" ]]; then
                 echo "No operation specified. Skipping Backup/Restore."
                 BACKUP_RESTORE_ENABLED="false"
