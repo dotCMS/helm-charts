@@ -83,6 +83,151 @@ spec:
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
 
+        - name: backup-restore
+          image: pgvector/pgvector:pg16
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              {{ if .Values.hookDebug }}set -ex {{ end }}
+
+              echo "Backup/Restore operation detected."
+              echo "Operation: ${OPERATION}"
+
+              BACKUP_DIR=/data/shared/backups
+              DOTCMS_DATA_DIR=/data/shared
+              RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
+              BACKUP_FILE_NAME="{{ .Values.backup.fileName | default "backup-complete" }}.tar.gz"
+              DB_DUMP="${BACKUP_DIR}/db-dump.sql"
+              ASSETS_BACKUP="${BACKUP_DIR}/assets.tar.gz"
+              FINAL_BACKUP="${BACKUP_DIR}/backup-complete-$(date +%Y%m%d%H%M%S).tar.gz"
+
+              mkdir -p "${BACKUP_DIR}" || {
+                  echo "ERROR: Failed to create backup directory at ${BACKUP_DIR}"
+                  exit 1
+              }
+
+              if [[ "$OPERATION" == "backup" ]]; then
+                  echo "Starting backup process..."
+
+                  # Database Dump
+                  if ! PGPASSWORD="${DB_PASSWORD}" pg_dump -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" -Fp -f "${DB_DUMP}"; then
+                      echo "ERROR: Database dump failed."
+                      exit 1
+                  fi
+
+                  echo "Archiving DotCMS data with exclusions..."
+
+                  # Create Assets Backup with Exclusions
+                  if ! tar \
+                      {{- range .Values.backup.excludes }}
+                      --exclude="{{ . }}" \
+                      {{- end }}
+                      -czf "${ASSETS_BACKUP}" -C "${DOTCMS_DATA_DIR}" assets; then
+                      echo "ERROR: Failed to archive DotCMS assets."
+                      exit 1
+                  fi
+
+                  # Create Final Backup
+                  if ! tar czf "${FINAL_BACKUP}" -C "${BACKUP_DIR}" db-dump.sql assets.tar.gz; then
+                      echo "ERROR: Failed to create final backup archive."
+                      exit 1
+                  fi
+
+                  echo "Backup completed successfully: ${FINAL_BACKUP}"
+
+                  rm -f "${DB_DUMP}" "${ASSETS_BACKUP}"
+                  echo "Temporary files cleaned up: ${DB_DUMP}, ${ASSETS_BACKUP}"        
+
+              elif [[ "$OPERATION" == "restore" ]]; then
+                  echo "Starting restore process..."
+
+                  if [[ -d "${RESTORE_TMP_DIR}" ]]; then
+                      echo "Cleaning up leftover restore temp directory..."
+                      rm -rf "${RESTORE_TMP_DIR}"
+                  fi
+
+                  mkdir -p "${RESTORE_TMP_DIR}" || {
+                      echo "ERROR: Failed to create restore temp directory."
+                      exit 1
+                  }
+
+                  echo "Extracting backup..."
+                  if ! tar xzf "${BACKUP_DIR}/${BACKUP_FILE_NAME}" -C "${RESTORE_TMP_DIR}"; then
+                      echo "ERROR: Failed to extract backup archive."
+                      exit 1
+                  fi
+
+                  DB_EXISTS=$(PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';")
+                  if [ "$DB_EXISTS" == "1" ]; then
+                      echo "Database $DB_NAME exists. Dropping it..."
+                      if ! PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "DROP DATABASE \"$DB_NAME\";"; then
+                          echo "ERROR: Failed to drop existing database $DB_NAME."
+                          exit 1
+                      fi
+                  else
+                      echo "Database $DB_NAME does not exist. Skipping drop."
+                  fi
+
+                  if ! grep -q "CREATE DATABASE" "${RESTORE_TMP_DIR}/db-dump.sql"; then
+                      echo "Recreating database $DB_NAME since it's not in the backup..."
+                      if ! PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USERNAME\";"; then
+                          echo "ERROR: Failed to create database $DB_NAME."
+                          exit 1
+                      fi
+                  else
+                      echo "Backup already includes CREATE DATABASE. Skipping creation."
+                  fi              
+
+                  echo "Restoring database..."
+                  if ! PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" -f "${RESTORE_TMP_DIR}/db-dump.sql"; then
+                      echo "ERROR: Failed to restore database."
+                      exit 1
+                  fi
+
+                  echo "Restoring DotCMS assets..."
+                  if ! tar xzf "${RESTORE_TMP_DIR}/assets.tar.gz" -C "${DOTCMS_DATA_DIR}"; then
+                      echo "ERROR: Failed to restore DotCMS assets."
+                      exit 1
+                  fi
+
+                  echo "Restore completed successfully."
+
+              else
+                  echo "ERROR: Unknown operation '${OPERATION}'"
+              fi
+          env:
+            - name: OPERATION
+              value: {{ .Values.backup.operation }}
+            - name: DB_HOST
+              value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
+            - name: DB_NAME
+              value: {{ $dbName }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.database.local.enabled }}
+                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  {{ else }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  {{ end }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.database.local.enabled }}
+                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+                  {{ else }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                  {{ end }}
+                  key: password
+
+          volumeMounts:
+            - name: admin-shared-{{ $envName }}
+              mountPath: /tmp
+            - name: dotcms-shared
+              mountPath: /data/shared
+
         - name: check-upgrade
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
@@ -137,11 +282,7 @@ spec:
         emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
-          claimName: {{ include "dotcms.pvc.env.name" . }}
-      - name: backup-volume-{{ $envName }}
-        hostPath:
-          path: {{ .Values.hostPath }}
-          type: DirectoryOrCreate          
+          claimName: {{ include "dotcms.pvc.env.name" . }}       
       {{- if .Values.secrets.useSecretsStoreCSI }}
       - name: {{ include "dotcms.secret.provider.className"  . }}
         csi:
