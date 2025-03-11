@@ -472,6 +472,201 @@ fi
 
 {{/*
 ###########################################################
+# Helper: dotcms.env.defaultVars
+###########################################################
+# This helper defines the default environment variables
+# for DotCMS based on the environment type (`environmentType`).
+# 
+# Usage:
+# - If `environmentType` is `local-dev`, local values are used.
+# - If `environmentType` is different from `local-dev`, values are fetched from `regionHosts`.
+# - Variables like `DB_DNSNAME`, `DB_BASE_URL`, `DOT_ES_ENDPOINTS`, etc.,
+#   are dynamically assigned.
+# - Conditional blocks include only necessary variables
+#   based on enabled features.
+# 
+# This helper ensures a flexible and modular configuration
+# within Helm for different environments and customers.
+###########################################################
+*/}}
+{{- define "dotcms.env.defaultVars" -}}
+  {{- $envName := .envName }}
+  {{- $environmentType := .Values.environmentType }}
+  {{- $region := .Values.aws.region }}
+
+  {{- if eq $environmentType "local-dev" }}
+    {{- $databaseHost := default "db" .Values.database.host }}
+    {{- $opensearchHost := default "opensearch" .Values.opensearch.host }}
+    {{- $redisHost := default "redis" .Values.redis.host }}
+  {{- else }}
+    {{- $databaseHost := index .Values.regionHosts $region "dbHost" }}
+    {{- $opensearchHost := index .Values.regionHosts $region "esHost" }}
+    {{- $redisHost := index .Values.regionHosts $region "redisHost" }}
+    {{- $analyticsIdpUrl := index .Values.regionHosts $region "idpUrl" }}
+  {{- end }}
+
+  {{- $dbBaseUrl := printf "jdbc:postgresql://%s:%v/%s" $databaseHost (int .Values.database.port) (include "dotcms.db.name" .) }}
+
+  - name: DOT_SHUTDOWN_ON_STARTUP
+    value: "{{ .ShutdownOnStartupValue }}"
+  - name: CMS_JAVA_OPTS
+    value: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+    # value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"    
+  - name: DOT_ES_ENDPOINTS
+    value: "{{ $opensearchHost }}"
+  - name: DOT_ES_AUTH_TYPE
+    value: "BASIC"
+  - name: DOT_ES_AUTH_BASIC_USER
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-elasticsearch:username"
+  - name: DOT_ES_AUTH_BASIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-elasticsearch:password"
+  - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
+    value: "120"
+  - name: DOT_DOTGENERATED_DEFAULT_PATH
+    value: "shared"
+  - name: DOT_DOTCMS_CLUSTER_ID
+    value: "{{ .Values.customerName }}-{{ $envName }}"
+  - name: DB_DNSNAME
+    value: "{{ $databaseHost }}"
+  - name: DB_BASE_URL
+    value: "{{ $dbBaseUrl }}"
+  - name: DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-database:username"
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-database:password"
+  - name: DOT_URI_NORMALIZATION_FORBIDDEN_REGEX
+    value: "\\/\\/html\\/.*"
+  - name: DOT_SYSTEM_STATUS_API_IP_ACL
+    value: "0.0.0.0/0"
+  - name: DOT_REMOTE_CALL_SUBNET_BLACKLIST
+    value: "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
+    value: "true"
+  - name: DOT_TELEMETRY_SAVE_SCHEDULE
+    value: "{{ $telemetrySaveSchedule }}"
+  - name: DOT_COOKIES_HTTP_ONLY
+    value: "false"
+  - name: DOT_ANALYTICS_IDP_URL
+    value: "{{ $analytics }}"
+  - name: CUSTOM_STARTER_URL
+    value: "{{ include "dotcms.customStarter.url" (dict "Values" .Values "envName" $envName) }}"
+
+  # Feature: Redis
+  {{- if (index .Values.environments $envName).feature.redisSessions.enabled }}
+  - name: TOMCAT_REDIS_SESSION_ENABLED
+    value: "true"
+  - name: TOMCAT_REDIS_SESSION_HOST
+    value: "{{ $redisHost }}"
+  - name: TOMCAT_REDIS_SESSION_PORT
+    value: "{{(index .Values.environments $envName).feature.redisSessions.port | default 6379 }}"
+  - name: TOMCAT_REDIS_SESSION_PASSWORD
+    value: "{{ (index .Values.environments $envName).feature.redisSessions.password | default '' }}"    
+  - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
+    value: "{{(index .Values.environments $envName).feature.redisSessions.sslEnabled | default true }}"
+  - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
+    value: "{{(index .Values.environments $envName).feature.redisSessions.sessionPersistentPolicies | default DEFAULT }}"
+  {{- end }}
+
+  # Feature: Glowroot
+  {{- if (index .Values.environments $envName).feature.glowroot.enabled }}
+  - name: GLOWROOT_ENABLED
+    value: "true"
+  - name: GLOWROOT_AGENT_ID
+    value: "{{ (index .Values.environments $envName).feature.glowroot.agentIdOverride | default .Values.customerName::$envName }}"
+  - name: GLOWROOT_COLLECTOR_ADDRESS
+    value: "{{ (index .Values.environments $envName).feature.glowroot.collectorAddress | default 'http://glowrootcentral.dotcmscloud.com:8181' }}"
+  {{- end }}
+
+  # Feature: Analytics
+    {{- if (index .Values.environments $envName).feature.analytics.enabled }}
+  - name: DOT_FEATURE_FLAG_EXPERIMENTS
+    value: "true"
+  - name: DOT_ANALYTICS_IDP_URL
+    value: "{{ $analyticsIdpUrl }}"
+  - name: DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION
+    value: "{{ (index .Values.environments $envName).feature.analytics.autoInjection | default true }}"
+  {{- end }}  
+
+  # Feature: Telemetry
+  {{- if .Values.telemetry.telemetry.enabled }}
+  - name: DOT_FEATURE_FLAG_TELEMETRY
+    value: "true"
+  - name: DOT_TELEMETRY_SAVE_SCHEDULE
+    value: "{{ .Values.telemetry.telemetrySaveSchedule | default '0 0 */8 * * ?' }}"
+  {{- end }}
+
+  # Feature: Mail
+  {{- if .Values.mail.enabled }}
+  - name: DOT_MAIL_SMTP_HOST
+    value: "{{ $mailHost }}"
+  - name: DOT_MAIL_SMTP_PORT
+    value: "{{ .Values.mail.smpt.port | default 587 }}"
+  - name: DOT_MAIL_SMTP_STARTTLS_ENABLE
+    value: "{{ .Values.mail.smpt.starttls.enabled | default true }}"
+  - name: DOT_MAIL_SMTP_AUTH
+    value: "{{ .Values.mail.smpt.auth | default true }}"
+  - name: DOT_MAIL_SMTP_SSL_PROTOCOLS
+    value: "{{ .Values.mail.smpt.sslProtocols | default TLSv1.2 }}"
+  - name: DOT_MAIL_SMTP_USER
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-ses:username"
+  - name: DOT_MAIL_SMTP_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-ses:password"
+  {{- end }}
+
+{{- end }}
+
+{{/*
+###########################################################
+# Helper: dotcms.customStarter.url
+###########################################################
+# This helper generates the URL for downloading the custom starter package
+# based on the environment configuration.
+#
+# Usage:
+# - If `starterUrlOverride` is provided in `.Values.environments[envName].customStarter`,
+#   that value is returned directly.
+# - Otherwise, if `repo`, `groupId`, `artifactId`, and `version` are defined,
+#   the helper constructs the URL dynamically in the format:
+#   `{repo}/{groupId}/{artifactId}/{version}/{artifactId}-{version}.zip`
+# - If neither condition is met, an empty string is returned.
+#
+# This ensures flexibility in defining custom starter package URLs, 
+# allowing both direct overrides and dynamically constructed values.
+###########################################################
+*/}}
+{{- define "dotcms.customStarter.url" -}}
+  {{- $envName := .envName }}
+  {{- $customStarter := index .Values.environments $envName "customStarter" }}
+
+  {{- if $customStarter.starterUrlOverride }}
+    {{- $customStarter.starterUrlOverride }}
+  {{- else if and $customStarter.repo $customStarter.groupId $customStarter.artifactId $customStarter.version }}
+    {{ printf "%s/%s/%s/%s/%s-%s.zip" 
+      $customStarter.repo 
+      (replace "." "/" $customStarter.groupId) 
+      $customStarter.artifactId 
+      $customStarter.version 
+      $customStarter.artifactId 
+      $customStarter.version }}
+  {{- else }}
+    ""
+  {{- end }}
+{{- end }}
+
+{{/*
+###########################################################
 # Environment Configuration Merge Helper
 ###########################################################
 

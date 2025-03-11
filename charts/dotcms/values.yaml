@@ -1,16 +1,42 @@
 app: dotcms
 customerName: dotcms-dev
-environmentType: local-dev
-cloudProvider: local
-hostType: corp  # corp, sh
+environmentType: local-dev # local-dev, customer-sandbox, staff-sandbox, partner-sandbox, production, qa
+cloudProvider: aws
+hostType: corp # corp, sh
+
+coreServiceEnabled: true
+repository: dotcms/dotcms-test
+tag: 1.0.0-SNAPSHOT
+imagePullPolicy: IfNotPresent
+terminationGracePeriodSeconds: 10
+scaleDownBeforeUpgrade: false
+configVersion: 1
+replicas: 1
+resources:
+  requests:
+    cpu: 0.5
+    memory: 5Gi
+  limits:
+    cpu: 2
+    memory: 5Gi
+envVariables: {}
+javaMemory: 2
+# defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+# additionalJavaOpts: ""
+# javaHeapMax: 2g
+
+
 aws:
   region: us-east-1
   serviceAccount:
     roleArn: ""
   secrets:
     secretsArn: ""
+
 secrets:
+  createSecrets: true
   useSecretsStoreCSI: false
+  prefix: "{{ .Values.cloudProvider }}-secret"
   sync:
     shared:
       elasticsearch:
@@ -37,131 +63,21 @@ secrets:
         type: kubernetes.io/basic-auth
         keys:
           - "password"
-  createSecrets: true
-serviceAccount:
-  create: false
 
-coreServiceEnabled: true
-environments:
-  prod:
-    mapToTopLevelDomain: true
-affinity:
-  requireDifferentHosts: false
-telemetry:
-  enabled: false
-  telemetryClient: DEV
-ingress:
-  tlsSecretName: developer-certificate-secret
-  host: ""
-  hostSuffix: dotcms.local
-  type: nginx
-  alb:
-    certificateArn: ""
-    sslPolicy: ""
-    securityGroups: ""
-enabled: true
-repository: dotcms/dotcms_test
-tag: 1.0.0-SNAPSHOT
-imagePullPolicy: IfNotPresent
-terminationGracePeriodSeconds: 10
-scaleDownBeforeUpgrade: false
-configVersion: 1
-replicas: 1
-resources:
-  requests:
-    cpu: 0.5
-    memory: 5Gi
-  limits:
-    cpu: 2
-    memory: 5Gi
-envVariables: {}
-javaMemory: 2
-redisSessions:
-  enabled: true
-startupProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 60
-  periodSeconds: 5
-  successThreshold: 1
-  failureThreshold: 60
-  timeoutSeconds: 20
-livenessProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 1
-  periodSeconds: 30
-  successThreshold: 1
-  failureThreshold: 1
-  timeoutSeconds: 10
-readinessProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 1
-  periodSeconds: 10
-  successThreshold: 1
-  failureThreshold: 1
-  timeoutSeconds: 5
-volumes:
-  shared:
-    accessPoint: ""
-    volumeHandle: ""
-    create: true
-defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-additionalJavaOpts: ""
-javaHeapMax: 2g
-remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-# customEnvVars:
-#   TEST_ENV_VAR: test
-linkerd:
-  enabled: false
-opensearch:
-  host: external-host
-  endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
-  local:
-    enabled: true
-    image: opensearchproject/opensearch:1
-  port: 9200
-  protocol: http
-  auth:
-    type: BASIC
-  javaOpts: "-Xmx1G"
-database:
-  local:
-    enabled: true
-    image: pgvector/pgvector:pg16
-    resources:
-      requests:
-        cpu: 100m
-        memory: 3Gi
-      limits:
-        cpu: 500m
-        memory: 3Gi
-  host: db
-  port: 5432
-  name: dotcms
-  sslMode: prefer
-  baseUrl: "jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode={{ .Values.database.sslMode }}"
-redis:
-  enabled: true
-  local:
-    enabled: true
-    image: redis:latest
-  host: redis.local
-  password: MY_SECRET_P4SS
-  port: 6379
-  sessionHost: redis
-  sessionPersistentPolicies: DEFAULT
-  sslEnabled: false
-mail:
-  enabled: false
-  local:
-    enabled: false
-  host: smtp.gmail.com
-  port: 587
+serviceAccount:
+  create: false    
+
+regionHosts:
+  us-east-1:
+    dbHost: "k8s-communal-green-aaaaaa.bbbbbbbbbbbb.us-east-1.rds.amazonaws.com"
+    esHost: "https://elasticsearch1.dotcms.cloud"
+    mailHost: "email-smtp.us-east-1.amazonaws.com"
+    redisHost: "master.redis-dotcms-prod-1.aaaaaa.use1.cache.amazonaws.com"
+    idpUrl: "https://dotcms-analytics-aaaaaaaaa.auth.us-east-1.amazoncognito.com/oauth2/token"
+    certificateArn: "arn:aws:acm:us-east-1:999999999999:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    securityGroups:
+      - "sg-00000000000000000"
+      - "sg-00000000000000001"
 
 backup:
   operation: none
@@ -173,3 +89,158 @@ backup:
     - "assets/timemachine/"
     - "assets/bundles/*"
     - "assets/server/sql_backups/"
+
+startupProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  successThreshold: 1
+  failureThreshold: 60
+  timeoutSeconds: 20
+
+livenessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 30
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 5
+
+affinity:
+  requireDifferentHosts: false
+
+telemetry:
+  enabled: false
+  telemetryClient: DEV
+
+linkerd:
+  enabled: false
+
+ingress:
+  tlsSecretName: developer-certificate-secret
+  host: ""
+  hostSuffix: dotcms.local
+  type: nginx
+
+  alb:
+    securityGroups: 
+      useDefaults: true
+      default:  
+        - sg-123456
+        - sg-987654   # set in region values
+      additional: {}  # override in customer if required.
+
+    hosts:
+      default: 
+        enabled: true
+        hostSuffix: ".dotcms.cloud"
+        certificateArn:   # set
+      additionalHosts:
+        - name: ejco-dev.dotcms.cloud
+          certificateArn: arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df
+      stickySessions:
+        enabled: true
+        duration: 18000
+        idleTimeout: 3600
+      accessLogs:
+        enabled: true
+        bucketOverride: ""
+        prefixOverride: ""
+      wafArn: "" # eg following line if provided " alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:948170117212:regional/webacl/caliber-waf/b28ef6c6-75a5-493f-b131-079a84785f8d"
+
+environments:
+  prod: 
+    environment:
+      override: {}
+      removeKeys: {} # If not too difficult to implement.
+      
+      customStarter: 
+        repo: "https://repo.dotcms.com/artifactory/libs-release"
+        groupId: com.dotcms # in helm template convert . to / to construct url
+        artifactId: starter
+        version: "20240724"
+        starterUrlOverride: "" # Full starter url if provided instead of generated.
+      
+      feature:
+        redisSessions:
+          enabled: true
+          secretNameOverride: "" # default {hostType}-{customer}-awssecret-redis
+          redisHost: "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          redisPort: 6379 
+          sslEnabled: true
+          persistentPolicied: "DEFAULT"
+
+        glowroot:
+          enabled: true
+          agentIdOverride : ""   # default {customer}::{env}
+          collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
+
+        analytics:
+          enabled: true
+          idpUrl: 
+          autoInjection: true 
+
+mail:
+  enabled: true
+  smtp:
+    host: 
+    port: 587
+    auth: 
+    sslProtocols: 
+    secretNameOverride: "default {hostType}-{customer}-awssecret-ses:password"
+      
+database:
+  local:
+    enabled: true
+    image: pgvector/pgvector:pg16
+    resources:
+      requests:
+        cpu: 100m
+        memory: 3Gi
+      limits:
+        cpu: 500m
+        memory: 3Gi
+  secretNameOverride: "{{ | default {hostType}-{customer}-awssecret-{env}-database }}"
+  host: # if not set uses dev host "db"
+  port: 5432
+  name: dotcms
+
+opensearch:
+  host:
+  endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
+  local:
+    enabled: true
+    image: opensearchproject/opensearch:1
+  port: 9200
+  protocol: http
+  javaOpts: "-Xmx1G"
+  authType: BASIC
+  secretNameOverride: " default default {hostType}-{customer}-awssecret-elasticsearch"
+  clusterIdOverride: ""
+
+redis:
+  local:
+    enabled: true
+    image: redis:latest
+  host:
+  port: 6379
+  secretNameOverride: " default {hostType}-{customer}-awssecret-redis"
+  password: ""
+  sslEnabled: true
+  sessionHost: "redis"
+  sessionPersistentPolicies: "DEFAULT"
+

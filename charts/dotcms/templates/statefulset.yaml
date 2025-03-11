@@ -3,7 +3,6 @@
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
-{{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s?ssl.mode=prefer" .Values.database.host ( int .Values.database.port ) $dbName  }}
 {{- $namespace := .Values.customerName }}
 {{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
