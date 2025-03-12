@@ -64,15 +64,15 @@
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- printf "%s-%s-awssecret-%s-%s" $.Values.hostType .Values.customerName .Values.environment .secretName -}}
+{{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
-{{- printf "%s-%s-awssecret-%s" .Values.hostType .Values.customerName .secretName -}}
+{{- printf "%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
-{{- printf "%s-%s-awssecret" .Values.hostType .Values.customerName -}}
+{{- printf "%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
 {{- end -}}
 
 {{/*
@@ -190,7 +190,6 @@
 # {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
 ###########################################################
 */}}
-}
 {{- define "dotcms.container.spec" -}}
 image: {{ include "dotcms.image" . }}
 imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -209,7 +208,7 @@ env:
   - name: DOT_ES_ENDPOINTS
     value: "{{ include "dotcms.opensearch.endpoints" . }}"
   - name: DOT_ES_AUTH_TYPE
-    value: {{ $.Values.opensearch.auth.type }}       
+    value: {{ $.Values.opensearch.authType }}       
   - name: DOT_ES_AUTH_BASIC_USER
     valueFrom:
       secretKeyRef:
@@ -293,8 +292,8 @@ env:
     value: {{ .Values.telemetry.telemetryClient | quote }}
   {{- end }}
   - name: TOMCAT_REDIS_SESSION_ENABLED
-    value: '{{ .Values.redisSessions.enabled }}'
-  {{- if .Values.redisSessions.enabled }}
+    value: 'false'
+  {{- if .Values.redisSessions }}
   - name: TOMCAT_REDIS_SESSION_HOST
     value: '{{ $.Values.redis.sessionHost }}'
   - name: TOMCAT_REDIS_SESSION_PORT
@@ -494,24 +493,30 @@ fi
   {{- $environmentType := .Values.environmentType }}
   {{- $region := .Values.aws.region }}
 
-  {{- if eq $environmentType "local-dev" }}
-    {{- $databaseHost := default "db" .Values.database.host }}
-    {{- $opensearchHost := default "opensearch" .Values.opensearch.host }}
-    {{- $redisHost := default "redis" .Values.redis.host }}
-  {{- else }}
-    {{- $databaseHost := index .Values.regionHosts $region "dbHost" }}
-    {{- $opensearchHost := index .Values.regionHosts $region "esHost" }}
-    {{- $redisHost := index .Values.regionHosts $region "redisHost" }}
-    {{- $analyticsIdpUrl := index .Values.regionHosts $region "idpUrl" }}
-  {{- end }}
+  {{- $databaseHost := "" }}
+  {{- $opensearchHost := "" }}
+  {{- $redisHost := "" }}
+  {{- $mailHost := "" }}
+  {{- $analyticsIdpUrl := "" }}
 
+  {{- if eq $environmentType "local-dev" }}
+    {{- $databaseHost =  .Values.database.host | default "db" }}
+    {{- $opensearchHost = .Values.opensearch.host | default "opensearch" }}
+    {{- $redisHost = .Values.redis.host | default "redis" }}
+    {{- $mailHost = .Values.mail.host | default "" }}
+  {{- else }}
+    {{- $databaseHost = index .Values.regionHosts $region "dbHost" }}
+    {{- $opensearchHost = index .Values.regionHosts $region "esHost" }}
+    {{- $redisHost = index .Values.regionHosts $region "redisHost" }}
+    {{- $mailHost = index .Values.regionHosts $region "mailHost" }}
+    {{- $analyticsIdpUrl = index .Values.regionHosts $region "idpUrl" }}    
+  {{- end }}
   {{- $dbBaseUrl := printf "jdbc:postgresql://%s:%v/%s" $databaseHost (int .Values.database.port) (include "dotcms.db.name" .) }}
 
   - name: DOT_SHUTDOWN_ON_STARTUP
     value: "{{ .ShutdownOnStartupValue }}"
   - name: CMS_JAVA_OPTS
     value: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-    # value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"    
   - name: DOT_ES_ENDPOINTS
     value: "{{ $opensearchHost }}"
   - name: DOT_ES_AUTH_TYPE
@@ -519,17 +524,13 @@ fi
   - name: DOT_ES_AUTH_BASIC_USER
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-elasticsearch:username"
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: username
   - name: DOT_ES_AUTH_BASIC_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-elasticsearch:password"
-  - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
-    value: "120"
-  - name: DOT_DOTGENERATED_DEFAULT_PATH
-    value: "shared"
-  - name: DOT_DOTCMS_CLUSTER_ID
-    value: "{{ .Values.customerName }}-{{ $envName }}"
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+        key: password
   - name: DB_DNSNAME
     value: "{{ $databaseHost }}"
   - name: DB_BASE_URL
@@ -537,11 +538,13 @@ fi
   - name: DB_USERNAME
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-database:username"
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+        key: username
   - name: DB_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-database:password"
+        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+        key: password
   - name: DOT_URI_NORMALIZATION_FORBIDDEN_REGEX
     value: "\\/\\/html\\/.*"
   - name: DOT_SYSTEM_STATUS_API_IP_ACL
@@ -550,79 +553,67 @@ fi
     value: "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
   - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
     value: "true"
-  - name: DOT_TELEMETRY_SAVE_SCHEDULE
-    value: "{{ $telemetrySaveSchedule }}"
   - name: DOT_COOKIES_HTTP_ONLY
     value: "false"
-  - name: DOT_ANALYTICS_IDP_URL
-    value: "{{ $analytics }}"
   - name: CUSTOM_STARTER_URL
     value: "{{ include "dotcms.customStarter.url" (dict "Values" .Values "envName" $envName) }}"
-
-  # Feature: Redis
-  {{- if (index .Values.environments $envName).feature.redisSessions.enabled }}
+  {{- if (index .Values.environments $envName "feature" "redisSessions" "enabled") | default false }}
   - name: TOMCAT_REDIS_SESSION_ENABLED
     value: "true"
   - name: TOMCAT_REDIS_SESSION_HOST
     value: "{{ $redisHost }}"
   - name: TOMCAT_REDIS_SESSION_PORT
-    value: "{{(index .Values.environments $envName).feature.redisSessions.port | default 6379 }}"
+    value: "{{ (index .Values.environments $envName "feature" "redisSessions" "port") | default 6379 }}"
   - name: TOMCAT_REDIS_SESSION_PASSWORD
-    value: "{{ (index .Values.environments $envName).feature.redisSessions.password | default '' }}"    
+    value: "{{ (index .Values.environments $envName "feature" "redisSessions" "password") | default "" }}"    
   - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
-    value: "{{(index .Values.environments $envName).feature.redisSessions.sslEnabled | default true }}"
+    value: "{{ (index .Values.environments $envName "feature" "redisSessions" "sslEnabled") | default false }}"
   - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
-    value: "{{(index .Values.environments $envName).feature.redisSessions.sessionPersistentPolicies | default DEFAULT }}"
+    value: "{{ (index .Values.environments $envName "feature" "redisSessions" "sessionPersistentPolicies") | default "DEFAULT" }}"
   {{- end }}
-
-  # Feature: Glowroot
-  {{- if (index .Values.environments $envName).feature.glowroot.enabled }}
+  {{- if (index .Values.environments $envName "feature" "glowroot" "enabled") | default false }}
   - name: GLOWROOT_ENABLED
     value: "true"
   - name: GLOWROOT_AGENT_ID
-    value: "{{ (index .Values.environments $envName).feature.glowroot.agentIdOverride | default .Values.customerName::$envName }}"
+    value: "{{ (index .Values.environments $envName "feature" "glowroot" "agentIdOverride") | default (printf "%s::%s" .Values.customerName $envName) }}"
   - name: GLOWROOT_COLLECTOR_ADDRESS
-    value: "{{ (index .Values.environments $envName).feature.glowroot.collectorAddress | default 'http://glowrootcentral.dotcmscloud.com:8181' }}"
+    value: "{{ (index .Values.environments $envName "feature" "glowroot" "collectorAddress") | default "http://glowrootcentral.dotcmscloud.com:8181" }}"
   {{- end }}
-
-  # Feature: Analytics
-    {{- if (index .Values.environments $envName).feature.analytics.enabled }}
+  {{- if (index .Values.environments $envName "feature" "analytics" "enabled") | default false }}
   - name: DOT_FEATURE_FLAG_EXPERIMENTS
     value: "true"
   - name: DOT_ANALYTICS_IDP_URL
     value: "{{ $analyticsIdpUrl }}"
   - name: DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION
-    value: "{{ (index .Values.environments $envName).feature.analytics.autoInjection | default true }}"
+    value: "{{ (index .Values.environments $envName "feature" "analytics" "autoInjection") | default false }}"
   {{- end }}  
-
-  # Feature: Telemetry
-  {{- if .Values.telemetry.telemetry.enabled }}
+  {{- if .Values.telemetry.enabled | default false }}
   - name: DOT_FEATURE_FLAG_TELEMETRY
     value: "true"
   - name: DOT_TELEMETRY_SAVE_SCHEDULE
-    value: "{{ .Values.telemetry.telemetrySaveSchedule | default '0 0 */8 * * ?' }}"
+    value: "{{ .Values.telemetry.telemetrySaveSchedule | default "0 0 */8 * * ?" }}"
   {{- end }}
-
-  # Feature: Mail
-  {{- if .Values.mail.enabled }}
+  {{- if .Values.mail.enabled | default false }}
   - name: DOT_MAIL_SMTP_HOST
     value: "{{ $mailHost }}"
   - name: DOT_MAIL_SMTP_PORT
-    value: "{{ .Values.mail.smpt.port | default 587 }}"
+    value: "{{ .Values.mail.port | default 587 }}"
   - name: DOT_MAIL_SMTP_STARTTLS_ENABLE
-    value: "{{ .Values.mail.smpt.starttls.enabled | default true }}"
+    value: "{{ .Values.mail.starttlsEnable | default true }}"
   - name: DOT_MAIL_SMTP_AUTH
-    value: "{{ .Values.mail.smpt.auth | default true }}"
+    value: "{{ .Values.mail.auth | default true }}"
   - name: DOT_MAIL_SMTP_SSL_PROTOCOLS
-    value: "{{ .Values.mail.smpt.sslProtocols | default TLSv1.2 }}"
+    value: "{{ .Values.mail.sslProtocols | default "TLSv1.2" }}"
   - name: DOT_MAIL_SMTP_USER
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-ses:username"
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+        key: username
   - name: DOT_MAIL_SMTP_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: "SECRET:{{ include "dotcms.secretPrefix" . }}-{{ .Values.customerName }}-ses:password"
+        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
+        key: password
   {{- end }}
 
 {{- end }}
