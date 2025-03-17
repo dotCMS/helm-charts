@@ -1,7 +1,7 @@
 app: dotcms
 customerName: dotcms-dev
 environmentType: local-dev # local-dev, customer-sandbox, staff-sandbox, partner-sandbox, production, qa
-cloudProvider: aws
+cloudProvider: local
 hostType: corp # corp, sh
 
 coreServiceEnabled: true
@@ -66,18 +66,6 @@ secrets:
 
 serviceAccount:
   create: false    
-
-regionHosts:
-  us-east-1:
-    dbHost: "k8s-communal-green-aaaaaa.bbbbbbbbbbbb.us-east-1.rds.amazonaws.com"
-    esHost: "https://elasticsearch1.dotcms.cloud"
-    mailHost: "email-smtp.us-east-1.amazonaws.com"
-    redisHost: "master.redis-dotcms-prod-1.aaaaaa.use1.cache.amazonaws.com"
-    idpUrl: "https://dotcms-analytics-aaaaaaaaa.auth.us-east-1.amazoncognito.com/oauth2/token"
-    certificateArn: "arn:aws:acm:us-east-1:999999999999:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-    securityGroups:
-      - "sg-00000000000000000"
-      - "sg-00000000000000001"
 
 backup:
   operation: none
@@ -160,39 +148,49 @@ ingress:
         enabled: true
         bucketOverride: ""
         prefixOverride: ""
-      wafArn: "" # eg following line if provided " alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:948170117212:regional/webacl/caliber-waf/b28ef6c6-75a5-493f-b131-079a84785f8d"
+      wafArn: ""
 
 environments:
   prod: 
-    environment:
-      override: {}
-      removeKeys: {} # If not too difficult to implement.
-      
-      customStarter: 
-        repo: "https://repo.dotcms.com/artifactory/libs-release"
-        groupId: com.dotcms # in helm template convert . to / to construct url
-        artifactId: starter
-        version: "20240724"
-        starterUrlOverride: "" # Full starter url if provided instead of generated.
-      
-      feature:
-        redisSessions:
-          enabled: true
-          secretNameOverride: "" # default {hostType}-{customer}-awssecret-redis
-          redisHost: "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
-          redisPort: 6379 
-          sslEnabled: true
-          persistentPolicied: "DEFAULT"
+    envVarsOverrides:
+      DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-prod"
+      DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-prod-database:password"
+      DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-prod-database:username"      
+      # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release/com/dotcms/starter/20240724/starter-20240724.zip"
+    removeKeys: {} # If not too difficult to implement.
+  auth:
+    envVarsOverrides:
+      DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-auth"
+      DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-auth-database:password"
+      DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-auth-database:username"        
+      DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
+    removeKeys: {} # If not too difficult to implement.
 
-        glowroot:
-          enabled: true
-          agentIdOverride : ""   # default {customer}::{env}
-          collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
+    customStarter: 
+      repo: "https://repo.dotcms.com/artifactory/libs-release"
+      groupId: com.dotcms # in helm template convert . to / to construct url
+      artifactId: starter
+      version: "20240724"
+      starterUrlOverride: "" # Full starter url if provided instead of generated.
+      
+    # feature:
+    #   redisSessions:
+    #     enabled: true
+    #     secretNameOverride: "" # default {hostType}-{customer}-awssecret-redis
+    #     redisHost: "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+    #     redisPort: 6379 
+    #     sslEnabled: true
+    #     persistentPolicied: "DEFAULT"
 
-        analytics:
-          enabled: true
-          idpUrl: 
-          autoInjection: true 
+    #   glowroot:
+    #     enabled: true
+    #     agentIdOverride : ""   # default {customer}::{env}
+    #     collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
+
+    #   analytics:
+    #     enabled: true
+    #     idpUrl: 
+    #     autoInjection: true 
 
 mail:
   enabled: true
@@ -244,3 +242,65 @@ redis:
   sessionHost: "redis"
   sessionPersistentPolicies: "DEFAULT"
 
+envVarsDefaults:
+  DOT_ES_ENDPOINTS: "{{ include \"dotcms.opensearch.endpoints\" . }}"
+  DOT_ES_AUTH_TYPE: "BASIC"
+  DOT_ES_AUTH_BASIC_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:username"
+  DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:password"
+  DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
+  DOT_DOTGENERATED_DEFAULT_PATH: "shared"
+  DOT_DOTCMS_CLUSTER_ID: "{{ .Values.customerName }}-prod"
+  DB_DNSNAME: "{{ .Values.database.host | default \"db\" }}"
+  DB_BASE_URL: "{{ printf \"jdbc:postgresql://%s:%v/%s\" (.Values.database.host | default \"db\") (int .Values.database.port) (include \"dotcms.db.name\" .) }}"
+  DB_USERNAME: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:username"
+  DB_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:password"
+  DOT_MAIL_SMTP_HOST: "{{ .Values.mail.smtp.host }}"
+  DOT_MAIL_SMTP_PORT: "587"
+  DOT_MAIL_SMTP_STARTTLS_ENABLE: "true"
+  DOT_MAIL_SMTP_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:username"
+  DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:password"
+  DOT_MAIL_SMTP_AUTH: "true"
+  DOT_MAIL_SMTP_SSL_PROTOCOLS: "TLSv1.2"
+  CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+  DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
+  DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
+  DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32127.0.0.1/3210.0.0.0/8172.16.0.0/12192.168.0.0/16"
+  DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
+  # DOT_FEATURE_FLAG_TELEMETRY: "true"
+  # DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
+  DOT_COOKIES_HTTP_ONLY: "false"
+  CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
+
+  # DOT_SHUTDOWN_ON_STARTUP: "{{ .ShutdownOnStartupValue }}"
+  # CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+  # DOT_ES_ENDPOINTS: "{{ $opensearchHost }}"
+  # DOT_ES_AUTH_TYPE: "BASIC"
+  # DOT_ES_AUTH_BASIC_USER 
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+  #       key: username
+  # DOT_ES_AUTH_BASIC_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
+  #       key: password
+  # DB_DNSNAME: "{{ $databaseHost }}"
+  # DB_BASE_URL: "{{ $dbBaseUrl }}"
+  # DB_USERNAME
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+  #       key: username
+  # DB_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+  #       key: password
+  # DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
+  # DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
+  # DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  # DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
+  # DOT_COOKIES_HTTP_ONLY: "false"
+  # CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" (dict "Values" .Values "envName" $envName) }}'
+ 
