@@ -352,7 +352,25 @@ else
 fi
 {{- end -}}
 
-
+{{/*
+###########################################################
+# Helper: dotcms.container.spec.envVars
+###########################################################
+# This helper generates the container environment variables block by merging
+# the default environment variables and any custom overrides.
+#
+# Usage:
+# - It reads default values from `.Values.envVarsDefaults`.
+# - It reads custom override values from `.Values.envVarsOverrides`.
+# - The helper uses `mergeOverwrite` to combine these maps, with overrides taking
+#   precedence over defaults.
+# - Each merged key-value pair is rendered as an environment variable using the
+#   `tpl` function, which allows dynamic evaluation of the value using the current context.
+#
+# This helper provides a centralized way to configure container environment variables,
+# ensuring that any custom settings override the defaults.
+###########################################################
+*/}}
 {{- define "dotcms.container.spec.envVars" -}}
   {{- $context := . -}}
   {{- $defaultEnv := .Values.envVarsDefaults | default dict }}
