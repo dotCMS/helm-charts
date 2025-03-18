@@ -64,15 +64,15 @@
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
+{{- printf "SECRET:%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
-{{- printf "%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
+{{- printf "SECRET:%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
-{{- printf "%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
+{{- printf "SECRET:%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
 {{- end -}}
 
 {{/*
@@ -375,12 +375,55 @@ fi
   {{- $context := . -}}
   {{- $defaultEnv := .Values.envVarsDefaults | default dict }}
   {{- $customEnv := .Values.envVarsOverrides | default dict }}
-  {{- $mergedEnv := mergeOverwrite $defaultEnv $customEnv }}
+  {{- $featuresEnv := fromYaml (include "dotcms.envVars.features" .) | default dict }}
+  {{- $mergedEnv := mergeOverwrite $defaultEnv $customEnv $featuresEnv }}
   {{- range $key, $value := $mergedEnv }}
   - name: {{ $key }}
     value: {{ tpl $value $context | quote }}
   {{- end }}
 {{- end }}
+
+{{- define "dotcms.envVars.features" -}}
+{{- $feat := .Values.feature | default dict }}
+{{- $redis := index $feat "redisSessions" | default dict }}
+
+{{- $analytics := $feat.analytics | default (dict) }}
+{{- if $analytics.enabled | default false }}
+DOT_FEATURE_FLAG_EXPERIMENTS: "true"
+DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION: {{ default false $analytics.autoInjection | quote }}
+DOT_ANALYTICS_IDP_URL: {{ default "" $analytics.idpUrl | quote }}
+{{- end }}
+
+{{- if .Values.mail.enabled | default false }}
+DOT_MAIL_SMTP_HOST: {{ default "" .Values.mail.smtp.host | quote }}
+DOT_MAIL_SMTP_PORT: {{ default 587 .Values.mail.smtp.port | quote }}
+DOT_MAIL_SMTP_STARTTLS_ENABLE: {{ default true .Values.mail.smtp.starttlsEnable | quote }}
+DOT_MAIL_SMTP_AUTH: {{ default true .Values.mail.smtp.auth | quote }}
+DOT_MAIL_SMTP_SSL_PROTOCOLS: {{ default "TLSv1.2" .Values.mail.smtp.sslProtocols | quote }}
+{{- end }}
+
+{{- $glow := $feat.glowroot | default (dict) }}
+{{- if $glow.enabled | default false }}
+GLOWROOT_ENABLED: "true"
+GLOWROOT_AGENT_ID: {{ $glow.agentIdOverride | default (printf "%s::%s" .Values.customerName .envName) }}
+GLOWROOT_COLLECTOR_ADDRESS: {{ $glow.collectorAddress | default "http://glowrootcentral.dotcmscloud.com:8181" }}
+{{- end }}
+
+{{- if default false (index $redis "enabled") }}
+TOMCAT_REDIS_SESSION_ENABLED: "true"
+TOMCAT_REDIS_SESSION_HOST: {{ default "" (index $redis "redisHost") | quote }}
+TOMCAT_REDIS_SESSION_PORT: {{ default 6379 (index $redis "port") | quote }}
+TOMCAT_REDIS_SESSION_PASSWORD: {{ default "" (index $redis "password") | quote }}
+TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") | quote }}
+TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
+{{- end }}
+
+{{- end }}
+
+{{- define "dotcms.debug.context" -}}
+{{ . | toYaml }}
+{{- end }}
+
 
 {{/*
 ###########################################################

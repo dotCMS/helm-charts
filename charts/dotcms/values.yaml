@@ -154,15 +154,15 @@ environments:
   prod: 
     envVarsOverrides:
       DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-prod"
-      DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-prod-database:password"
-      DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-prod-database:username"      
+      # DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-prod-database:password"
+      # DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-prod-database:username"      
       # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release/com/dotcms/starter/20240724/starter-20240724.zip"
     removeKeys: {} # If not too difficult to implement.
   auth:
     envVarsOverrides:
       DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-auth"
-      DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-auth-database:password"
-      DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-auth-database:username"        
+      # DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-auth-database:password"
+      # DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-auth-database:username"        
       DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
     removeKeys: {} # If not too difficult to implement.
 
@@ -173,24 +173,24 @@ environments:
       version: "20240724"
       starterUrlOverride: "" # Full starter url if provided instead of generated.
       
-    # feature:
-    #   redisSessions:
-    #     enabled: true
-    #     secretNameOverride: "" # default {hostType}-{customer}-awssecret-redis
-    #     redisHost: "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
-    #     redisPort: 6379 
-    #     sslEnabled: true
-    #     persistentPolicied: "DEFAULT"
+    feature:
+      redisSessions:
+        enabled: true
+        secretNameOverride: "" # default {hostType}-{customer}-awssecret-redis
+        redisHost: "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+        redisPort: 6379 
+        sslEnabled: true
+        persistentPolicied: "DEFAULT"
 
-    #   glowroot:
-    #     enabled: true
-    #     agentIdOverride : ""   # default {customer}::{env}
-    #     collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
+      glowroot:
+        enabled: true
+        agentIdOverride : ""   # default {customer}::{env}
+        collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
 
-    #   analytics:
-    #     enabled: true
-    #     idpUrl: 
-    #     autoInjection: true 
+      analytics:
+        enabled: true
+        idpUrl: ""
+        autoInjection: true 
 
 mail:
   enabled: true
@@ -212,7 +212,7 @@ database:
       limits:
         cpu: 500m
         memory: 3Gi
-  secretNameOverride: "{{ | default {hostType}-{customer}-awssecret-{env}-database }}"
+  secretNameOverride: ""
   host: # if not set uses dev host "db"
   port: 5432
   name: dotcms
@@ -245,20 +245,24 @@ redis:
 envVarsDefaults:
   DOT_ES_ENDPOINTS: "{{ include \"dotcms.opensearch.endpoints\" . }}"
   DOT_ES_AUTH_TYPE: "BASIC"
-  DOT_ES_AUTH_BASIC_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:username"
-  DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:password"
+  # DOT_ES_AUTH_BASIC_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:username"
+  # DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:password"
   DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
   DOT_DOTGENERATED_DEFAULT_PATH: "shared"
   DOT_DOTCMS_CLUSTER_ID: "{{ .Values.customerName }}-prod"
   DB_DNSNAME: "{{ .Values.database.host | default \"db\" }}"
   DB_BASE_URL: "{{ printf \"jdbc:postgresql://%s:%v/%s\" (.Values.database.host | default \"db\") (int .Values.database.port) (include \"dotcms.db.name\" .) }}"
-  DB_USERNAME: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:username"
-  DB_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:password"
+  DB_USERNAME: "SECRET:database:username"
+  DB_PASSWORD: "SECRET:database:password"
+  # DB_USERNAME: '{{ tpl (include "dotcms.secret.envVar" (dict "Values" .Values "secretType" "database" "key" "username" "value" "default-username")) . }}'
+  # DB_PASSWORD: '{{ include "dotcms.secret.envVar" (dict "Values" .Values "secretType" "database" "key" "password" "value" "default-password") }}'
+  # DB_USERNAME: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:username"
+  # DB_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:password"
   DOT_MAIL_SMTP_HOST: "{{ .Values.mail.smtp.host }}"
   DOT_MAIL_SMTP_PORT: "587"
   DOT_MAIL_SMTP_STARTTLS_ENABLE: "true"
-  DOT_MAIL_SMTP_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:username"
-  DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:password"
+  # DOT_MAIL_SMTP_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:username"
+  # DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:password"
   DOT_MAIL_SMTP_AUTH: "true"
   DOT_MAIL_SMTP_SSL_PROTOCOLS: "TLSv1.2"
   CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
@@ -287,12 +291,12 @@ envVarsDefaults:
   #       key: password
   # DB_DNSNAME: "{{ $databaseHost }}"
   # DB_BASE_URL: "{{ $dbBaseUrl }}"
-  # DB_USERNAME
+  # DB_USERNAME:
   #   valueFrom:
   #     secretKeyRef:
   #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
   #       key: username
-  # DB_PASSWORD
+  # DB_PASSWORD:
   #   valueFrom:
   #     secretKeyRef:
   #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
