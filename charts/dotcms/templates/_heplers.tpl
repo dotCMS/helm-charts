@@ -383,6 +383,16 @@ fi
   {{- end }}
 {{- end }}
 
+{{/*
+###########################################################
+# Helper: dotcms.envVars.features
+###########################################################
+# This helper generates additional environment variable mappings 
+# based on enabled feature flags. It conditionally adds blocks for 
+# features such as Analytics, Mail, Glowroot, and Redis Sessions.
+# Each block is rendered only if its corresponding feature flag is true.
+###########################################################
+*/}}
 {{- define "dotcms.envVars.features" -}}
 {{- $feat := .Values.feature | default dict }}
 {{- $redis := index $feat "redisSessions" | default dict }}
