@@ -430,16 +430,52 @@ TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "se
 
 {{- end }}
 
+  {{/*
+###########################################################
+# dotcms.ingress.alb.annotations
+###########################################################
+# This helper generates the ALB Ingress annotations required for configuring
+# an AWS Application Load Balancer (ALB). It outputs several key annotations:
+#
+# 1. Target Group Attributes
+# 2. Load Balancer Attributes
+# 3. SSL Policy
+# 4. Security Groups
+# 5. Certificate ARN
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.annotations" . }}
+###########################################################
+*/}}
 {{- define "dotcms.ingress.alb.annotations" -}}
 alb.ingress.kubernetes.io/target-group-attributes: {{- if "dotcms.ingress.alb.hosts.stickySessions.enabled" }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
 alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.alb.hosts.idleTimeout }}{{- if .Values.ingress.alb.hosts.accessLogs.enabled }},access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.alb.hosts.accessLogs.bucketOverride }},access_logs.s3.prefix={{ .Values.ingress.alb.hosts.accessLogs.prefixOverride }}{{- end }}
-alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
 alb.ingress.kubernetes.io/ssl-policy: {{ required "ingress.alb.hosts.default.sslPolicy is required when ingress.type is 'alb'" .Values.ingress.alb.hosts.default.sslPolicy }}
 alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGroups is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.securityGroups" .) }}
+alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
 {{- end }}
 
+{{/*
+###########################################################
+# dotcms.ingress.alb.certificateArns
+###########################################################
+# This helper generates a list of certificate ARNs to be used in the ALB Ingress annotation.
+#
+# It takes into account:
+# - The default certificate ARN defined in .Values.ingress.alb.hosts.default.certificateArn,
+#   if .Values.ingress.alb.hosts.default.enabled is true.
+#
+# - Additional certificate ARNs defined in .Values.ingress.alb.hosts.additionalCertificateArns.
+#
+# The ARNs are joined into a single string, separated by commas and spaces,
+# and the resulting string is wrapped in single quotes.
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.certificateArns" . }}
+###########################################################
+*/}}
 {{- define "dotcms.ingress.alb.certificateArns" -}}
-{{- $allArns := list -}}
+'{{- $allArns := list -}}
 {{- if .Values.ingress.alb.hosts.default.enabled -}}
   {{- $defaultArn := .Values.ingress.alb.hosts.default.certificateArn | default "" -}}
   {{- if $defaultArn -}}
@@ -450,16 +486,29 @@ alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGrou
 {{- range $arn := $additionalArns -}}
   {{- $allArns = append $allArns $arn -}}
 {{- end -}}
-"\
-{{ "\n" }}
-{{ $total := len $allArns }}
-{{ range $index, $arn := $allArns }}
-        {{ $arn }}{{ if lt (add $index 1) $total }}, \{{ "\n" }}{{ else }}"{{ end }}
-{{- end -}}
+{{ join ", " $allArns -}}'
 {{- end -}}
 
+{{/*
+###########################################################
+# dotcms.ingress.alb.securityGroups
+###########################################################
+# This helper generates the list of security groups to be applied to the ALB Ingress.
+#
+# It works as follows:
+# - If .Values.ingress.alb.securityGroups.useDefaults is true, it includes:
+#     * The default groups defined in .Values.ingress.alb.securityGroups.default.
+#     * Additional groups defined in .Values.ingress.alb.securityGroups.additional.
+#
+# The groups are joined into a single string, separated by commas and spaces,
+# and the resulting string is wrapped in single quotes.
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.securityGroups" . }}
+###########################################################
+*/}}
 {{- define "dotcms.ingress.alb.securityGroups" -}}
-{{- $groups := list -}}
+'{{- $groups := list -}}
 {{- if .Values.ingress.alb.securityGroups.useDefaults -}}
   {{- $defaultGroups := .Values.ingress.alb.securityGroups.default | default list -}}
   {{- $additionalGroups := .Values.ingress.alb.securityGroups.additional | default list -}}
@@ -470,9 +519,24 @@ alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGrou
     {{- $groups = append $groups $group -}}
   {{- end -}}
 {{- end -}}
-{{- join "," $groups -}}
+{{- join ", " $groups -}}'
 {{- end -}}
 
+{{/*
+###########################################################
+# dotcms.ingress.alb.additionalHosts
+###########################################################
+# This helper renders the YAML block for additional hosts for an ALB Ingress.
+#
+# If the ingress type is "alb", it iterates over the list defined in
+# .Values.ingress.alb.hosts.additionalHosts and renders each host as:
+#
+#   - host: "host_value"
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.additionalHosts" . }}
+###########################################################
+*/}}
 {{- define "dotcms.ingress.alb.additionalHosts" -}}
 {{- if eq .Values.ingress.type "alb" -}}
 {{- $additionalHosts := .Values.ingress.alb.hosts.additionalHosts | default list -}}
