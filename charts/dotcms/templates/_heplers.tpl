@@ -64,11 +64,23 @@
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- printf "SECRET:%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
+{{- $overrideKey := printf "%sSecretNameOverride" .secretName -}}
+{{- $overrideValue := index .Values $overrideKey | default "" -}}
+{{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+  {{- printf "%s" $overrideValue -}}
+{{- else -}}
+  {{- printf "SECRET:%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
-{{- printf "SECRET:%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
+{{- $overrideKey := printf "%sSecretNameOverride" .secretName -}}
+{{- $overrideValue := index .Values $overrideKey | default "" -}}
+{{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+  {{- printf "%s" $overrideValue -}}
+{{- else -}}
+  {{- printf "SECRET:%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
