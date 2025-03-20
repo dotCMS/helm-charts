@@ -430,6 +430,58 @@ TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "se
 
 {{- end }}
 
+{{- define "dotcms.ingress.alb.annotations" -}}
+alb.ingress.kubernetes.io/target-group-attributes: {{- if "dotcms.ingress.alb.hosts.stickySessions.enabled" }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
+alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.alb.hosts.idleTimeout }}{{- if .Values.ingress.alb.hosts.accessLogs.enabled }},access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.alb.hosts.accessLogs.bucketOverride }},access_logs.s3.prefix={{ .Values.ingress.alb.hosts.accessLogs.prefixOverride }}{{- end }}
+alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
+alb.ingress.kubernetes.io/ssl-policy: {{ required "ingress.alb.hosts.default.sslPolicy is required when ingress.type is 'alb'" .Values.ingress.alb.hosts.default.sslPolicy }}
+alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGroups is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.securityGroups" .) }}
+{{- end }}
+
+{{- define "dotcms.ingress.alb.certificateArns" -}}
+{{- $allArns := list -}}
+{{- if .Values.ingress.alb.hosts.default.enabled -}}
+  {{- $defaultArn := .Values.ingress.alb.hosts.default.certificateArn | default "" -}}
+  {{- if $defaultArn -}}
+    {{- $allArns = append $allArns $defaultArn -}}
+  {{- end -}}
+{{- end -}}
+{{- $additionalArns := .Values.ingress.alb.hosts.additionalCertificateArns | default list -}}
+{{- range $arn := $additionalArns -}}
+  {{- $allArns = append $allArns $arn -}}
+{{- end -}}
+"\
+{{ "\n" }}
+{{ $total := len $allArns }}
+{{ range $index, $arn := $allArns }}
+        {{ $arn }}{{ if lt (add $index 1) $total }}, \{{ "\n" }}{{ else }}"{{ end }}
+{{- end -}}
+{{- end -}}
+
+{{- define "dotcms.ingress.alb.securityGroups" -}}
+{{- $groups := list -}}
+{{- if .Values.ingress.alb.securityGroups.useDefaults -}}
+  {{- $defaultGroups := .Values.ingress.alb.securityGroups.default | default list -}}
+  {{- $additionalGroups := .Values.ingress.alb.securityGroups.additional | default list -}}
+  {{- range $index, $group := $defaultGroups -}}
+    {{- $groups = append $groups $group -}}
+  {{- end -}}
+  {{- range $index, $group := $additionalGroups -}}
+    {{- $groups = append $groups $group -}}
+  {{- end -}}
+{{- end -}}
+{{- join "," $groups -}}
+{{- end -}}
+
+{{- define "dotcms.ingress.alb.additionalHosts" -}}
+{{- if eq .Values.ingress.type "alb" -}}
+{{- $additionalHosts := .Values.ingress.alb.hosts.additionalHosts | default list -}}
+{{ range $host := $additionalHosts -}}
+- host: {{ $host | quote }}
+{{ end }}
+{{- end -}}
+{{- end -}}
+
 {{- define "dotcms.debug.context" -}}
 {{ . | toYaml }}
 {{- end }}
