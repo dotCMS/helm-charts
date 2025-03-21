@@ -64,27 +64,35 @@
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- $overrideKey := printf "%sSecretNameOverride" .secretName -}}
-{{- $overrideValue := index .Values $overrideKey | default "" -}}
-{{- if and $overrideValue (ne (trim $overrideValue) "") -}}
-  {{- printf "%s" $overrideValue -}}
-{{- else -}}
-  {{- printf "SECRET:%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment .secretName -}}
-{{- end -}}
+  {{- $secretName := .secretName -}}
+  {{- $overridePath := .overridePath | default "" -}}
+  {{- $overrideValue := "" -}}
+  {{- if ne $overridePath "" -}}
+    {{- $overrideValue = get .Values (splitList "." $overridePath) | default "" -}}
+  {{- end -}}
+  {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+    {{- printf "%s" $overrideValue -}}
+  {{- else -}}
+    {{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment $secretName -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
-{{- $overrideKey := printf "%sSecretNameOverride" .secretName -}}
-{{- $overrideValue := index .Values $overrideKey | default "" -}}
-{{- if and $overrideValue (ne (trim $overrideValue) "") -}}
-  {{- printf "%s" $overrideValue -}}
-{{- else -}}
-  {{- printf "SECRET:%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider .secretName -}}
-{{- end -}}
+  {{- $secretName := .secretName -}}
+  {{- $overridePath := .overridePath | default "" -}}
+  {{- $overrideValue := "" -}}
+  {{- if ne $overridePath "" -}}
+    {{- $overrideValue = get .Values (splitList "." $overridePath) | default "" -}}
+  {{- end -}}
+  {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+    {{- printf "%s" $overrideValue -}}
+  {{- else -}}
+    {{- printf "%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider $secretName -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
-{{- printf "SECRET:%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
+{{- printf "%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
 {{- end -}}
 
 {{/*
@@ -214,7 +222,7 @@ resources:
     cpu: '{{ .Values.resources.limits.cpu }}'
     memory: {{ .Values.resources.limits.memory }}
 env:
-  {{- include "dotcms.container.spec.envVars" . }}  
+  {{- include "dotcms.container.spec.envVars" . }}
   {{- range $key, $value := .Values.customEnvVars }}
   - name: {{ $key }}
     value: {{ $value | quote }}

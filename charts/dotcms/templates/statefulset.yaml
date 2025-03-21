@@ -4,7 +4,7 @@
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
 {{- $namespace := .Values.customerName }}
-{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license" "overridePath" "") | quote }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 {{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
