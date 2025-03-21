@@ -382,13 +382,23 @@ fi
 # Usage:
 # - It reads default values from `.Values.envVarsDefaults`.
 # - It reads custom override values from `.Values.envVarsOverrides`.
+# - It also includes additional variables from the features helper.
 # - The helper uses `mergeOverwrite` to combine these maps, with overrides taking
 #   precedence over defaults.
-# - Each merged key-value pair is rendered as an environment variable using the
-#   `tpl` function, which allows dynamic evaluation of the value using the current context.
+# - Each merged key-value pair is first evaluated with the `tpl` function to
+#   resolve dynamic expressions.
+# - If the evaluated value begins with "SECRET:" and has the format 
+#   "SECRET:secretName:key" (i.e. splits into exactly three parts),
+#   the helper calls the sub-helper `dotcms.container.spec.renderSecret` to render
+#   the variable using a `valueFrom.secretKeyRef` block.
+# - Otherwise, the variable is rendered normally using a `value:` block.
 #
-# This helper provides a centralized way to configure container environment variables,
-# ensuring that any custom settings override the defaults.
+# This design ensures that secret references are handled correctly while allowing
+# standard environment variables to be defined in a centralized way.
+#
+# Example usage in a container spec:
+#   env:
+#     {{ include "dotcms.container.spec.envVars" . | nindent 2 }}
 ###########################################################
 */}}
 {{- define "dotcms.container.spec.envVars" -}}
@@ -415,31 +425,6 @@ fi
   value: {{ $evaluatedValue | quote }}
   {{- end }}
   {{- end }}
-{{- end -}}
-
-{{- /*
-  This helper renders an environment variable definition for a secret.
-  The input value should be in the format "SECRET:secretName:key".
-  It returns a YAML snippet with valueFrom.secretKeyRef using the provided secretName.
-*/ -}}
-{{- define "dotcms.container.spec.renderSecret" -}}
-{{- $envName := .envName -}}
-{{- $secretValue := .secretValue -}}
-{{- $parts := splitList ":" $secretValue -}}
-{{- if ne (len $parts) 3 -}}
-  {{- fail (printf "Invalid secret format for env var %s: expected SECRET:secretName:key" $envName) -}}
-{{- end -}}
-{{- $prefix := index $parts 0 -}}
-{{- if ne $prefix "SECRET" -}}
-  {{- fail (printf "Invalid secret prefix for env var %s: expected SECRET" $envName) -}}
-{{- end -}}
-{{- $resolvedName := index $parts 1 -}}
-{{- $secKey := index $parts 2 -}}
-- name: {{ $envName }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ $resolvedName | quote }}
-      key: {{ $secKey | quote }}
 {{- end -}}
 
 {{/*
