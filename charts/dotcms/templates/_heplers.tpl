@@ -398,10 +398,49 @@ fi
   {{- $featuresEnv := fromYaml (include "dotcms.envVars.features" .) | default dict }}
   {{- $mergedEnv := mergeOverwrite $defaultEnv $customEnv $featuresEnv }}
   {{- range $key, $value := $mergedEnv }}
-  - name: {{ $key }}
-    value: {{ tpl $value $context | quote }}
+  {{- $evaluatedValue := tpl $value $context }}
+  {{- if contains "SECRET:" $evaluatedValue }}
+  {{- $parts := splitList ":" $evaluatedValue -}}
+  {{- if ne (len $parts) 3 -}}
+    {{- fail (printf "Invalid secret format for env var %s: expected SECRET:secretName:key" .envName) -}}
+  {{- end -}}  
+  {{- $secretArgs := rest $parts }}
+- name: {{ $key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ first $secretArgs | quote }}
+      key: {{ $secretArgs | last | quote }}
+  {{- else }}
+- name: {{ $key }}
+  value: {{ $evaluatedValue | quote }}
   {{- end }}
-{{- end }}
+  {{- end }}
+{{- end -}}
+
+{{- /*
+  This helper renders an environment variable definition for a secret.
+  The input value should be in the format "SECRET:secretName:key".
+  It returns a YAML snippet with valueFrom.secretKeyRef using the provided secretName.
+*/ -}}
+{{- define "dotcms.container.spec.renderSecret" -}}
+{{- $envName := .envName -}}
+{{- $secretValue := .secretValue -}}
+{{- $parts := splitList ":" $secretValue -}}
+{{- if ne (len $parts) 3 -}}
+  {{- fail (printf "Invalid secret format for env var %s: expected SECRET:secretName:key" $envName) -}}
+{{- end -}}
+{{- $prefix := index $parts 0 -}}
+{{- if ne $prefix "SECRET" -}}
+  {{- fail (printf "Invalid secret prefix for env var %s: expected SECRET" $envName) -}}
+{{- end -}}
+{{- $resolvedName := index $parts 1 -}}
+{{- $secKey := index $parts 2 -}}
+- name: {{ $envName }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ $resolvedName | quote }}
+      key: {{ $secKey | quote }}
+{{- end -}}
 
 {{/*
 ###########################################################
