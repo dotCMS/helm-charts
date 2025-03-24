@@ -65,7 +65,7 @@ secrets:
           - "password"
 
 serviceAccount:
-  create: false    
+  create: true    
 
 backup:
   operation: none
@@ -268,5 +268,6 @@ envVarsDefaults:
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
   DOT_COOKIES_HTTP_ONLY: "false"
   CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
-  DOT_FEATURE_FLAG_TELEMETRY: "false"
+  DOT_FEATURE_FLAG_TELEMETRY: "{{ .Values.telemetry.enabled }}"
+  DOT_TELEMETRY_CLIENT: "{{ .Values.telemetry.telemetryClient }}"
   DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
