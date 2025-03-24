@@ -122,7 +122,7 @@ ingress:
   tlsSecretName: developer-certificate-secret
   host: ""
   hostSuffix: dotcms.local
-  type: nginx
+  type: alb
 
   alb:
     securityGroups: 
@@ -136,34 +136,38 @@ ingress:
       default: 
         enabled: true
         hostSuffix: ".dotcms.cloud"
-        certificateArn:   # set
+        certificateArn: "dcolina-certificate-arn"  # set
+        sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
       additionalHosts:
-        - name: ejco-dev.dotcms.cloud
-          certificateArn: arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df
+        - ejco-dev-1.dotcms.cloud
+        - ejco-dev.dotcms.cloud
+      additionalCertificateArns: 
+        - arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df
+        - arn:aws:acm:us-east-1:948170117212:certificate/fe642960-7ed8-4ce4-8520-98fa2b1c437e
       stickySessions:
         enabled: true
         duration: 18000
-        idleTimeout: 3600
+      idleTimeout: 3600
       accessLogs:
         enabled: true
-        bucketOverride: ""
-        prefixOverride: ""
+        bucketOverride: "dcolina-s3-bucket"
+        prefixOverride: "dcolina-prj"
       wafArn: ""
 
 environments:
   prod: 
     envVarsOverrides:
-      DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-prod"
+      # DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-prod"
       # DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-prod-database:password"
       # DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-prod-database:username"      
       # CUSTOM_STARTER_URL: "https://repo.dotcms.com/artifactory/libs-release/com/dotcms/starter/20240724/starter-20240724.zip"
     removeKeys: {} # If not too difficult to implement.
   auth:
     envVarsOverrides:
-      DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-auth"
+      # DOT_DOTCMS_CLUSTER_ID: "dotcms-dev-auth"
       # DB_PASSWORD: "SECRET:corp-dotcms-dev-localsecret-auth-database:password"
       # DB_USERNAME: "SECRET:corp-dotcms-dev-localsecret-auth-database:username"        
-      DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
+      # DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
     removeKeys: {} # If not too difficult to implement.
 
     customStarter: 
@@ -183,17 +187,17 @@ environments:
         persistentPolicied: "DEFAULT"
 
       glowroot:
-        enabled: true
+        enabled: false
         agentIdOverride : ""   # default {customer}::{env}
         collectorAddress : "http://glowrootcentral.dotcmscloud.com:8181" 
 
       analytics:
-        enabled: true
+        enabled: false
         idpUrl: ""
         autoInjection: true 
 
 mail:
-  enabled: true
+  enabled: false
   smtp:
     host: 
     port: 587
@@ -243,68 +247,26 @@ redis:
   sessionPersistentPolicies: "DEFAULT"
 
 envVarsDefaults:
-  DOT_ES_ENDPOINTS: "{{ include \"dotcms.opensearch.endpoints\" . }}"
-  DOT_ES_AUTH_TYPE: "BASIC"
-  # DOT_ES_AUTH_BASIC_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:username"
-  # DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-elasticsearch:password"
-  DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
-  DOT_DOTGENERATED_DEFAULT_PATH: "shared"
-  DOT_DOTCMS_CLUSTER_ID: "{{ .Values.customerName }}-prod"
+  DB_USERNAME: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"database\" \"overridePath\" \"database.secretNameOverride\") }}:username"
+  DB_PASSWORD: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"database\") }}:password"
   DB_DNSNAME: "{{ .Values.database.host | default \"db\" }}"
   DB_BASE_URL: "{{ printf \"jdbc:postgresql://%s:%v/%s\" (.Values.database.host | default \"db\") (int .Values.database.port) (include \"dotcms.db.name\" .) }}"
-  DB_USERNAME: "SECRET:database:username"
-  DB_PASSWORD: "SECRET:database:password"
-  # DB_USERNAME: '{{ tpl (include "dotcms.secret.envVar" (dict "Values" .Values "secretType" "database" "key" "username" "value" "default-username")) . }}'
-  # DB_PASSWORD: '{{ include "dotcms.secret.envVar" (dict "Values" .Values "secretType" "database" "key" "password" "value" "default-password") }}'
-  # DB_USERNAME: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:username"
-  # DB_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-prod-database:password"
-  DOT_MAIL_SMTP_HOST: "{{ .Values.mail.smtp.host }}"
-  DOT_MAIL_SMTP_PORT: "587"
-  DOT_MAIL_SMTP_STARTTLS_ENABLE: "true"
-  # DOT_MAIL_SMTP_USER: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:username"
-  # DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ .Values.hostType }}-{{ .Values.customerName }}-{{ .Values.cloudProvider }}secret-ses:password"
-  DOT_MAIL_SMTP_AUTH: "true"
-  DOT_MAIL_SMTP_SSL_PROTOCOLS: "TLSv1.2"
+  DOT_ES_AUTH_BASIC_USER: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"elasticsearch\") }}:username"
+  DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"elasticsearch\") }}:password"
+  DOT_ES_ENDPOINTS: "{{ include \"dotcms.opensearch.endpoints\" . }}"
+  DOT_ES_AUTH_TYPE: "BASIC"
+  DOT_MAIL_SMTP_USER: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"ses\") }}:username"
+  DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"ses\") }}:password"
+  DOT_INITIAL_ADMIN_PASSWORD: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"dotcms-admin\") }}:password"
+  DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
+  DOT_DOTGENERATED_DEFAULT_PATH: "shared"
+  DOT_DOTCMS_CLUSTER_ID: "{{ .Values.customerName }}-{{ .Values.environment }}"
   CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
   DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
   DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
   DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32127.0.0.1/3210.0.0.0/8172.16.0.0/12192.168.0.0/16"
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
-  # DOT_FEATURE_FLAG_TELEMETRY: "true"
-  # DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
   DOT_COOKIES_HTTP_ONLY: "false"
   CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
-
-  # DOT_SHUTDOWN_ON_STARTUP: "{{ .ShutdownOnStartupValue }}"
-  # CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-  # DOT_ES_ENDPOINTS: "{{ $opensearchHost }}"
-  # DOT_ES_AUTH_TYPE: "BASIC"
-  # DOT_ES_AUTH_BASIC_USER 
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-  #       key: username
-  # DOT_ES_AUTH_BASIC_PASSWORD
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-  #       key: password
-  # DB_DNSNAME: "{{ $databaseHost }}"
-  # DB_BASE_URL: "{{ $dbBaseUrl }}"
-  # DB_USERNAME:
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
-  #       key: username
-  # DB_PASSWORD:
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
-  #       key: password
-  # DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
-  # DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
-  # DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-  # DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
-  # DOT_COOKIES_HTTP_ONLY: "false"
-  # CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" (dict "Values" .Values "envName" $envName) }}'
- 
+  DOT_FEATURE_FLAG_TELEMETRY: "false"
+  DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"

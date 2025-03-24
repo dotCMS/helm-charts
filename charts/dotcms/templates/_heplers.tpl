@@ -68,7 +68,8 @@
   {{- $overridePath := .overridePath | default "" -}}
   {{- $overrideValue := "" -}}
   {{- if ne $overridePath "" -}}
-    {{- $overrideValue = get .Values (splitList "." $overridePath) | default "" -}}
+    {{- $keys := splitList "." $overridePath -}}
+    {{- $overrideValue = index .Values (index $keys 0) (index $keys 1) | default "" -}}
   {{- end -}}
   {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
     {{- printf "%s" $overrideValue -}}
@@ -82,7 +83,8 @@
   {{- $overridePath := .overridePath | default "" -}}
   {{- $overrideValue := "" -}}
   {{- if ne $overridePath "" -}}
-    {{- $overrideValue = get .Values (splitList "." $overridePath) | default "" -}}
+    {{- $keys := splitList "." $overridePath -}}
+    {{- $overrideValue = index .Values (index $keys 0) (index $keys 1) | default "" -}}
   {{- end -}}
   {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
     {{- printf "%s" $overrideValue -}}
@@ -467,7 +469,8 @@ GLOWROOT_COLLECTOR_ADDRESS: {{ $glow.collectorAddress | default "http://glowroot
 TOMCAT_REDIS_SESSION_ENABLED: "true"
 TOMCAT_REDIS_SESSION_HOST: {{ default "" (index $redis "redisHost") | quote }}
 TOMCAT_REDIS_SESSION_PORT: {{ default 6379 (index $redis "port") | quote }}
-TOMCAT_REDIS_SESSION_PASSWORD: {{ default "" (index $redis "password") | quote }}
+TOMCAT_REDIS_SESSION_USERNAME: "SECRET:{{ default "" (index $redis "password") }}:username"
+TOMCAT_REDIS_SESSION_PASSWORD: "SECRET:{{ default "" (index $redis "password") }}:password"
 TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") | quote }}
 TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
 {{- end }}
