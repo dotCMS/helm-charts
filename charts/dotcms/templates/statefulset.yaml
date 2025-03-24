@@ -193,7 +193,7 @@ spec:
                   echo "Restore completed successfully."
 
               else
-                  echo "ERROR: Unknown operation '${OPERATION}'"
+                  echo "Nothing to do [OPERATION='${OPERATION}']"
               fi
           env:
             - name: OPERATION

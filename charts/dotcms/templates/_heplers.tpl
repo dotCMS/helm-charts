@@ -43,8 +43,14 @@
 */}}
 
 {{- define "dotcms.opensearch.cluster" -}}
-{{- printf "%s-%s" .Values.customerName .Values.environment -}}
+  {{- $clusterIdOverride := .Values.opensearch.clusterIdOverride | default "" | trim -}}
+  {{- if ne $clusterIdOverride "" -}}
+    {{- printf "%s" $clusterIdOverride -}}
+  {{- else -}}
+    {{- printf "%s-%s" .Values.customerName .Values.environment -}}
+  {{- end -}}
 {{- end -}}
+
 
 {{- define "dotcms.opensearch.endpoints" -}}
 {{- if $.Values.opensearch.local.enabled -}}
@@ -224,11 +230,13 @@ resources:
     cpu: '{{ .Values.resources.limits.cpu }}'
     memory: {{ .Values.resources.limits.memory }}
 env:
-  {{- include "dotcms.container.spec.envVars" . }}
+  - name: DOT_SHUTDOWN_ON_STARTUP
+    value: {{ .ShutdownOnStartupValue | quote }}
+  {{- include "dotcms.container.spec.envVars" . | nindent 2 }}
   {{- range $key, $value := .Values.customEnvVars }}
   - name: {{ $key }}
     value: {{ $value | quote }}
-  {{- end }}  
+  {{- end }}
 volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
@@ -500,6 +508,7 @@ alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds
 alb.ingress.kubernetes.io/ssl-policy: {{ required "ingress.alb.hosts.default.sslPolicy is required when ingress.type is 'alb'" .Values.ingress.alb.hosts.default.sslPolicy }}
 alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGroups is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.securityGroups" .) }}
 alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
+alb.ingress.kubernetes.io/wafv2-acl-arn: {{ default "" .Values.ingress.alb.hosts.wafArn | squote }}
 {{- end }}
 
 {{/*
