@@ -31,7 +31,6 @@ ingress:
   hostSuffix: dotcms.local
   # type: "nginx" or "alb"
   type: "nginx"
-
   alb:
     securityGroups:
       useDefaults: true
@@ -67,13 +66,12 @@ database:
       limits:
         cpu: 500m
         memory: 3Gi
-  # Leave empty if no override is needed        
+  # Leave empty if no override is needed
   secretNameOverride: ""
-  # Default host name (e.g., "db")
   host: "db"
   port: 5432
   name: dotcms
-  
+
 # Opensearch configuration (mandatory)
 opensearch:
   host:
@@ -92,7 +90,7 @@ opensearch:
 mail:
   enabled: false
   smtp:
-    host: "" # e.g., "smtp.example.com"
+    host: ""
     port: 587
     auth: "true"
     sslProtocols: "TLSv1.2"
@@ -137,9 +135,6 @@ envVarsDefaults:
   DOT_FEATURE_FLAG_TELEMETRY: "{{ .Values.telemetry.enabled }}"
   DOT_TELEMETRY_CLIENT: "{{ .Values.telemetry.telemetryClient }}"
   DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
-  
-# Empty map for environment variables overrides
-envVarsOverrides: {}
 
 # Secrets configuration (minimal)
 secrets:
@@ -232,6 +227,6 @@ linkerd:
   enabled: false
 
 environments:
-  prod: 
+  prod:
     envVarsOverrides: {}
     removeKeys: {}
