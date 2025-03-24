@@ -29,7 +29,8 @@ ingress:
   tlsSecretName: developer-certificate-secret
   host: ""
   hostSuffix: dotcms.local
-  type: "nginx" # Options: "nginx" or "alb"
+  # type: "nginx" or "alb"
+  type: "nginx"
 
   alb:
     securityGroups:
@@ -66,8 +67,10 @@ database:
       limits:
         cpu: 500m
         memory: 3Gi
-  secretNameOverride: ""   # Leave empty if no override is needed
-  host: "db"               # Default host name (e.g., "db")
+  # Leave empty if no override is needed        
+  secretNameOverride: ""
+  # Default host name (e.g., "db")
+  host: "db"
   port: 5432
   name: dotcms
   
@@ -89,7 +92,7 @@ opensearch:
 mail:
   enabled: false
   smtp:
-    host: ""            # e.g., "smtp.example.com"
+    host: "" # e.g., "smtp.example.com"
     port: 587
     auth: "true"
     sslProtocols: "TLSv1.2"
