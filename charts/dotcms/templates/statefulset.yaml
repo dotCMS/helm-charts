@@ -208,7 +208,7 @@ spec:
                   name: {{ if .Values.database.local.enabled }}
                     {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
                   {{ end }}
                   key: username
             - name: DB_PASSWORD
@@ -217,7 +217,7 @@ spec:
                   name: {{ if .Values.database.local.enabled }}
                     {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
                   {{ end }}
                   key: password
 
