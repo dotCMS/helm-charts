@@ -1,5 +1,3 @@
-# Minimal values.yaml for local development
-
 app: dotcms
 customerName: dotcms-dev
 environmentType: local-dev
@@ -111,18 +109,18 @@ redis:
 
 # Environment Variables Defaults (mandatory secrets)
 envVarsDefaults:
-  DB_USERNAME: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"database\" \"overridePath\" \"database.secretNameOverride\") }}:username"
-  DB_PASSWORD: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"database\") }}:password"
-  DB_DNSNAME: "{{ .Values.database.host | default \"db\" }}"
-  DB_BASE_URL: "{{ printf \"jdbc:postgresql://%s:%v/%s\" (.Values.database.host | default \"db\") (int .Values.database.port) (include \"dotcms.db.name\" .) }}"
-  DOT_ES_AUTH_BASIC_USER: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"elasticsearch\") }}:username"
-  DOT_ES_AUTH_BASIC_PASSWORD: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"elasticsearch\") }}:password"
-  DOT_ES_ENDPOINTS: "{{ include \"dotcms.opensearch.endpoints\" . }}"
+  DB_USERNAME: '{{ printf "SECRET:%s:username" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  DB_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  DB_DNSNAME: '{{ .Values.database.host | default "db" }}'
+  DB_BASE_URL: '{{ printf "jdbc:postgresql://%s:%v/%s" (.Values.database.host | default "db") (int .Values.database.port) (include "dotcms.db.name" .) }}'
+  DOT_ES_AUTH_BASIC_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  DOT_ES_AUTH_BASIC_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  DOT_ES_ENDPOINTS: '{{ include "dotcms.opensearch.endpoints" . }}'
   DOT_ES_AUTH_TYPE: "BASIC"
-  DOT_DOTCMS_CLUSTER_ID: "{{ include \"dotcms.opensearch.cluster\" . }}"
-  DOT_MAIL_SMTP_USER: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"ses\") }}:username"
-  DOT_MAIL_SMTP_PASSWORD: "SECRET:{{ include \"dotcms.secret.shared.name\" (dict \"Values\" .Values \"secretName\" \"ses\") }}:password"
-  DOT_INITIAL_ADMIN_PASSWORD: "SECRET:{{ include \"dotcms.secret.env.name\" (dict \"Values\" .Values \"secretName\" \"dotcms-admin\") }}:password"
+  DOT_DOTCMS_CLUSTER_ID: '{{ include "dotcms.opensearch.cluster" . }}'
+  DOT_MAIL_SMTP_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  DOT_MAIL_SMTP_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  DOT_INITIAL_ADMIN_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin")) }}'
   DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
   DOT_DOTGENERATED_DEFAULT_PATH: "shared"
   CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
@@ -132,8 +130,8 @@ envVarsDefaults:
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
   DOT_COOKIES_HTTP_ONLY: "false"
   CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
-  DOT_FEATURE_FLAG_TELEMETRY: "{{ .Values.telemetry.enabled }}"
-  DOT_TELEMETRY_CLIENT: "{{ .Values.telemetry.telemetryClient }}"
+  DOT_FEATURE_FLAG_TELEMETRY: '{{ .Values.telemetry.enabled }}'
+  DOT_TELEMETRY_CLIENT: '{{ .Values.telemetry.telemetryClient }}'
   DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
 
 # Secrets configuration (minimal)
