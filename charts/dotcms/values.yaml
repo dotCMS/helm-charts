@@ -2,14 +2,141 @@ app: dotcms
 customerName: dotcms-dev
 environmentType: local-dev
 cloudProvider: local
-hostType: corp  # corp, sh
-aws:
-  region: us-east-1
-  serviceAccount:
-    roleArn: ""
-  secrets:
-    secretsArn: ""
+hostType: corp
+
+# Resources configuration
+coreServiceEnabled: true
+repository: dotcms/dotcms-test
+tag: 1.0.0-SNAPSHOT
+imagePullPolicy: IfNotPresent
+terminationGracePeriodSeconds: 10
+scaleDownBeforeUpgrade: false
+configVersion: 1
+replicas: 1
+resources:
+  requests:
+    cpu: 500m
+    memory: 5Gi
+  limits:
+    cpu: 2
+    memory: 5Gi
+javaMemory: 2
+
+# Ingress configuration (minimal defaults)
+ingress:
+  tlsSecretName: developer-certificate-secret
+  host: ""
+  hostSuffix: dotcms.local
+  # type: "nginx" or "alb"
+  type: "nginx"
+  alb:
+    securityGroups:
+      useDefaults: true
+      default: []
+      additional: []
+    hosts:
+      default:
+        enabled: true
+        hostSuffix: ".dotcms.cloud"
+        certificateArn: ""
+        sslPolicy: ""
+      additionalHosts: []
+      additionalCertificateArns: []
+      stickySessions:
+        enabled: false
+        duration: 18000
+      idleTimeout: 3600
+      accessLogs:
+        enabled: false
+        bucketOverride: ""
+        prefixOverride: ""
+      wafArn: ""
+
+# Database configuration (mandatory)
+database:
+  local:
+    enabled: true
+    image: pgvector/pgvector:pg16
+    resources:
+      requests:
+        cpu: 100m
+        memory: 3Gi
+      limits:
+        cpu: 500m
+        memory: 3Gi
+  # Leave empty if no override is needed
+  secretNameOverride: ""
+  host: "db"
+  port: 5432
+  name: dotcms
+
+# Opensearch configuration (mandatory)
+opensearch:
+  host:
+  endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
+  local:
+    enabled: true
+    image: opensearchproject/opensearch:1
+  port: 9200
+  protocol: "http"
+  javaOpts: "-Xmx1G"
+  authType: "BASIC"
+  secretNameOverride: ""
+  clusterIdOverride: ""
+
+# SMTP (Mail) configuration
+mail:
+  enabled: false
+  smtp:
+    host: ""
+    port: 587
+    auth: "true"
+    sslProtocols: "TLSv1.2"
+    secretNameOverride: ""
+
+# Redis configuration
+redis:
+  local:
+    enabled: true
+    image: redis:latest
+  host:
+  port: 6379
+  secretNameOverride: ""
+  password: ""
+  sslEnabled: true
+  sessionHost: "redis"
+  sessionPersistentPolicies: "DEFAULT"
+
+# Environment Variables Defaults (mandatory secrets)
+envVarsDefaults:
+  DB_USERNAME: '{{ printf "SECRET:%s:username" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  DB_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  DB_DNSNAME: '{{ .Values.database.host | default "db" }}'
+  DB_BASE_URL: '{{ printf "jdbc:postgresql://%s:%v/%s" (.Values.database.host | default "db") (int .Values.database.port) (include "dotcms.db.name" .) }}'
+  DOT_ES_AUTH_BASIC_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  DOT_ES_AUTH_BASIC_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  DOT_ES_ENDPOINTS: '{{ include "dotcms.opensearch.endpoints" . }}'
+  DOT_ES_AUTH_TYPE: "BASIC"
+  DOT_DOTCMS_CLUSTER_ID: '{{ include "dotcms.opensearch.cluster" . }}'
+  DOT_MAIL_SMTP_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  DOT_MAIL_SMTP_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  DOT_INITIAL_ADMIN_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin")) }}'
+  DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
+  DOT_DOTGENERATED_DEFAULT_PATH: "shared"
+  CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+  DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
+  DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
+  DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32127.0.0.1/3210.0.0.0/8172.16.0.0/12192.168.0.0/16"
+  DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
+  DOT_COOKIES_HTTP_ONLY: "false"
+  CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
+  DOT_FEATURE_FLAG_TELEMETRY: '{{ .Values.telemetry.enabled }}'
+  DOT_TELEMETRY_CLIENT: '{{ .Values.telemetry.telemetryClient }}'
+  DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
+
+# Secrets configuration (minimal)
 secrets:
+  createSecrets: true
   useSecretsStoreCSI: false
   sync:
     shared:
@@ -37,132 +164,11 @@ secrets:
         type: kubernetes.io/basic-auth
         keys:
           - "password"
-  createSecrets: true
+
 serviceAccount:
-  create: false
+  create: true
 
-coreServiceEnabled: true
-environments:
-  prod:
-    mapToTopLevelDomain: true
-affinity:
-  requireDifferentHosts: false
-telemetry:
-  enabled: false
-  telemetryClient: DEV
-ingress:
-  tlsSecretName: developer-certificate-secret
-  host: ""
-  hostSuffix: dotcms.local
-  type: nginx
-  alb:
-    certificateArn: ""
-    sslPolicy: ""
-    securityGroups: ""
-enabled: true
-repository: dotcms/dotcms_test
-tag: 1.0.0-SNAPSHOT
-imagePullPolicy: IfNotPresent
-terminationGracePeriodSeconds: 10
-scaleDownBeforeUpgrade: false
-configVersion: 1
-replicas: 1
-resources:
-  requests:
-    cpu: 0.5
-    memory: 5Gi
-  limits:
-    cpu: 2
-    memory: 5Gi
-envVariables: {}
-javaMemory: 2
-redisSessions:
-  enabled: true
-startupProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 60
-  periodSeconds: 5
-  successThreshold: 1
-  failureThreshold: 60
-  timeoutSeconds: 20
-livenessProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 1
-  periodSeconds: 30
-  successThreshold: 1
-  failureThreshold: 1
-  timeoutSeconds: 10
-readinessProbe:
-  httpGet:
-    path: /api/v1/appconfiguration
-    port: 8082
-  initialDelaySeconds: 1
-  periodSeconds: 10
-  successThreshold: 1
-  failureThreshold: 1
-  timeoutSeconds: 5
-volumes:
-  shared:
-    accessPoint: ""
-    volumeHandle: ""
-    create: true
-defaultJavaOpts: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
-additionalJavaOpts: ""
-javaHeapMax: 2g
-remoteCallSubnetBlacklist: 169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-# customEnvVars:
-#   TEST_ENV_VAR: test
-linkerd:
-  enabled: false
-opensearch:
-  host: external-host
-  endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
-  local:
-    enabled: true
-    image: opensearchproject/opensearch:1
-  port: 9200
-  protocol: http
-  auth:
-    type: BASIC
-  javaOpts: "-Xmx1G"
-database:
-  local:
-    enabled: true
-    image: pgvector/pgvector:pg16
-    resources:
-      requests:
-        cpu: 100m
-        memory: 3Gi
-      limits:
-        cpu: 500m
-        memory: 3Gi
-  host: db
-  port: 5432
-  name: dotcms
-  sslMode: prefer
-  baseUrl: "jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode={{ .Values.database.sslMode }}"
-redis:
-  enabled: true
-  local:
-    enabled: true
-    image: redis:latest
-  host: redis.local
-  password: MY_SECRET_P4SS
-  port: 6379
-  sessionHost: redis
-  sessionPersistentPolicies: DEFAULT
-  sslEnabled: false
-mail:
-  enabled: false
-  local:
-    enabled: false
-  host: smtp.gmail.com
-  port: 587
-
+# Backup configuration
 backup:
   operation: none
   fileName: backup-complete
@@ -173,3 +179,52 @@ backup:
     - "assets/timemachine/"
     - "assets/bundles/*"
     - "assets/server/sql_backups/"
+
+# Probe configuration
+startupProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  successThreshold: 1
+  failureThreshold: 60
+  timeoutSeconds: 20
+
+livenessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 30
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/v1/appconfiguration
+    port: 8082
+  initialDelaySeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 1
+  timeoutSeconds: 5
+
+# Affinity configuration
+affinity:
+  requireDifferentHosts: false
+
+# Telemetry configuration
+telemetry:
+  enabled: false
+  telemetryClient: DEV
+
+# Service mesh configuration
+linkerd:
+  enabled: false
+
+environments:
+  prod:
+    envVarsOverrides: {}
+    removeKeys: {}

@@ -3,9 +3,8 @@
 {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
-{{- $baseUrl := printf "jdbc:postgresql://%s:%v/%s?ssl.mode=prefer" .Values.database.host ( int .Values.database.port ) $dbName  }}
 {{- $namespace := .Values.customerName }}
-{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
+{{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license" "overridePath" "") | quote }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
 {{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
@@ -194,7 +193,7 @@ spec:
                   echo "Restore completed successfully."
 
               else
-                  echo "ERROR: Unknown operation '${OPERATION}'"
+                  echo "Nothing to do [OPERATION='${OPERATION}']"
               fi
           env:
             - name: OPERATION
@@ -209,7 +208,7 @@ spec:
                   name: {{ if .Values.database.local.enabled }}
                     {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
                   {{ end }}
                   key: username
             - name: DB_PASSWORD
@@ -218,7 +217,7 @@ spec:
                   name: {{ if .Values.database.local.enabled }}
                     {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
                   {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
+                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
                   {{ end }}
                   key: password
 

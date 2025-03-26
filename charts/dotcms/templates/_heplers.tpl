@@ -43,8 +43,14 @@
 */}}
 
 {{- define "dotcms.opensearch.cluster" -}}
-{{- printf "%s-%s" .Values.customerName .Values.environment -}}
+  {{- $clusterIdOverride := .Values.opensearch.clusterIdOverride | default "" | trim -}}
+  {{- if ne $clusterIdOverride "" -}}
+    {{- printf "%s" $clusterIdOverride -}}
+  {{- else -}}
+    {{- printf "%s-%s" .Values.customerName .Values.environment -}}
+  {{- end -}}
 {{- end -}}
+
 
 {{- define "dotcms.opensearch.endpoints" -}}
 {{- if $.Values.opensearch.local.enabled -}}
@@ -64,15 +70,37 @@
 */}}
 
 {{- define "dotcms.secret.env.name" -}}
-{{- printf "%s-%s-awssecret-%s-%s" $.Values.hostType .Values.customerName .Values.environment .secretName -}}
+  {{- $secretName := .secretName -}}
+  {{- $overridePath := .overridePath | default "" -}}
+  {{- $overrideValue := "" -}}
+  {{- if ne $overridePath "" -}}
+    {{- $keys := splitList "." $overridePath -}}
+    {{- $overrideValue = index .Values (index $keys 0) (index $keys 1) | default "" -}}
+  {{- end -}}
+  {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+    {{- printf "%s" $overrideValue -}}
+  {{- else -}}
+    {{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment $secretName -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.shared.name" -}}
-{{- printf "%s-%s-awssecret-%s" .Values.hostType .Values.customerName .secretName -}}
+  {{- $secretName := .secretName -}}
+  {{- $overridePath := .overridePath | default "" -}}
+  {{- $overrideValue := "" -}}
+  {{- if ne $overridePath "" -}}
+    {{- $keys := splitList "." $overridePath -}}
+    {{- $overrideValue = index .Values (index $keys 0) (index $keys 1) | default "" -}}
+  {{- end -}}
+  {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
+    {{- printf "%s" $overrideValue -}}
+  {{- else -}}
+    {{- printf "%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider $secretName -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
-{{- printf "%s-%s-awssecret" .Values.hostType .Values.customerName -}}
+{{- printf "%s-%s-%ssecret" .Values.hostType .Values.cloudProvider .Values.customerName -}}
 {{- end -}}
 
 {{/*
@@ -190,8 +218,8 @@
 # {{ include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true) .) | nindent 10 }}
 ###########################################################
 */}}
-}
 {{- define "dotcms.container.spec" -}}
+{{- $envName := .envName }}
 image: {{ include "dotcms.image" . }}
 imagePullPolicy: {{ .Values.imagePullPolicy }}
 resources:
@@ -203,128 +231,12 @@ resources:
     memory: {{ .Values.resources.limits.memory }}
 env:
   - name: DOT_SHUTDOWN_ON_STARTUP
-    value: "{{ .ShutdownOnStartupValue }}"
-  - name: CMS_JAVA_OPTS
-    value: "-Xmx{{ .Values.javaHeapMax }} {{ .Values.defaultJavaOpts }} {{ .Values.additionalJavaOpts }}"
-  - name: DOT_ES_ENDPOINTS
-    value: "{{ include "dotcms.opensearch.endpoints" . }}"
-  - name: DOT_ES_AUTH_TYPE
-    value: {{ $.Values.opensearch.auth.type }}       
-  - name: DOT_ES_AUTH_BASIC_USER
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-        key: username
-  - name: DOT_ES_AUTH_BASIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch") }}
-        key: password        
-  - name: DB_DNSNAME
-    value: {{ $.Values.database.host }}
-  - name: DB_BASE_URL
-    value: "{{ printf "jdbc:postgresql://%s:%v/%s?sslmode=prefer" .Values.database.host (int .Values.database.port) (include "dotcms.db.name" .) }}"
-  - name: DB_USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
-        key: username
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database") }}
-        key: password
-  {{- if .UseLicense }}
-  - name: LICENSE
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license") }}
-        key: license
-  {{- end }}
-  - name: DOT_INITIAL_ADMIN_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin") }}
-        key: password  
-  - name: DOT_ARCHIVE_IMPORTED_LICENSE_PACKS
-    value: 'false'
-  - name: DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC
-    value: '120'
-  - name: DOT_DOTGENERATED_DEFAULT_PATH
-    value: shared
-  - name: DOT_DOTCMS_CLUSTER_ID
-    value: {{ include "dotcms.opensearch.cluster" . }}
-  - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE
-    value: '5'
-  - name: DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS
-    value: '1'
-  - name: DOT_REINDEX_RECORDS_TO_FETCH
-    value: '10'
-  - name: DOT_SYSTEM_STATUS_API_IP_ACL
-    value: 0.0.0.0/0
-  {{- if eq $.Values.cloud_provider "aws" }}
-  - name: DOT_REMOTE_CALL_SUBNET_BLACKLIST
-    value: {{ .Values.remoteCallSubnetBlacklist }}
-  {{- end }}
-  - name: DOT_REMOTE_CALL_ALLOW_REDIRECTS
-    value: 'true'
-  - name: DOT_URI_NORMALIZATION_FORBIDDEN_REGEX
-    value: \/\/html\/.*
-  - name: DOT_COOKIES_HTTP_ONLY
-    value: 'true'
-  - name: COOKIES_SECURE_FLAG
-    value: always
-  - name: CACHE_CATEGORYPARENTSCACHE_SIZE
-    value: '25000'
-  - name: CACHE_CONTENTLETCACHE_SIZE
-    value: '15000'
-  - name: CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS
-    value: '60000'
-  - name: DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS
-    value: '1200'
-  - name: DOT_ENABLE_SYSTEM_TABLE_CONFIG_SOURCE
-    value: 'false'  
-  {{- if $.Values.telemetry.enabled }}
-  - name: DOT_FEATURE_FLAG_TELEMETRY
-    value: 'true'
-  - name: DOT_TELEMETRY_SAVE_SCHEDULE
-    value: 0 0 */8 * * ?
-  - name: DOT_TELEMETRY_CLIENT_CATEGORY
-    value: {{ .Values.telemetry.telemetryClient | quote }}
-  {{- end }}
-  - name: TOMCAT_REDIS_SESSION_ENABLED
-    value: '{{ .Values.redisSessions.enabled }}'
-  {{- if .Values.redisSessions.enabled }}
-  - name: TOMCAT_REDIS_SESSION_HOST
-    value: '{{ $.Values.redis.sessionHost }}'
-  - name: TOMCAT_REDIS_SESSION_PORT
-    value: '{{ $.Values.redis.port }}'
-  - name: TOMCAT_REDIS_SESSION_PASSWORD
-    value: '{{ $.Values.redis.password }}'
-  - name: TOMCAT_REDIS_SESSION_SSL_ENABLED
-    value: '{{ $.Values.redis.sslEnabled }}'
-  - name: TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES
-    value: '{{ $.Values.redis.sessionPersistentPolicies }}'
-  {{- end }}
-  {{- if .Values.mail.enabled }}
-  - name: DOT_MAIL_SMTP_HOST
-    value: '{{ $.Values.mail.host }}'
-  - name: DOT_MAIL_SMTP_USER
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
-        key: username
-  - name: DOT_MAIL_SMTP_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses") }}
-        key: password
-  {{- end }}
-  # Custom environment variables
+    value: {{ .ShutdownOnStartupValue | quote }}
+  {{- include "dotcms.container.spec.envVars" . | nindent 2 }}
   {{- range $key, $value := .Values.customEnvVars }}
   - name: {{ $key }}
     value: {{ $value | quote }}
-  {{- end }}  
+  {{- end }}
 volumeMounts:
   - name: dotcms-shared
     mountPath: /data/shared
@@ -469,6 +381,266 @@ else
   echo "No valid operation specified. Exiting."
 fi
 {{- end -}}
+
+{{/*
+###########################################################
+# Helper: dotcms.container.spec.envVars
+###########################################################
+# This helper generates the container environment variables block by merging
+# the default environment variables and any custom overrides.
+#
+# Usage:
+# - It reads default values from `.Values.envVarsDefaults`.
+# - It reads custom override values from `.Values.envVarsOverrides`.
+# - It also includes additional variables from the features helper.
+# - The helper uses `mergeOverwrite` to combine these maps, with overrides taking
+#   precedence over defaults.
+# - Each merged key-value pair is first evaluated with the `tpl` function to
+#   resolve dynamic expressions.
+# - If the evaluated value begins with "SECRET:" and has the format 
+#   "SECRET:secretName:key" (i.e. splits into exactly three parts),
+#   the helper calls the sub-helper `dotcms.container.spec.renderSecret` to render
+#   the variable using a `valueFrom.secretKeyRef` block.
+# - Otherwise, the variable is rendered normally using a `value:` block.
+#
+# This design ensures that secret references are handled correctly while allowing
+# standard environment variables to be defined in a centralized way.
+#
+# Example usage in a container spec:
+#   env:
+#     {{ include "dotcms.container.spec.envVars" . | nindent 2 }}
+###########################################################
+*/}}
+{{- define "dotcms.container.spec.envVars" -}}
+  {{- $context := . -}}
+  {{- $defaultEnv := .Values.envVarsDefaults | default dict }}
+  {{- $customEnv := .Values.envVarsOverrides | default dict }}
+  {{- $featuresEnv := fromYaml (include "dotcms.envVars.features" .) | default dict }}
+  {{- $mergedEnv := mergeOverwrite $defaultEnv $customEnv $featuresEnv }}
+  {{- range $key, $value := $mergedEnv }}
+  {{- $evaluatedValue := tpl $value $context }}
+  {{- if contains "SECRET:" $evaluatedValue }}
+  {{- $parts := splitList ":" $evaluatedValue -}}
+  {{- if ne (len $parts) 3 -}}
+    {{- fail (printf "Invalid secret format for env var %s: expected SECRET:secretName:key" .envName) -}}
+  {{- end -}}  
+  {{- $secretArgs := rest $parts }}
+- name: {{ $key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ first $secretArgs | quote }}
+      key: {{ $secretArgs | last | quote }}
+  {{- else }}
+- name: {{ $key }}
+  value: {{ $evaluatedValue | quote }}
+  {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{/*
+###########################################################
+# Helper: dotcms.envVars.features
+###########################################################
+# This helper generates additional environment variable mappings 
+# based on enabled feature flags. It conditionally adds blocks for 
+# features such as Analytics, Mail, Glowroot, and Redis Sessions.
+# Each block is rendered only if its corresponding feature flag is true.
+###########################################################
+*/}}
+{{- define "dotcms.envVars.features" -}}
+{{- $feat := .Values.feature | default dict }}
+{{- $redis := index $feat "redisSessions" | default dict }}
+
+{{- $analytics := $feat.analytics | default (dict) }}
+{{- if $analytics.enabled | default false }}
+DOT_FEATURE_FLAG_EXPERIMENTS: "true"
+DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION: {{ default false $analytics.autoInjection | quote }}
+DOT_ANALYTICS_IDP_URL: {{ default "" $analytics.idpUrl | quote }}
+{{- end }}
+
+{{- if .Values.mail.enabled | default false }}
+DOT_MAIL_SMTP_HOST: {{ default "" .Values.mail.smtp.host | quote }}
+DOT_MAIL_SMTP_PORT: {{ default 587 .Values.mail.smtp.port | quote }}
+DOT_MAIL_SMTP_STARTTLS_ENABLE: {{ default true .Values.mail.smtp.starttlsEnable | quote }}
+DOT_MAIL_SMTP_AUTH: {{ default true .Values.mail.smtp.auth | quote }}
+DOT_MAIL_SMTP_SSL_PROTOCOLS: {{ default "TLSv1.2" .Values.mail.smtp.sslProtocols | quote }}
+{{- end }}
+
+{{- $glow := $feat.glowroot | default (dict) }}
+{{- if $glow.enabled | default false }}
+GLOWROOT_ENABLED: "true"
+GLOWROOT_AGENT_ID: {{ $glow.agentIdOverride | default (printf "%s::%s" .Values.customerName .envName) }}
+GLOWROOT_COLLECTOR_ADDRESS: {{ $glow.collectorAddress | default "http://glowrootcentral.dotcmscloud.com:8181" }}
+{{- end }}
+
+{{- if default false (index $redis "enabled") }}
+TOMCAT_REDIS_SESSION_ENABLED: "true"
+TOMCAT_REDIS_SESSION_HOST: {{ default "" (index $redis "redisHost") | quote }}
+TOMCAT_REDIS_SESSION_PORT: {{ default 6379 (index $redis "port") | quote }}
+TOMCAT_REDIS_SESSION_USERNAME: "SECRET:{{ default "" (index $redis "password") }}:username"
+TOMCAT_REDIS_SESSION_PASSWORD: "SECRET:{{ default "" (index $redis "password") }}:password"
+TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") | quote }}
+TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
+{{- end }}
+
+{{- end }}
+
+  {{/*
+###########################################################
+# dotcms.ingress.alb.annotations
+###########################################################
+# This helper generates the ALB Ingress annotations required for configuring
+# an AWS Application Load Balancer (ALB). It outputs several key annotations:
+#
+# 1. Target Group Attributes
+# 2. Load Balancer Attributes
+# 3. SSL Policy
+# 4. Security Groups
+# 5. Certificate ARN
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.annotations" . }}
+###########################################################
+*/}}
+{{- define "dotcms.ingress.alb.annotations" -}}
+alb.ingress.kubernetes.io/target-group-attributes: {{- if "dotcms.ingress.alb.hosts.stickySessions.enabled" }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
+alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.alb.hosts.idleTimeout }}{{- if .Values.ingress.alb.hosts.accessLogs.enabled }},access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.alb.hosts.accessLogs.bucketOverride }},access_logs.s3.prefix={{ .Values.ingress.alb.hosts.accessLogs.prefixOverride }}{{- end }}
+alb.ingress.kubernetes.io/ssl-policy: {{ required "ingress.alb.hosts.default.sslPolicy is required when ingress.type is 'alb'" .Values.ingress.alb.hosts.default.sslPolicy }}
+alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGroups is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.securityGroups" .) }}
+alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
+alb.ingress.kubernetes.io/wafv2-acl-arn: {{ default "" .Values.ingress.alb.hosts.wafArn | squote }}
+{{- end }}
+
+{{/*
+###########################################################
+# dotcms.ingress.alb.certificateArns
+###########################################################
+# This helper generates a list of certificate ARNs to be used in the ALB Ingress annotation.
+#
+# It takes into account:
+# - The default certificate ARN defined in .Values.ingress.alb.hosts.default.certificateArn,
+#   if .Values.ingress.alb.hosts.default.enabled is true.
+#
+# - Additional certificate ARNs defined in .Values.ingress.alb.hosts.additionalCertificateArns.
+#
+# The ARNs are joined into a single string, separated by commas and spaces,
+# and the resulting string is wrapped in single quotes.
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.certificateArns" . }}
+###########################################################
+*/}}
+{{- define "dotcms.ingress.alb.certificateArns" -}}
+'{{- $allArns := list -}}
+{{- if .Values.ingress.alb.hosts.default.enabled -}}
+  {{- $defaultArn := .Values.ingress.alb.hosts.default.certificateArn | default "" -}}
+  {{- if $defaultArn -}}
+    {{- $allArns = append $allArns $defaultArn -}}
+  {{- end -}}
+{{- end -}}
+{{- $additionalArns := .Values.ingress.alb.hosts.additionalCertificateArns | default list -}}
+{{- range $arn := $additionalArns -}}
+  {{- $allArns = append $allArns $arn -}}
+{{- end -}}
+{{ join ", " $allArns -}}'
+{{- end -}}
+
+{{/*
+###########################################################
+# dotcms.ingress.alb.securityGroups
+###########################################################
+# This helper generates the list of security groups to be applied to the ALB Ingress.
+#
+# It works as follows:
+# - If .Values.ingress.alb.securityGroups.useDefaults is true, it includes:
+#     * The default groups defined in .Values.ingress.alb.securityGroups.default.
+#     * Additional groups defined in .Values.ingress.alb.securityGroups.additional.
+#
+# The groups are joined into a single string, separated by commas and spaces,
+# and the resulting string is wrapped in single quotes.
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.securityGroups" . }}
+###########################################################
+*/}}
+{{- define "dotcms.ingress.alb.securityGroups" -}}
+'{{- $groups := list -}}
+{{- if .Values.ingress.alb.securityGroups.useDefaults -}}
+  {{- $defaultGroups := .Values.ingress.alb.securityGroups.default | default list -}}
+  {{- $additionalGroups := .Values.ingress.alb.securityGroups.additional | default list -}}
+  {{- range $index, $group := $defaultGroups -}}
+    {{- $groups = append $groups $group -}}
+  {{- end -}}
+  {{- range $index, $group := $additionalGroups -}}
+    {{- $groups = append $groups $group -}}
+  {{- end -}}
+{{- end -}}
+{{- join ", " $groups -}}'
+{{- end -}}
+
+{{/*
+###########################################################
+# dotcms.ingress.alb.additionalHosts
+###########################################################
+# This helper renders the YAML block for additional hosts for an ALB Ingress.
+#
+# If the ingress type is "alb", it iterates over the list defined in
+# .Values.ingress.alb.hosts.additionalHosts and renders each host as:
+#
+#   - host: "host_value"
+#
+# Example usage:
+#   {{ include "dotcms.ingress.alb.additionalHosts" . }}
+###########################################################
+*/}}
+{{- define "dotcms.ingress.alb.additionalHosts" -}}
+{{- if eq .Values.ingress.type "alb" -}}
+{{- $additionalHosts := .Values.ingress.alb.hosts.additionalHosts | default list -}}
+{{ range $host := $additionalHosts -}}
+- host: {{ $host | quote }}
+{{ end }}
+{{- end -}}
+{{- end -}}
+
+{{- define "dotcms.debug.context" -}}
+{{ . | toYaml }}
+{{- end }}
+
+
+{{/*
+###########################################################
+# Helper: dotcms.customStarter.url
+###########################################################
+# This helper generates the URL for downloading the custom starter package
+# based on the merged environment configuration.
+#
+# Usage:
+# - If `starterUrlOverride` is provided in `.Values.customStarter`,
+#   that value is returned directly.
+# - Otherwise, if `repo`, `groupId`, `artifactId`, and `version` are defined in
+#   `.Values.customStarter`, the helper constructs the URL dynamically in the format:
+#   `{repo}/{groupId with dots replaced by '/'}/{artifactId}/{version}/{artifactId}-{version}.zip`
+# - If neither condition is met, an empty string is returned.
+#
+# This ensures flexibility in defining custom starter package URLs, 
+# allowing both direct overrides and dynamically constructed values.
+###########################################################
+*/}}
+{{- define "dotcms.customStarter.url" -}}
+  {{- $customStarter := .Values.customStarter | default dict }}
+  {{- if $customStarter.starterUrlOverride }}
+    {{- $customStarter.starterUrlOverride }}
+  {{- else if and $customStarter.repo $customStarter.groupId $customStarter.artifactId $customStarter.version -}}
+    {{ printf "%s/%s/%s/%s/%s-%s.zip" 
+      $customStarter.repo 
+      (replace "." "/" $customStarter.groupId) 
+      $customStarter.artifactId 
+      $customStarter.version 
+      $customStarter.artifactId 
+      $customStarter.version }}
+  {{- else -}}
+  {{- end -}}
+{{- end }}
 
 {{/*
 ###########################################################
