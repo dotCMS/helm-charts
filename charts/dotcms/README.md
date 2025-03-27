@@ -121,7 +121,7 @@ Go to the `helm-charts` directory and install the chart:
 
 # dotcms
 
-![Version: 1.0.15](https://img.shields.io/badge/Version-1.0.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 1.0.16](https://img.shields.io/badge/Version-1.0.16-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 A Helm chart for DotCMS cluster
 
@@ -193,7 +193,7 @@ A Helm chart for DotCMS cluster
 | ingress.alb.hosts.default.certificateArn | string | `""` | ARN of the TLS certificate for the ALB host |
 | ingress.alb.hosts.default.hostSuffix | string | `.dotcms.cloud` | Host suffix for default ALB host |
 | ingress.alb.hosts.default.sslPolicy | string | `""` | SSL policy name for the ALB |
-| ingress.alb.hosts.idleTimeout | int | 3600 | ALB idle timeout in seconds |
+| ingress.alb.hosts.idleTimeout | int | `3600` | ALB idle timeout in seconds |
 | ingress.alb.hosts.stickySessions | object | `{"duration":18000,"enabled":false}` | Sticky session configuration for ALB |
 | ingress.alb.hosts.stickySessions.duration | int | `18000` | Sticky session duration in seconds |
 | ingress.alb.hosts.stickySessions.enabled | bool | `false` | Enable sticky sessions |
