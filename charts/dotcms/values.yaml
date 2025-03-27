@@ -268,10 +268,10 @@ envVarsDefaults:
   # -- Full JDBC URL to connect to the database
   DB_BASE_URL: '{{ printf "jdbc:postgresql://%s:%v/%s" (.Values.database.host | default "db") (int .Values.database.port) (include "dotcms.db.name" .) }}'
   # -- OpenSearch basic auth username (from shared secret)
-  # -- Secret value using the format SECRET:<secretName>:<key>  
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_ES_AUTH_BASIC_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
   # -- OpenSearch basic auth password (from shared secret)
-  # -- Secret value using the format SECRET:<secretName>:<key>  
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_ES_AUTH_BASIC_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
   # -- List of OpenSearch endpoints
   DOT_ES_ENDPOINTS: '{{ include "dotcms.opensearch.endpoints" . }}'
@@ -280,13 +280,13 @@ envVarsDefaults:
   # -- OpenSearch cluster ID
   DOT_DOTCMS_CLUSTER_ID: '{{ include "dotcms.opensearch.cluster" . }}'
   # -- SMTP user for mail service (from SES secret)
-  # -- Secret value using the format SECRET:<secretName>:<key>  
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_MAIL_SMTP_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
   # -- SMTP password for mail service (from SES secret)
-  # -- Secret value using the format SECRET:<secretName>:<key>  
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_MAIL_SMTP_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
   # -- Initial password for DotCMS admin user
-  # -- Secret value using the format SECRET:<secretName>:<key> 
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_INITIAL_ADMIN_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin")) }}'
   # -- Minimum runtime (in seconds) for reindex threads
   # @default -- "120"
