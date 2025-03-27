@@ -1,178 +1,406 @@
+# -- Application name
+# @default -- dotcms
 app: dotcms
+# -- Customer identifier
+# @default -- dotcms-dev
 customerName: dotcms-dev
+# -- Deployment environment type (e.g., local-dev, staging, prod)
+# @default -- local-dev
 environmentType: local-dev
+# -- Cloud provider (e.g., aws, gcp, local)
+# @default -- local
 cloudProvider: local
+# -- Type of host (e.g., corp, sh)
+# @default -- corp
 hostType: corp
 
 # Resources configuration
+# -- Enable or disable the core service
+# @default -- true
 coreServiceEnabled: true
+# -- Docker image repository
+# @default -- dotcms/dotcms-test
 repository: dotcms/dotcms-test
+# -- Docker image tag
+# @default -- 1.0.0-SNAPSHOT
 tag: 1.0.0-SNAPSHOT
+# -- Image pull policy (Always, IfNotPresent, Never)
+# @default -- IfNotPresent
 imagePullPolicy: IfNotPresent
+# -- Termination grace period in seconds
+# @default -- 10
 terminationGracePeriodSeconds: 10
+# -- Scale down before upgrading
+# @default -- false
 scaleDownBeforeUpgrade: false
+# -- Configuration version for tracking changes
+# @default -- 1
 configVersion: 1
+# -- Number of replicas to deploy
+# @default -- 1
 replicas: 1
+# Resource limits and requests for the main container
 resources:
   requests:
+    # -- Minimum CPU requested
+    # @default -- 500m
     cpu: 500m
+    # -- Minimum memory requested
+    # @default -- 5Gi
     memory: 5Gi
   limits:
+    # -- Maximum CPU allowed
+    # @default -- 2
     cpu: 2
+    # -- Maximum memory allowed
+    # @default -- 5Gi
     memory: 5Gi
+# -- Maximum heap size for the JVM (in Gi)
+# @default -- 2
 javaMemory: 2
 
-# Ingress configuration (minimal defaults)
+# Ingress configuration for external access and load balancing
 ingress:
+  # -- TLS secret name used for HTTPS ingress
+  # @default -- developer-certificate-secret
   tlsSecretName: developer-certificate-secret
+  # -- Optional custom ingress host
+  # @default -- ""
   host: ""
+  # -- Default suffix for ingress hostnames
+  # @default -- dotcms.local
   hostSuffix: dotcms.local
-  # type: "nginx" or "alb"
+  # -- Ingress controller type ("nginx" or "alb")
+  # @default -- nginx
   type: "nginx"
   alb:
+    # ALB security group settings
     securityGroups:
+      # -- Use default security groups
+      # @default -- true
       useDefaults: true
+      # -- List of default security groups
+      # @default -- []
       default: []
+      # -- Additional security groups to attach
+      # @default -- []
       additional: []
+    # ALB host definitions
     hosts:
+      # -- Enable default ALB host
+      # @default -- true
       default:
         enabled: true
+        # -- Host suffix for default ALB host
+        # @default -- .dotcms.cloud
         hostSuffix: ".dotcms.cloud"
+        # -- ARN of the TLS certificate for the ALB host
+        # @default -- ""
         certificateArn: ""
+        # -- SSL policy name for the ALB
+        # @default -- ""
         sslPolicy: ""
+      # -- Additional ALB hosts
+      # @default -- []
       additionalHosts: []
+      # -- Additional certificate ARNs for ALB
+      # @default -- []
       additionalCertificateArns: []
+      # -- Sticky session configuration for ALB
       stickySessions:
+        # -- Enable sticky sessions
+        # @default -- false
         enabled: false
+        # -- Sticky session duration in seconds
+        # @default -- 18000
         duration: 18000
+      # -- ALB idle timeout in seconds
+      # @default -- 3600
       idleTimeout: 3600
+      # Access log settings for ALB
       accessLogs:
+        # -- Enable ALB access logs
+        # @default -- false
         enabled: false
+        # -- Override for the S3 bucket for access logs
+        # @default -- ""
         bucketOverride: ""
+        # -- Prefix override for access logs in S3
+        # @default -- ""
         prefixOverride: ""
+      # -- ARN of the WAF to associate with the ALB
+      # @default -- ""
       wafArn: ""
 
-# Database configuration (mandatory)
+# Database configuration settings
 database:
   local:
+    # -- Enable the local database container
+    # @default -- true
     enabled: true
+    # -- Docker image to use for the local database
+    # @default -- pgvector/pgvector:pg16
     image: pgvector/pgvector:pg16
+    # Resource requests and limits for the database container
     resources:
       requests:
+        # -- Minimum CPU requested by the database
+        # @default -- 100m
         cpu: 100m
+        # -- Minimum memory requested by the database
+        # @default -- 3Gi
         memory: 3Gi
       limits:
+        # -- Maximum CPU allowed for the database
+        # @default -- 500m
         cpu: 500m
+        # -- Maximum memory allowed for the database
+        # @default -- 3Gi
         memory: 3Gi
-  # Leave empty if no override is needed
+  # -- Override the secret name used for database credentials (leave empty to use default)
+  # @default -- ""
   secretNameOverride: ""
+  # -- Hostname for the database server
+  # @default -- db
   host: "db"
+  # -- Port number for the database server
+  # @default -- 5432
   port: 5432
+  # -- Name of the PostgreSQL database
+  # @default -- dotcms
   name: dotcms
 
 # Opensearch configuration (mandatory)
 opensearch:
+  # -- Hostname of the OpenSearch service (leave empty if using local)
   host:
+  # -- Computed endpoint URL for OpenSearch access
   endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
   local:
+    # -- Enable the local OpenSearch container
+    # @default -- true
     enabled: true
+    # -- Docker image to use for the local OpenSearch instance
+    # @default -- opensearchproject/opensearch:1
     image: opensearchproject/opensearch:1
+  # -- Port on which OpenSearch listens
+  # @default -- 9200
   port: 9200
+  # -- Protocol to use for OpenSearch communication (http or https)
+  # @default -- http
   protocol: "http"
+  # -- Java options passed to the OpenSearch JVM
+  # @default -- -Xmx1G
   javaOpts: "-Xmx1G"
+  # -- Authentication type for OpenSearch (e.g., BASIC)
+  # @default -- BASIC
   authType: "BASIC"
+  # -- Override the name of the secret containing OpenSearch credentials
+  # @default -- ""
   secretNameOverride: ""
+  # -- Override for the OpenSearch cluster identifier
+  # @default -- ""
   clusterIdOverride: ""
 
 # SMTP (Mail) configuration
 mail:
+  # -- Enable SMTP mail configuration
+  # @default -- false
   enabled: false
   smtp:
+    # -- SMTP server hostname
+    # @default -- ""
     host: ""
+    # -- SMTP server port
+    # @default -- 587
     port: 587
+    # -- Whether SMTP authentication is required
+    # @default -- "true"
     auth: "true"
+    # -- SSL/TLS protocols to use for secure connection
+    # @default -- TLSv1.2
     sslProtocols: "TLSv1.2"
+    # -- Override the name of the secret for SMTP credentials
+    # @default -- ""
     secretNameOverride: ""
 
 # Redis configuration
 redis:
   local:
+    # -- Enable the local Redis container
+    # @default -- true
     enabled: true
+    # -- Docker image used for local Redis
+    # @default -- redis:latest
     image: redis:latest
+  # -- Hostname of the external Redis instance (if not using local)
+  # @default -- ""
   host:
+  # -- Port number for Redis service
+  # @default -- 6379
   port: 6379
+  # -- Override the secret name for Redis credentials
+  # @default -- ""
   secretNameOverride: ""
+  # -- Redis password (leave empty to use secret)
+  # @default -- ""
   password: ""
+  # -- Enable SSL/TLS for Redis communication
+  # @default -- true
   sslEnabled: true
+  # -- Hostname used for Redis-backed sessions
+  # @default -- redis
   sessionHost: "redis"
+  # -- Redis session persistence policy
+  # @default -- DEFAULT
   sessionPersistentPolicies: "DEFAULT"
 
-# Environment Variables Defaults (mandatory secrets)
+# Default environment variables, including credentials and system configuration
 envVarsDefaults:
+  # -- Database username (fetched from secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DB_USERNAME: '{{ printf "SECRET:%s:username" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  # -- Database password (fetched from secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DB_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride")) }}'
+  # -- Database hostname used in JDBC connections
   DB_DNSNAME: '{{ .Values.database.host | default "db" }}'
+  # -- Full JDBC URL to connect to the database
   DB_BASE_URL: '{{ printf "jdbc:postgresql://%s:%v/%s" (.Values.database.host | default "db") (int .Values.database.port) (include "dotcms.db.name" .) }}'
+  # -- OpenSearch basic auth username (from shared secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_ES_AUTH_BASIC_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  # -- OpenSearch basic auth password (from shared secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_ES_AUTH_BASIC_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "elasticsearch" "overridePath" "opensearch.secretNameOverride")) }}'
+  # -- List of OpenSearch endpoints
   DOT_ES_ENDPOINTS: '{{ include "dotcms.opensearch.endpoints" . }}'
+  # -- Authentication type for OpenSearch (e.g., BASIC)
   DOT_ES_AUTH_TYPE: "BASIC"
+  # -- OpenSearch cluster ID
   DOT_DOTCMS_CLUSTER_ID: '{{ include "dotcms.opensearch.cluster" . }}'
+  # -- SMTP user for mail service (from SES secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_MAIL_SMTP_USER: '{{ printf "SECRET:%s:username" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  # -- SMTP password for mail service (from SES secret)
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_MAIL_SMTP_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "ses")) }}'
+  # -- Initial password for DotCMS admin user
+  # -- Secret value using the format SECRET:<secretName>:<key>
   DOT_INITIAL_ADMIN_PASSWORD: '{{ printf "SECRET:%s:password" (include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "dotcms-admin")) }}'
+  # -- Minimum runtime (in seconds) for reindex threads
+  # @default -- "120"
   DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC: "120"
+  # -- Default path for dot-generated content
+  # @default -- shared
   DOT_DOTGENERATED_DEFAULT_PATH: "shared"
+  # -- Custom JVM options for DotCMS
+  # @default -- -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork
   CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+  # -- Regex to block unwanted URIs from being processed
   DOT_URI_NORMALIZATION_FORBIDDEN_REGEX: "\\/\\/html\\/.*"
+  # -- CIDR block allowed to query the system status API
+  # @default -- 0.0.0.0/0
   DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
+  # -- List of IPs/subnets to block from making remote calls
   DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32127.0.0.1/3210.0.0.0/8172.16.0.0/12192.168.0.0/16"
+  # -- Whether remote calls should follow redirects
+  # @default -- "true"
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
+  # -- If true, cookies are set with HttpOnly flag
+  # @default -- "false"
   DOT_COOKIES_HTTP_ONLY: "false"
+  # -- Starter content URL for initializing DotCMS
   CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
+  # -- Toggle telemetry features via feature flag
   DOT_FEATURE_FLAG_TELEMETRY: '{{ .Values.telemetry.enabled }}'
+  # -- Client identifier for telemetry
   DOT_TELEMETRY_CLIENT: '{{ .Values.telemetry.telemetryClient }}'
+  # -- Cron schedule for telemetry data submission
+  # @default -- 0 0 */8 * * ?
   DOT_TELEMETRY_SAVE_SCHEDULE: "0 0 */8 * * ?"
 
-# Secrets configuration (minimal)
+# Secrets configuration for sensitive credentials and licenses
 secrets:
+  # -- Whether to create secrets automatically
+  # @default -- true
   createSecrets: true
+  # -- Use CSI driver to mount secrets from external store
+  # @default -- false
   useSecretsStoreCSI: false
+
+  # Synchronization of shared and environment-specific secrets
   sync:
     shared:
+      # Shared secret for OpenSearch credentials
       elasticsearch:
+        # -- Type of Kubernetes secret
+        # @default -- kubernetes.io/basic-auth
         type: kubernetes.io/basic-auth
+        # -- Required keys for the secret
+        # @default -- [username, password]
         keys:
           - "username"
           - "password"
+      # Shared secret for SES (SMTP credentials)
       ses:
+        # -- Type of Kubernetes secret
+        # @default -- kubernetes.io/basic-auth
         type: kubernetes.io/basic-auth
+        # -- Required keys for the secret
+        # @default -- [username, password]
         keys:
           - "username"
           - "password"
+      # Shared secret for DotCMS license
       license:
+        # -- Type of Kubernetes secret
+        # @default -- Opaque
         type: Opaque
+        # -- Required key for the license file
+        # @default -- [license]
         keys:
           - "license"
     env:
+      # Environment-specific secret for database access
       database:
+        # -- Type of Kubernetes secret
+        # @default -- kubernetes.io/basic-auth
         type: kubernetes.io/basic-auth
+        # -- Required keys for the secret
+        # @default -- [username, password]
         keys:
           - "username"
           - "password"
+      # Environment-specific secret for DotCMS admin credentials
       dotcms-admin:
+        # -- Type of Kubernetes secret
+        # @default -- kubernetes.io/basic-auth
         type: kubernetes.io/basic-auth
+        # -- Required key for the secret
+        # @default -- [password]
         keys:
           - "password"
 
+# Service account configuration for the pod
 serviceAccount:
+  # -- Whether to create a dedicated Kubernetes service account
+  # @default -- true
   create: true
 
-# Backup configuration
+# Configuration for automatic backups of persistent data
 backup:
+  # -- Backup operation type (e.g., none, scheduled, manual)
+  # @default -- none
   operation: none
+  # -- Name of the file created after successful backup
+  # @default -- backup-complete
   fileName: backup-complete
+  # -- Directory path inside the container where backups are stored
+  # @default -- /data/shared/backups
   path: "/data/shared/backups"
+  # -- List of paths to exclude from backups
+  # @default -- ["assets/tmp_upload*", "assets/dotGenerated/", "assets/timemachine/", "assets/bundles/*", "assets/server/sql_backups/"]
   excludes:
     - "assets/tmp_upload*"
     - "assets/dotGenerated/"
@@ -181,50 +409,111 @@ backup:
     - "assets/server/sql_backups/"
 
 # Probe configuration
+# Startup probe configuration to determine when the container is ready to start accepting traffic
 startupProbe:
   httpGet:
+    # -- Path to check for readiness
+    # @default -- /api/v1/appconfiguration
     path: /api/v1/appconfiguration
+    # -- Port used for the readiness probe
+    # @default -- 8082
     port: 8082
+  # -- Initial delay before the first probe is initiated
+  # @default -- 60
   initialDelaySeconds: 60
+  # -- Frequency of probe checks in seconds
+  # @default -- 5
   periodSeconds: 5
+  # -- Number of successful checks required before marking as healthy
+  # @default -- 1
   successThreshold: 1
+  # -- Number of failed checks before container is restarted
+  # @default -- 60
   failureThreshold: 60
+  # -- Time in seconds after which the probe times out
+  # @default -- 20
   timeoutSeconds: 20
 
+# Liveness probe to determine if the container should be restarted
 livenessProbe:
   httpGet:
+    # -- Path to check liveness
+    # @default -- /api/v1/appconfiguration
     path: /api/v1/appconfiguration
+    # -- Port used for the liveness probe
+    # @default -- 8082
     port: 8082
+  # -- Initial delay before the first liveness check
+  # @default -- 1
   initialDelaySeconds: 1
+  # -- Frequency of liveness checks
+  # @default -- 30
   periodSeconds: 30
+  # -- Number of successes needed for the container to be considered alive
+  # @default -- 1
   successThreshold: 1
+  # -- Number of failures before restarting the container
+  # @default -- 1
   failureThreshold: 1
+  # -- Timeout for the probe request
+  # @default -- 10
   timeoutSeconds: 10
 
+# Readiness probe to determine if the container is ready to receive traffic
 readinessProbe:
   httpGet:
+    # -- Path to check readiness
+    # @default -- /api/v1/appconfiguration
     path: /api/v1/appconfiguration
+    # -- Port used for the readiness probe
+    # @default -- 8082
     port: 8082
+  # -- Initial delay before the first readiness check
+  # @default -- 1
   initialDelaySeconds: 1
+  # -- Frequency of readiness checks
+  # @default -- 10
   periodSeconds: 10
+  # -- Number of successes required to be considered ready
+  # @default -- 1
   successThreshold: 1
+  # -- Number of failures before marking the pod as not ready
+  # @default -- 1
   failureThreshold: 1
+  # -- Timeout for the readiness probe
+  # @default -- 5
   timeoutSeconds: 5
 
 # Affinity configuration
+# Pod affinity and anti-affinity rules
 affinity:
+  # -- Enforce pods to be scheduled on different nodes
+  # @default -- false
   requireDifferentHosts: false
 
-# Telemetry configuration
+# Configuration for telemetry reporting
 telemetry:
+  # -- Enable or disable telemetry
+  # @default -- false
   enabled: false
+  # -- Client name used for telemetry reporting (e.g., DEV, PROD)
+  # @default -- DEV
   telemetryClient: DEV
 
-# Service mesh configuration
+# Service mesh configuration using Linkerd
 linkerd:
+  # -- Enable Linkerd sidecar injection
+  # @default -- false
   enabled: false
 
+# Map of environment-specific configurations. You can define multiple environments (e.g., prod, staging, auth),
+# each with its own env var overrides and removed keys.
 environments:
+  # environments.prod -- You can define multiple environments (e.g., prod, staging, auth). 'prod' is the default environment included in the chart
   prod:
+    # -- Environment variable overrides for the 'prod' environment
+    # @default -- {}
     envVarsOverrides: {}
+    # @ignore -- Keys to remove from environment variables in the 'prod' environment
+    # @default -- {}
     removeKeys: {}
