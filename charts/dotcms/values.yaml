@@ -385,8 +385,8 @@ secrets:
 # Service account configuration for the pod
 serviceAccount:
   # -- Whether to create a dedicated Kubernetes service account
-  # @default -- true
-  create: true
+  # @default -- false
+  create: false
 
 # Configuration for automatic backups of persistent data
 backup:
