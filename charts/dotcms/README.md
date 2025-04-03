@@ -253,7 +253,7 @@ Go to the `helm-charts` directory and install the chart:
 | secrets.sync.shared.ses.keys | list | `[username, password]` | Required keys for the secret |
 | secrets.sync.shared.ses.type | string | `kubernetes.io/basic-auth` | Type of Kubernetes secret |
 | secrets.useSecretsStoreCSI | bool | `false` | Use CSI driver to mount secrets from external store |
-| serviceAccount.create | bool | `true` | Whether to create a dedicated Kubernetes service account |
+| serviceAccount.create | bool | `false` | Whether to create a dedicated Kubernetes service account |
 | startupProbe.failureThreshold | int | `60` | Number of failed checks before container is restarted |
 | startupProbe.httpGet.path | string | `/api/v1/appconfiguration` | Path to check for readiness |
 | startupProbe.httpGet.port | int | `8082` | Port used for the readiness probe |
