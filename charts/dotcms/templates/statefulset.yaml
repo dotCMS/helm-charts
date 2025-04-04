@@ -199,7 +199,7 @@ spec:
             - name: OPERATION
               value: {{ .Values.backup.operation }}
             - name: DB_HOST
-              value: '{{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local'
+              value: "{{ include "dotcms.database.host" . }}"
             - name: DB_NAME
               value: {{ $dbName }}
             - name: DB_USERNAME
