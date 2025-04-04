@@ -181,6 +181,14 @@
 {{- printf "%s_%s_db" .Values.customerName .Values.environment | lower | replace "-" "_" -}}
 {{- end -}}
 
+{{- define "dotcms.database.host" -}}
+  {{- if .Values.database.local.enabled -}}
+    {{ .Values.database.host }}.{{ .Values.customerName }}.svc.cluster.local
+  {{- else -}}
+    {{ .Values.database.host }}
+  {{- end -}}
+{{- end -}}
+
 {{/*
 ###########################################################
 # Job Naming Helpers
