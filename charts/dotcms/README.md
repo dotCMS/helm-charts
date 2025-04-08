@@ -265,4 +265,6 @@ Go to the `helm-charts` directory and install the chart:
 | telemetry.enabled | bool | `false` | Enable or disable telemetry |
 | telemetry.telemetryClient | string | `DEV` | Client name used for telemetry reporting (e.g., DEV, PROD) |
 | terminationGracePeriodSeconds | int | `10` | Termination grace period in seconds |
-
+| volumes.shared.accessPoint | string | "" | Access point for the shared volume |
+| volumes.shared.create | bool | true | Whether to create the shared volume |
+| volumes.shared.volumeHandle | string | "" | Volume handle for the shared volume |
