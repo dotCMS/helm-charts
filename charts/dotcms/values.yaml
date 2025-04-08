@@ -382,6 +382,17 @@ secrets:
         keys:
           - "password"
 
+# Shared volume configuration
+volumes:
+  shared:
+    # -- Access point for the shared volume
+    # @default -- ""
+    accessPoint: ""
+    # -- Volume handle for the shared volume
+    # @default -- ""
+    volumeHandle: ""
+    create: true          
+
 # Service account configuration for the pod
 serviceAccount:
   # -- Whether to create a dedicated Kubernetes service account
