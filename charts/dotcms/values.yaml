@@ -393,7 +393,7 @@ volumes:
     volumeHandle: ""
     # -- Whether to create the shared volume
     # @default -- true
-    create: true    
+    create: true
 
 # Service account configuration for the pod
 serviceAccount:
