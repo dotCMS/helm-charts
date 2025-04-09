@@ -168,6 +168,12 @@ spec:
                   rm -f "${DB_DUMP}" "${ASSETS_BACKUP}"
                   echo "Temporary files cleaned up: ${DB_DUMP}, ${ASSETS_BACKUP}"
 
+                  # List backup directory contents
+                  echo "Listing backup directory contents:"
+                  echo "--------------------------------"
+                  ls -lh "${BACKUP_DIR}"/*.tar.gz 2>/dev/null || echo "No backup files found in ${BACKUP_DIR}"
+                  echo "--------------------------------"
+
                   # Create completion file
                   echo "{{ .Release.Revision }}" > /tmp/backup_completed
                   echo "Backup completion signal created"
