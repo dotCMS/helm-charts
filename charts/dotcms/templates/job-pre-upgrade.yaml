@@ -42,15 +42,31 @@ spec:
               
               echo "Detecting Backup/Restore operation..."
               OPERATION="{{ .Values.backup.operation }}"
+              CURRENT_REVISION="{{ .Release.Revision }}"
+              
               if [[ "$OPERATION" == "none" ]]; then
                 echo "No operation specified. Skipping Backup/Restore."
                 BACKUP_RESTORE_ENABLED="false"
               elif [[ "$OPERATION" == "backup" && "$HELM_ACTION" == "upgrade" ]]; then
-                echo "Backup operation detected during an upgrade. Allowing execution."
-                BACKUP_RESTORE_ENABLED="true"
+                echo "Backup operation detected during an upgrade. Checking if already completed for this revision..."
+                PREV_REVISION=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.backupRevision}' -n {{ $namespace }} 2>/dev/null || echo "")
+                if [[ "$PREV_REVISION" == "$CURRENT_REVISION" ]]; then
+                  echo "Backup already completed for revision $CURRENT_REVISION. Skipping..."
+                  BACKUP_RESTORE_ENABLED="false"
+                else
+                  echo "Backup not completed for revision $CURRENT_REVISION. Allowing execution."
+                  BACKUP_RESTORE_ENABLED="true"
+                fi
               elif [[ "$OPERATION" == "restore" ]]; then
-                echo "Restore operation detected. Allowing execution."
-                BACKUP_RESTORE_ENABLED="true"
+                echo "Restore operation detected. Checking if already completed for this revision..."
+                PREV_REVISION=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.restoreRevision}' -n {{ $namespace }} 2>/dev/null || echo "")
+                if [[ "$PREV_REVISION" == "$CURRENT_REVISION" ]]; then
+                  echo "Restore already completed for revision $CURRENT_REVISION. Skipping..."
+                  BACKUP_RESTORE_ENABLED="false"
+                else
+                  echo "Restore not completed for revision $CURRENT_REVISION. Allowing execution."
+                  BACKUP_RESTORE_ENABLED="true"
+                fi
               else
                 echo "Backup operation is not allowed during an installation process. Skipping..."
                 BACKUP_RESTORE_ENABLED="false"
@@ -85,6 +101,7 @@ spec:
                 --from-literal=startTime="$(date)" \
                 --from-literal=environmentName="{{ $envName }}" \
                 --from-literal=kubernetesVersion="$(kubectl version --client | grep 'Client Version' | awk '{print $3}')" \
+                --from-literal=currentRevision="$CURRENT_REVISION" \
                 --dry-run=client -o yaml | kubectl apply -f -
 
               echo "ConfigMap $CONFIGMAP_NAME created successfully."              
@@ -99,7 +116,12 @@ spec:
               else
                 echo "Scale down not enabled for {{ $envName }}. Skipping..."
               fi
-
+          volumeMounts:
+            - name: admin-shared-{{ $envName }}
+              mountPath: /tmp
+      volumes:
+        - name: admin-shared-{{ $envName }}
+          emptyDir: {}
       restartPolicy: Never
 {{- end }}
 {{- end }}
