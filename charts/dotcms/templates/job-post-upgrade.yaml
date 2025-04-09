@@ -31,6 +31,7 @@ spec:
               echo "Checking for ConfigMap {{ $configMapName }} in namespace {{ $namespace }}..."
 
               UPGRADE_REQUIRED="false"
+              BACKUP_RESTORE_ENABLED="false"
 
               if kubectl get configmap {{ $configMapName }} -n {{ $namespace }} > /dev/null 2>&1; then
                 echo "ConfigMap found. Fetching replica count..."
@@ -46,6 +47,21 @@ spec:
                 echo "No ConfigMap found for {{ $envName }}. Assuming no upgrade required."
               fi
 
+              # Check for completion files and update ConfigMap accordingly
+              if [[ -f /tmp/backup_completed ]]; then
+                echo "Backup completion file found. Updating ConfigMap..."
+                kubectl patch configmap {{ $configMapName }} -n {{ $namespace }} \
+                  --type merge \
+                  --patch '{"data":{"backupRevision":"{{ .Release.Revision }}"}}'
+                echo "ConfigMap updated with backup completion."
+              elif [[ -f /tmp/restore_completed ]]; then
+                echo "Restore completion file found. Updating ConfigMap..."
+                kubectl patch configmap {{ $configMapName }} -n {{ $namespace }} \
+                  --type merge \
+                  --patch '{"data":{"restoreRevision":"{{ .Release.Revision }}"}}'
+                echo "ConfigMap updated with restore completion."
+              fi
+
               if [ "{{ .Values.scaleDownBeforeUpgrade }}" = "true" ] || [ "$UPGRADE_REQUIRED" = "true" ] || [ "$BACKUP_RESTORE_ENABLED" = "true" ]; then
                 echo "Scaling up statefulset {{ $fullName }} to $REPLICAS replicas..."
                 kubectl scale statefulset {{ $fullName }} --replicas=$REPLICAS -n {{ $namespace }}
@@ -54,6 +70,12 @@ spec:
               else
                 echo "Scale up not required for {{ $envName }}. Skipping..."
               fi
+          volumeMounts:
+            - name: admin-shared-{{ $envName }}
+              mountPath: /tmp
+      volumes:
+        - name: admin-shared-{{ $envName }}
+          emptyDir: {}
       restartPolicy: Never
 {{- end }}
 {{- end }}

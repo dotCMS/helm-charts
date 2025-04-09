@@ -66,17 +66,41 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - |
-              if [ -f /tmp/backupRestore ]; then
-                rm /tmp/backupRestore
+              if [ -f /tmp/backup_restore ]; then
+                rm /tmp/backup_restore
               fi
 
               echo "Checking backup/restore operation status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
               BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupRestoreEnabled}' 2>/dev/null || echo "false")
+              OPERATION_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.operationState}' 2>/dev/null || echo "none")
+              REQUESTED_OPERATION="{{ .Values.backup.operation }}"
+
+              echo "Current operation state: $OPERATION_STATE"
+              echo "Requested operation: $REQUESTED_OPERATION"
 
               if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
-                echo "true" > /tmp/backupRestore
+                case "$OPERATION_STATE" in
+                  "none")
+                    if [ "$REQUESTED_OPERATION" != "none" ]; then
+                      echo "$REQUESTED_OPERATION" > /tmp/backup_restore
+                      echo "Operation signal created: $REQUESTED_OPERATION"
+                      kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+                        --type=merge \
+                        -p "{\"data\":{\"operationState\":\"${REQUESTED_OPERATION}-in-progress\"}}"
+                    else
+                      echo "No operation requested. Skipping."
+                    fi
+                    ;;
+                  *)
+                    if [ "$REQUESTED_OPERATION" != "none" ]; then
+                      echo "Operation state is '$OPERATION_STATE'. Must be 'none' to start a new operation. Reset the state first."
+                    else
+                      echo "No operation requested. Current state: $OPERATION_STATE"
+                    fi
+                    ;;
+                esac
               else
-                echo "Backup/Restore operation not detected. Skipping container"
+                echo "Backup/Restore operation not enabled. Skipping container"
               fi
           volumeMounts:
             - name: admin-shared-{{ $envName }}
@@ -90,8 +114,14 @@ spec:
             - |
               {{ if .Values.hookDebug }}set -ex {{ end }}
 
-              echo "Backup/Restore operation detected."
-              echo "Operation: ${OPERATION}"
+              echo "Checking for backup/restore operation signal..."
+              if [ ! -f /tmp/backup_restore ]; then
+                echo "No backup/restore operation signal found. Skipping container."
+                exit 0
+              fi
+
+              OPERATION=$(cat /tmp/backup_restore)
+              echo "Backup/Restore operation detected: $OPERATION"
 
               BACKUP_DIR=/data/shared/backups
               DOTCMS_DATA_DIR=/data/shared
@@ -136,7 +166,11 @@ spec:
                   echo "Backup completed successfully: ${FINAL_BACKUP}"
 
                   rm -f "${DB_DUMP}" "${ASSETS_BACKUP}"
-                  echo "Temporary files cleaned up: ${DB_DUMP}, ${ASSETS_BACKUP}"        
+                  echo "Temporary files cleaned up: ${DB_DUMP}, ${ASSETS_BACKUP}"
+
+                  # Create completion file
+                  echo "{{ .Release.Revision }}" > /tmp/backup_completed
+                  echo "Backup completion signal created"
 
               elif [[ "$OPERATION" == "restore" ]]; then
                   echo "Starting restore process..."
@@ -191,6 +225,10 @@ spec:
                   fi
 
                   echo "Restore completed successfully."
+
+                  # Create completion file
+                  echo "{{ .Release.Revision }}" > /tmp/restore_completed
+                  echo "Restore completion signal created"
 
               else
                   echo "Nothing to do [OPERATION='${OPERATION}']"
@@ -260,6 +298,31 @@ spec:
                 exec /srv/entrypoint.sh dotcms
               fi
               exit 0
+
+        - name: update-configmap
+          image: bitnami/kubectl:1.32.0
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ -f /tmp/backup_completed ]; then
+                echo "Updating ConfigMap to mark backup as completed..."
+                kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+                  --type merge \
+                  --patch '{"data":{"operationState":"backup-completed"}}'
+                echo "ConfigMap updated successfully."
+              elif [ -f /tmp/restore_completed ]; then
+                echo "Updating ConfigMap to mark restore as completed..."
+                kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+                  --type merge \
+                  --patch '{"data":{"operationState":"restore-completed"}}'
+                echo "ConfigMap updated successfully."
+              else
+                echo "No completion signal found. Skipping ConfigMap update."
+              fi
+          volumeMounts:
+            - name: admin-shared-{{ $envName }}
+              mountPath: /tmp
 
       containers:
         - name: dotcms
