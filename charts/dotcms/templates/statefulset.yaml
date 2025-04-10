@@ -72,10 +72,10 @@ spec:
 
               echo "Checking backup/restore operation status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
               BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupRestoreEnabled}' 2>/dev/null || echo "false")
-              OPERATION_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.operationState}' 2>/dev/null || echo "none")
+              OPERATION_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupState}' 2>/dev/null || echo "none")
               REQUESTED_OPERATION="{{ .Values.backup.operation }}"
 
-              echo "Current operation state: $OPERATION_STATE"
+              echo "Current backup state: $OPERATION_STATE"
               echo "Requested operation: $REQUESTED_OPERATION"
 
               # List backup directory contents
@@ -86,16 +86,28 @@ spec:
 
 
               if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
-                case "$OPERATION_STATE" in
-                  "none")
-                    if [ "$REQUESTED_OPERATION" != "none" ]; then
+                case "$REQUESTED_OPERATION" in
+                  "backup")
+                    if [ "$OPERATION_STATE" != "completed" ]; then
                       echo "$REQUESTED_OPERATION" > /tmp/backup_restore
                       echo "Operation signal created: $REQUESTED_OPERATION"
                       kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
                         --type=merge \
-                        -p "{\"data\":{\"operationState\":\"${REQUESTED_OPERATION}-in-progress\"}}"
+                        -p "{\"data\":{\"backupState\":\"in-progress\"}}"
                     else
-                      echo "No operation requested. Skipping."
+                      echo "Backup already completed. Skipping."
+                    fi
+                    ;;
+                  "restore")
+                    RESTORE_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.restoreState}' 2>/dev/null || echo "none")
+                    if [ "$RESTORE_STATE" != "completed" ]; then
+                      echo "$REQUESTED_OPERATION" > /tmp/backup_restore
+                      echo "Operation signal created: $REQUESTED_OPERATION"
+                      kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+                        --type=merge \
+                        -p "{\"data\":{\"restoreState\":\"in-progress\"}}"
+                    else
+                      echo "Restore already completed. Skipping."
                     fi
                     ;;
                   *)
@@ -325,13 +337,13 @@ spec:
                 echo "Updating ConfigMap to mark backup as completed..."
                 kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
                   --type merge \
-                  --patch '{"data":{"operationState":"backup-completed"}}'
+                  --patch '{"data":{"backupState":"completed"}}'
                 echo "ConfigMap updated successfully."
               elif [ -f /tmp/restore_completed ]; then
                 echo "Updating ConfigMap to mark restore as completed..."
                 kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
                   --type merge \
-                  --patch '{"data":{"operationState":"restore-completed"}}'
+                  --patch '{"data":{"restoreState":"completed"}}'
                 echo "ConfigMap updated successfully."
               else
                 echo "No completion signal found. Skipping ConfigMap update."
