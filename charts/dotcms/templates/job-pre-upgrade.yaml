@@ -49,26 +49,26 @@ spec:
                 BACKUP_RESTORE_ENABLED="false"
               elif [[ "$OPERATION" == "backup" && "$HELM_ACTION" == "upgrade" ]]; then
                 echo "Backup operation detected during an upgrade. Checking if already completed for this revision..."
-                PREV_REVISION=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.backupRevision}' -n {{ $namespace }} 2>/dev/null || echo "")
-                if [[ "$PREV_REVISION" == "$CURRENT_REVISION" ]]; then
-                  echo "Backup already completed for revision $CURRENT_REVISION. Skipping..."
+                PREV_BACKUP_STATE=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.backupState}' -n {{ $namespace }} 2>/dev/null || echo "none")
+                if [[ "$PREV_BACKUP_STATE" == "completed" ]]; then
+                  echo "Backup already completed. Skipping..."
                   BACKUP_RESTORE_ENABLED="false"
                 else
-                  echo "Backup not completed for revision $CURRENT_REVISION. Allowing execution."
+                  echo "Backup not completed. Allowing execution."
                   BACKUP_RESTORE_ENABLED="true"
                 fi
               elif [[ "$OPERATION" == "restore" ]]; then
                 echo "Restore operation detected. Checking if already completed for this revision..."
-                PREV_REVISION=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.restoreRevision}' -n {{ $namespace }} 2>/dev/null || echo "")
-                if [[ "$PREV_REVISION" == "$CURRENT_REVISION" ]]; then
-                  echo "Restore already completed for revision $CURRENT_REVISION. Skipping..."
+                PREV_RESTORE_STATE=$(kubectl get configmap $CONFIGMAP_NAME -o=jsonpath='{.data.restoreState}' -n {{ $namespace }} 2>/dev/null || echo "none")
+                if [[ "$PREV_RESTORE_STATE" == "completed" ]]; then
+                  echo "Restore already completed. Skipping..."
                   BACKUP_RESTORE_ENABLED="false"
                 else
-                  echo "Restore not completed for revision $CURRENT_REVISION. Allowing execution."
+                  echo "Restore not completed. Allowing execution."
                   BACKUP_RESTORE_ENABLED="true"
                 fi
               else
-                echo "Backup operation is not allowed during an installation process. Skipping..."
+                echo "Operation not recognized. Skipping..."
                 BACKUP_RESTORE_ENABLED="false"
               fi
 
@@ -84,7 +84,7 @@ spec:
               CURR_VERSION="{{ .Values.configVersion }}"
               echo "Current Version: $CURR_VERSION, Previous Version: $PREV_VERSION"
 
-              if [[ "$PREV_VERSION" != "$CURR_VERSION" || ("$BACKUP_RESTORE_ENABLED" == "true" && "$OPERATION" == "restore") ]]; then
+              if [[ "$PREV_VERSION" != "$CURR_VERSION" || "$BACKUP_RESTORE_ENABLED" == "true" ]]; then
                 UPGRADE_REQUIRED="true"
               else
                 UPGRADE_REQUIRED="false"
