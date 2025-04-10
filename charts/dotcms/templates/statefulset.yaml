@@ -78,6 +78,12 @@ spec:
               echo "Current operation state: $OPERATION_STATE"
               echo "Requested operation: $REQUESTED_OPERATION"
 
+              # List backup directory contents
+              echo "Listing backup directory contents:"
+              echo "--------------------------------"
+              ls -lh /data/shared/backups/*.tar.gz 2>/dev/null || echo "No backup files found in /data/shared/backups"
+              echo "--------------------------------"
+
               if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
                 case "$OPERATION_STATE" in
                   "none")
@@ -105,6 +111,8 @@ spec:
           volumeMounts:
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
+            - name: dotcms-shared
+              mountPath: /data/shared
 
         - name: backup-restore
           image: pgvector/pgvector:pg16
