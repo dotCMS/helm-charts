@@ -84,6 +84,7 @@ spec:
               ls -lh /data/shared/backups/*.tar.gz 2>/dev/null || echo "No backup files found in /data/shared/backups"
               echo "--------------------------------"
 
+
               if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
                 case "$OPERATION_STATE" in
                   "none")
@@ -130,6 +131,7 @@ spec:
 
               OPERATION=$(cat /tmp/backup_restore)
               echo "Backup/Restore operation detected: $OPERATION"
+              echo "Checking for backup/restore operation signal..."
 
               BACKUP_DIR=/data/shared/backups
               DOTCMS_DATA_DIR=/data/shared
