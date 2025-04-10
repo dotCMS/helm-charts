@@ -46,7 +46,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - job
-            - {{ include "dotcms.preUpgradeJobName" . }}-{{ .Release.Revision }}
+            - {{ include "dotcms.preUpgradeJobName" . }}
 
         {{- if .Values.database.local.enabled }}
         - name: wait-for-db

@@ -8,7 +8,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dotcms.postUpgradeJobName" . }}-{{ .Release.Revision }}
+  name: {{ include "dotcms.postUpgradeJobName" . }}
   namespace: {{ .Values.customerName }}
   labels:
     helm.sh-revision: "{{ .Release.Revision }}"  
