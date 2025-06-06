@@ -303,7 +303,7 @@ envVarsDefaults:
   # @default -- 0.0.0.0/0
   DOT_SYSTEM_STATUS_API_IP_ACL: "0.0.0.0/0"
   # -- List of IPs/subnets to block from making remote calls
-  DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32127.0.0.1/3210.0.0.0/8172.16.0.0/12192.168.0.0/16"
+  DOT_REMOTE_CALL_SUBNET_BLACKLIST: "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
   # -- Whether remote calls should follow redirects
   # @default -- "true"
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
