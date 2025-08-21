@@ -26,6 +26,7 @@ spec:
       fullname: {{ $fullName }}
   serviceName: {{ $fullName }}
   replicas: {{ .Values.replicas }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
   template:
     metadata:
       annotations:

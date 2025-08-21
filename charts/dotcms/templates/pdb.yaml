@@ -1,0 +1,25 @@
+{{- if .Values.coreServiceEnabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $fullName := include "dotcms.env.fullName" . }}
+{{- if or (eq (toString .Values.pdb.enabled) "true") (and (eq (toString .Values.pdb.enabled) "auto") (gt (int .Values.replicas) 1)) }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ include "dotcms.name.customer" . }}
+  name: {{ $fullName }}-pdb
+  labels:
+    {{- if eq $.Values.cloudProvider "aws" }}
+    app.dotcms.cloud/aws-region: {{ $.Values.aws.region }}
+    {{- end }}
+    app.kubernetes.io/instance: {{ $.Values.customerName }}
+spec:
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      fullname: {{ $fullName }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
