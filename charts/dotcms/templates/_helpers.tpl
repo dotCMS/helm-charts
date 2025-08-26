@@ -514,12 +514,15 @@ TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") |
 TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
 {{- end }}
 {{- if .Values.prometheus.enabled | default false }}
-DOT_METRICS_TAG_APP: {{ .Values.app | quote }}
-DOT_METRICS_TAG_ENV: {{ .Values.environment | quote }}
+{{/*
+These are currently being calculated within the app
 DOT_METRICS_TAG_VER: {{ include "dotcms.version" . | quote }}
-DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
 DOT_METRICS_TAG_FULLNAME: {{ include "dotcms.env.fullName" . | quote }}
 DOT_METRICS_TAG_HOSTNAME: "FIELD:metadata.name"
+*/}}
+DOT_METRICS_TAG_APP: {{ .Values.app | quote }}
+DOT_METRICS_TAG_ENV: {{ .Values.environment | quote }}
+DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
 {{- end }}
 
 {{- end }}
