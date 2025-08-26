@@ -32,6 +32,7 @@ spec:
       annotations:
         {{- if $.Values.linkerd.enabled }}
         linkerd.io/inject: enabled
+        config.alpha.linkerd.io/proxy-wait-before-exit-seconds: {{ $.Values.linkerd.proxyWaitBeforeExitSeconds | quote }}
         {{- end }}
         {{- if $.Values.prometheus.enabled }}
         prometheus.io/scrape: {{ $.Values.prometheus.annotations.scrape | quote }}
