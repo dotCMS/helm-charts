@@ -13,21 +13,21 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/tags: dotcms.client.name.short={{ .Values.customerName }}, VantaOwner=example@dotcms.com, VantaDescription=ALB for {{ .Values.customerName }} {{ .Values.environment }}, VantaNonProd=true
-    alb.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.alb.healthcheck.backendProtocol | default "HTTP" }}
-    alb.ingress.kubernetes.io/healthcheck-protocol: {{ .Values.ingress.alb.healthcheck.protocol | default "HTTP" }}
+    alb.ingress.kubernetes.io/backend-protocol: {{ dig "ingress" "alb" "healthcheck" "backendProtocol" "HTTP" .Values }}
+    alb.ingress.kubernetes.io/healthcheck-protocol: {{ dig "ingress" "alb" "healthcheck" "protocol" "HTTP" .Values }}
     alb.ingress.kubernetes.io/healthcheck-port: '{{ .Values.readinessProbe.httpGet.port }}'
     alb.ingress.kubernetes.io/healthcheck-path: '{{ .Values.readinessProbe.httpGet.path }}'
-    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '{{ .Values.ingress.alb.healthcheck.intervalSeconds | default "10" }}'
-    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '{{ .Values.ingress.alb.healthcheck.timeoutSeconds | default "5" }}'
-    alb.ingress.kubernetes.io/success-codes: '{{ .Values.ingress.alb.healthcheck.successCodes | default "200" }}'
-    alb.ingress.kubernetes.io/healthy-threshold-count: '{{ .Values.ingress.alb.healthcheck.healthyThresholdCount | default "3" }}'
-    alb.ingress.kubernetes.io/unhealthy-threshold-count: '{{ .Values.ingress.alb.healthcheck.unhealthyThresholdCount | default "2" }}'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '{{ dig "ingress" "alb" "healthcheck" "intervalSeconds" "10" .Values }}'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '{{ dig "ingress" "alb" "healthcheck" "timeoutSeconds" "5" .Values }}'
+    alb.ingress.kubernetes.io/success-codes: '{{ dig "ingress" "alb" "healthcheck" "successCodes" "200" .Values }}'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '{{ dig "ingress" "alb" "healthcheck" "healthyThresholdCount" "3" .Values }}'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '{{ dig "ingress" "alb" "healthcheck" "unhealthyThresholdCount" "2" .Values }}'
     alb.ingress.kubernetes.io/target-group-attributes: >-
-      stickiness.enabled={{ .Values.ingress.alb.targetGroup.stickiness.enabled | default true }},
-      stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.targetGroup.stickiness.cookieDuration | default "18000" }},
-      slow_start.duration_seconds={{ .Values.ingress.alb.targetGroup.slowStart.durationSeconds | default "120" }},
-      deregistration_delay.timeout_seconds={{ .Values.ingress.alb.targetGroup.deregistrationDelay.timeoutSeconds | default "60" }},
-      load_balancing.algorithm.type={{ .Values.ingress.alb.targetGroup.loadBalancing.algorithmType | default "least_outstanding_requests" }}
+      stickiness.enabled={{ dig "ingress" "alb" "targetGroup" "stickiness" "enabled" true .Values }},
+      stickiness.lb_cookie.duration_seconds={{ dig "ingress" "alb" "targetGroup" "stickiness" "cookieDuration" "18000" .Values }},
+      slow_start.duration_seconds={{ dig "ingress" "alb" "targetGroup" "slowStart" "durationSeconds" "120" .Values }},
+      deregistration_delay.timeout_seconds={{ dig "ingress" "alb" "targetGroup" "deregistrationDelay" "timeoutSeconds" "60" .Values }},
+      load_balancing.algorithm.type={{ dig "ingress" "alb" "targetGroup" "loadBalancing" "algorithmType" "least_outstanding_requests" .Values }}
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
     {{- if eq .Values.ingress.type "alb" }}
