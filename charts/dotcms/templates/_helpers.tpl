@@ -20,6 +20,14 @@
 {{- printf "%s:%s" $repository $tag -}}
 {{- end -}}
 
+{{- define "dotcms.version" -}}
+{{- if eq .Values.tag "1.0.0-SNAPSHOT" -}}
+SNAPSHOT
+{{- else -}}
+{{- .Values.tag | regexFind "^[^_]+" -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "dotcms.env.fullName" -}}
 {{- printf "%s-%s-%s" .Values.app .Values.customerName .Values.environment -}}
 {{- end -}}
@@ -438,6 +446,12 @@ fi
     secretKeyRef:
       name: {{ first $secretArgs | quote }}
       key: {{ $secretArgs | last | quote }}
+  {{- else if contains "FIELD:" $evaluatedValue }}
+  {{- $fieldPath := $evaluatedValue | replace "FIELD:" "" }}
+- name: {{ $key }}
+  valueFrom:
+    fieldRef:
+      fieldPath: {{ $fieldPath | quote }}
   {{- else }}
 - name: {{ $key }}
   value: {{ $evaluatedValue | quote }}
@@ -489,6 +503,14 @@ TOMCAT_REDIS_SESSION_USERNAME: "SECRET:{{ default "" (index $redis "password") }
 TOMCAT_REDIS_SESSION_PASSWORD: "SECRET:{{ default "" (index $redis "password") }}:password"
 TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") | quote }}
 TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
+{{- end }}
+{{- if .Values.prometheus.enabled | default false }}
+DOT_METRICS_TAG_APP: {{ .Values.app | quote }}
+DOT_METRICS_TAG_ENV: {{ .Values.environment | quote }}
+DOT_METRICS_TAG_VER: {{ include "dotcms.version" . | quote }}
+DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
+DOT_METRICS_TAG_FULLNAME: {{ include "dotcms.env.fullName" . | quote }}
+DOT_METRICS_TAG_HOSTNAME: "FIELD:metadata.name"
 {{- end }}
 
 {{- end }}

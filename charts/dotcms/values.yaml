@@ -525,6 +525,23 @@ telemetry:
   # @default -- DEV
   telemetryClient: DEV
 
+# Prometheus metrics configuration
+prometheus:
+  # -- Enable or disable Prometheus metrics scraping annotations
+  # @default -- false
+  enabled: false
+  # -- Prometheus scraping annotations configuration
+  annotations:
+    # -- Enable or disable scraping
+    # @default -- "true"
+    scrape: "true"
+    # -- Port for Prometheus to scrape metrics
+    # @default -- "8090"
+    port: "8090"
+    # -- Path for Prometheus to scrape metrics
+    # @default -- "/dotmgt/metrics"
+    path: "/dotmgt/metrics"
+
 # Service mesh configuration using Linkerd
 linkerd:
   # -- Enable Linkerd sidecar injection
