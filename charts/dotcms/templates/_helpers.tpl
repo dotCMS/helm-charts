@@ -245,15 +245,26 @@ resources:
   limits:
     cpu: '{{ .Values.resources.limits.cpu }}'
     memory: {{ .Values.resources.limits.memory }}
+{{- if not .IsUpgradeJob }}
 ports:
-  - name: http
-    containerPort: 8082
+  - containerPort: 8080
+    name: api
+    protocol: TCP
+  - containerPort: 8081
+    name: web-insecure
+    protocol: TCP
+  - containerPort: 8082
+    name: web-secure
+    protocol: TCP
+  - containerPort: 5701
+    name: hazelcast
     protocol: TCP
   {{- if or (.Values.management.enabled | default false) (.Values.prometheus.enabled | default false) }}
   - name: management
     containerPort: {{ .Values.management.port }}
     protocol: TCP
   {{- end }}
+{{- end }}
 env:
   - name: DOT_SHUTDOWN_ON_STARTUP
     value: {{ .ShutdownOnStartupValue | quote }}
@@ -274,17 +285,6 @@ volumeMounts:
     name: {{ include "dotcms.secret.provider.className" .  }}
     readOnly: true
   {{- end }}
-{{- if not .IsUpgradeJob }}
-ports:
-  - containerPort: 8080
-    name: api
-  - containerPort: 8081
-    name: web-insecure
-  - containerPort: 8082
-    name: web-secure
-  - containerPort: 5701
-    name: hazelcast
-{{- end }}
 {{- if .EnableProbes }}
 startupProbe:
   httpGet:
