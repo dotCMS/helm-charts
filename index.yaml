@@ -27,6 +27,19 @@ entries:
   dotcms:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-08-26T10:08:00.959595089Z"
+    description: A Helm chart for DotCMS cluster
+    digest: a8c8581422d4180ef08f81ceb0867575926c8a0c8c74e18ad22c7072149e6cfc
+    maintainers:
+    - email: daniel.colina@dotcms.com
+      name: dcolina
+    name: dotcms
+    type: application
+    urls:
+    - https://github.com/dotCMS/helm-charts/releases/download/dotcms-1.0.25/dotcms-1.0.25.tgz
+    version: 1.0.25
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-07-14T07:34:17.528306025Z"
     description: A Helm chart for DotCMS cluster
     digest: 97f3dad5ffbd56207002afbfe078275d3ebb6965def963dd0aa783513f23ad75
@@ -321,4 +334,4 @@ entries:
     urls:
     - https://github.com/dotCMS/helm-charts/releases/download/dotcms-1.0.0/dotcms-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-14T07:34:17.528466697Z"
+generated: "2025-08-26T10:08:00.959789232Z"
