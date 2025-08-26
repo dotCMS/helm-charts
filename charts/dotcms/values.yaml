@@ -39,6 +39,18 @@ configVersion: 1
 # -- Number of replicas to deploy
 # @default -- 1
 replicas: 1
+# -- Pod management policy for the StatefulSet (OrderedReady, Parallel)
+# @default -- OrderedReady
+podManagementPolicy: OrderedReady
+
+# PodDisruptionBudget configuration
+pdb:
+  # -- Enable PodDisruptionBudget (auto: enabled when replicas > 1, true: always enabled, false: disabled)
+  # @default -- auto
+  enabled: auto
+  # -- Minimum number of pods that must be available during disruptions
+  # @default -- 1
+  minAvailable: 1
 # Resource limits and requests for the main container
 resources:
   requests:
