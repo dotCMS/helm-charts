@@ -35,7 +35,7 @@ spec:
         {{- end }}
         {{- if $.Values.prometheus.enabled }}
         prometheus.io/scrape: {{ $.Values.prometheus.annotations.scrape | quote }}
-        prometheus.io/port: {{ $.Values.prometheus.annotations.port | quote }}
+        prometheus.io/port: {{ $.Values.management.port | quote }}
         prometheus.io/path: {{ $.Values.prometheus.annotations.path | quote }}
         {{- end }}
       labels:

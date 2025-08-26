@@ -14,10 +14,10 @@ spec:
       port: 8082
       targetPort: 8082
       protocol: TCP
-    {{- if $.Values.prometheus.enabled | default false }}
+    {{- if or ($.Values.management.enabled | default false) ($.Values.prometheus.enabled | default false) }}
     - name: management
-      port: {{ $.Values.prometheus.annotations.port }}
-      targetPort: {{ $.Values.prometheus.annotations.port }}
+      port: {{ $.Values.management.port }}
+      targetPort: {{ $.Values.management.port }}
       protocol: TCP
     {{- end }}
   type: NodePort

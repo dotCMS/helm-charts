@@ -249,9 +249,9 @@ ports:
   - name: http
     containerPort: 8082
     protocol: TCP
-  {{- if .Values.prometheus.enabled | default false }}
+  {{- if or (.Values.management.enabled | default false) (.Values.prometheus.enabled | default false) }}
   - name: management
-    containerPort: {{ .Values.prometheus.annotations.port }}
+    containerPort: {{ .Values.management.port }}
     protocol: TCP
   {{- end }}
 env:

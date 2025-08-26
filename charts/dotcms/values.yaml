@@ -525,6 +525,15 @@ telemetry:
   # @default -- DEV
   telemetryClient: DEV
 
+# Management port configuration
+management:
+  # -- Enable or disable management port exposure
+  # @default -- false
+  enabled: false
+  # -- Management port number for health checks, metrics, and admin endpoints
+  # @default -- 8090
+  port: 8090
+
 # Prometheus metrics configuration
 prometheus:
   # -- Enable or disable Prometheus metrics scraping annotations
@@ -535,9 +544,9 @@ prometheus:
     # -- Enable or disable scraping
     # @default -- "true"
     scrape: "true"
-    # -- Port for Prometheus to scrape metrics
-    # @default -- "8090"
-    port: "8090"
+    # -- Port for Prometheus to scrape metrics (uses management port by default)
+    # @default -- management.port
+    port: "{{ .Values.management.port }}"
     # -- Path for Prometheus to scrape metrics
     # @default -- "/dotmgt/metrics"
     path: "/dotmgt/metrics"
