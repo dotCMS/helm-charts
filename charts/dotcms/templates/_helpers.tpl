@@ -245,6 +245,15 @@ resources:
   limits:
     cpu: '{{ .Values.resources.limits.cpu }}'
     memory: {{ .Values.resources.limits.memory }}
+ports:
+  - name: http
+    containerPort: 8082
+    protocol: TCP
+  {{- if .Values.prometheus.enabled | default false }}
+  - name: management
+    containerPort: {{ .Values.prometheus.annotations.port }}
+    protocol: TCP
+  {{- end }}
 env:
   - name: DOT_SHUTDOWN_ON_STARTUP
     value: {{ .ShutdownOnStartupValue | quote }}
