@@ -33,10 +33,15 @@ spec:
         {{- if $.Values.linkerd.enabled }}
         linkerd.io/inject: enabled
         {{- end }}
+        {{- if $.Values.prometheus.enabled }}
+        prometheus.io/scrape: {{ $.Values.prometheus.annotations.scrape | quote }}
+        prometheus.io/port: {{ $.Values.management.port | quote }}
+        prometheus.io/path: {{ $.Values.prometheus.annotations.path | quote }}
+        {{- end }}
       labels:
         app: {{ $.Values.app }}
         env: {{ .Values.environment }}
-        ver: {{ .Values.environment }}
+        ver: {{ include "dotcms.version" . }}
         cust: {{ $.Values.customerName }}
         fullname: {{ $fullName }}
     spec:
