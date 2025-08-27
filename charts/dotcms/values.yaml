@@ -143,6 +143,54 @@ ingress:
       # -- ARN of the WAF to associate with the ALB
       # @default -- ""
       wafArn: ""
+      # Health check configuration for ALB
+      healthcheck:
+        # -- Backend protocol for health checks (HTTP or HTTPS)
+        # @default -- HTTP
+        backendProtocol: HTTP
+        # -- Protocol for health checks (HTTP or HTTPS)
+        # @default -- HTTP
+        protocol: HTTP
+        # -- Interval between health checks in seconds
+        # @default -- 10
+        intervalSeconds: 10
+        # -- Timeout for health checks in seconds
+        # @default -- 5
+        timeoutSeconds: 5
+        # -- Success codes for health checks
+        # @default -- "200"
+        successCodes: "200"
+        # -- Number of consecutive successful health checks before marking healthy
+        # @default -- 3
+        healthyThresholdCount: 3
+        # -- Number of consecutive failed health checks before marking unhealthy
+        # @default -- 2
+        unhealthyThresholdCount: 2
+      # Target group attributes for ALB
+      targetGroup:
+        # Stickiness configuration
+        stickiness:
+          # -- Enable sticky sessions
+          # @default -- true
+          enabled: true
+          # -- Cookie duration for sticky sessions in seconds
+          # @default -- 18000
+          cookieDuration: 18000
+        # Slow start configuration
+        slowStart:
+          # -- Slow start duration in seconds
+          # @default -- 120
+          durationSeconds: 120
+        # Deregistration delay configuration
+        deregistrationDelay:
+          # -- Deregistration delay timeout in seconds
+          # @default -- 60
+          timeoutSeconds: 60
+        # Load balancing algorithm configuration
+        loadBalancing:
+          # -- Load balancing algorithm type
+          # @default -- least_outstanding_requests
+          algorithmType: least_outstanding_requests
 
 # Database configuration settings
 database:
@@ -438,39 +486,39 @@ backup:
 startupProbe:
   httpGet:
     # -- Path to check for readiness
-    # @default -- /api/v1/appconfiguration
-    path: /api/v1/appconfiguration
-    # -- Port used for the readiness probe
-    # @default -- 8082
-    port: 8082
+    # @default -- /dotmgmt/readyz
+    path: /dotmgmt/readyz
+    # -- Port used for the readiness probe (defaults to management port if enabled)
+    # @default -- 8090
+    port: 8090
   # -- Initial delay before the first probe is initiated
-  # @default -- 60
-  initialDelaySeconds: 60
+  # @default -- 30
+  initialDelaySeconds: 30
   # -- Frequency of probe checks in seconds
-  # @default -- 5
-  periodSeconds: 5
+  # @default -- 10
+  periodSeconds: 10
   # -- Number of successful checks required before marking as healthy
   # @default -- 1
   successThreshold: 1
   # -- Number of failed checks before container is restarted
-  # @default -- 60
-  failureThreshold: 60
+  # @default -- 90
+  failureThreshold: 90
   # -- Time in seconds after which the probe times out
-  # @default -- 20
-  timeoutSeconds: 20
+  # @default -- 5
+  timeoutSeconds: 5
 
 # Liveness probe to determine if the container should be restarted
 livenessProbe:
   httpGet:
     # -- Path to check liveness
-    # @default -- /api/v1/appconfiguration
-    path: /api/v1/appconfiguration
+    # @default -- /dotmgmt/livez
+    path: /dotmgmt/livez
     # -- Port used for the liveness probe
-    # @default -- 8082
-    port: 8082
+    # @default -- 8090
+    port: 8090
   # -- Initial delay before the first liveness check
-  # @default -- 1
-  initialDelaySeconds: 1
+  # @default -- 120
+  initialDelaySeconds: 120
   # -- Frequency of liveness checks
   # @default -- 30
   periodSeconds: 30
@@ -478,8 +526,8 @@ livenessProbe:
   # @default -- 1
   successThreshold: 1
   # -- Number of failures before restarting the container
-  # @default -- 1
-  failureThreshold: 1
+  # @default -- 3
+  failureThreshold: 3
   # -- Timeout for the probe request
   # @default -- 10
   timeoutSeconds: 10
@@ -488,23 +536,23 @@ livenessProbe:
 readinessProbe:
   httpGet:
     # -- Path to check readiness
-    # @default -- /api/v1/appconfiguration
-    path: /api/v1/appconfiguration
+    # @default -- /dotmgmt/readyz
+    path: /dotmgmt/readyz
     # -- Port used for the readiness probe
-    # @default -- 8082
-    port: 8082
+    # @default -- 8090
+    port: 8090
   # -- Initial delay before the first readiness check
-  # @default -- 1
-  initialDelaySeconds: 1
-  # -- Frequency of readiness checks
   # @default -- 10
-  periodSeconds: 10
+  initialDelaySeconds: 10
+  # -- Frequency of readiness checks
+  # @default -- 5
+  periodSeconds: 5
   # -- Number of successes required to be considered ready
   # @default -- 1
   successThreshold: 1
   # -- Number of failures before marking the pod as not ready
-  # @default -- 1
-  failureThreshold: 1
+  # @default -- 2
+  failureThreshold: 2
   # -- Timeout for the readiness probe
   # @default -- 5
   timeoutSeconds: 5
@@ -545,8 +593,8 @@ prometheus:
     # @default -- "true"
     scrape: "true"
     # -- Port for Prometheus to scrape metrics (uses management port by default)
-    # @default -- management.port
-    port: "{{ .Values.management.port }}"
+    # @default -- 8090
+    port: 8090
     # -- Path for Prometheus to scrape metrics
     # @default -- "/dotmgt/metrics"
     path: "/dotmgt/metrics"
@@ -556,6 +604,9 @@ linkerd:
   # -- Enable Linkerd sidecar injection
   # @default -- false
   enabled: false
+  # -- Proxy wait before exit seconds (allows graceful shutdown)
+  # @default -- 90
+  proxyWaitBeforeExitSeconds: 90
 
 # Map of environment-specific configurations. You can define multiple environments (e.g., prod, staging, auth),
 # each with its own env var overrides and removed keys.
@@ -568,3 +619,52 @@ environments:
     # @ignore -- Keys to remove from environment variables in the 'prod' environment
     # @default -- {}
     removeKeys: {}
+    # Ensure ingress configuration is available in environment context
+    ingress:
+      alb:
+        healthcheck:
+          # -- Backend protocol for health checks (HTTP or HTTPS)
+          # @default -- HTTP
+          backendProtocol: HTTP
+          # -- Protocol for health checks (HTTP or HTTPS)
+          # @default -- HTTP
+          protocol: HTTP
+          # -- Interval between health checks in seconds
+          # @default -- 10
+          intervalSeconds: 10
+          # -- Timeout for health checks in seconds
+          # @default -- 5
+          timeoutSeconds: 5
+          # -- Success codes for health checks
+          # @default -- "200"
+          successCodes: "200"
+          # -- Number of consecutive successful health checks before marking healthy
+          # @default -- 3
+          healthyThresholdCount: 3
+          # -- Number of consecutive failed health checks before marking unhealthy
+          # @default -- 2
+          unhealthyThresholdCount: 2
+        targetGroup:
+          # Stickiness configuration
+          stickiness:
+            # -- Enable sticky sessions
+            # @default -- true
+            enabled: true
+            # -- Cookie duration for sticky sessions in seconds
+            # @default -- 18000
+            cookieDuration: 18000
+          # Slow start configuration
+          slowStart:
+            # -- Slow start duration in seconds
+            # @default -- 120
+            durationSeconds: 120
+          # Deregistration delay configuration
+          deregistrationDelay:
+            # -- Deregistration delay timeout in seconds
+            # @default -- 60
+            timeoutSeconds: 60
+          # Load balancing algorithm configuration
+          loadBalancing:
+            # -- Load balancing algorithm type
+            # @default -- least_outstanding_requests
+            algorithmType: least_outstanding_requests
