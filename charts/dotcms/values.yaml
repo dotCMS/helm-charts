@@ -593,8 +593,8 @@ prometheus:
     # @default -- "true"
     scrape: "true"
     # -- Port for Prometheus to scrape metrics (uses management port by default)
-    # @default -- management.port
-    port: "{{ .Values.management.port }}"
+    # @default -- 8090
+    port: 8090
     # -- Path for Prometheus to scrape metrics
     # @default -- "/dotmgt/metrics"
     path: "/dotmgt/metrics"
