@@ -486,8 +486,8 @@ backup:
 startupProbe:
   httpGet:
     # -- Path to check for readiness
-    # @default -- /dotmgmt/readyz
-    path: /dotmgmt/readyz
+    # @default -- /dotmgt/readyz
+    path: /dotmgt/readyz
     # -- Port used for the readiness probe (defaults to management port if enabled)
     # @default -- 8090
     port: 8090
@@ -511,8 +511,8 @@ startupProbe:
 livenessProbe:
   httpGet:
     # -- Path to check liveness
-    # @default -- /dotmgmt/livez
-    path: /dotmgmt/livez
+    # @default -- /dotmgt/livez
+    path: /dotmgt/livez
     # -- Port used for the liveness probe
     # @default -- 8090
     port: 8090
@@ -536,8 +536,8 @@ livenessProbe:
 readinessProbe:
   httpGet:
     # -- Path to check readiness
-    # @default -- /dotmgmt/readyz
-    path: /dotmgmt/readyz
+    # @default -- /dotmgt/readyz
+    path: /dotmgt/readyz
     # -- Port used for the readiness probe
     # @default -- 8090
     port: 8090
