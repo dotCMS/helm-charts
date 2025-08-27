@@ -619,3 +619,52 @@ environments:
     # @ignore -- Keys to remove from environment variables in the 'prod' environment
     # @default -- {}
     removeKeys: {}
+    # Ensure ingress configuration is available in environment context
+    ingress:
+      alb:
+        healthcheck:
+          # -- Backend protocol for health checks (HTTP or HTTPS)
+          # @default -- HTTP
+          backendProtocol: HTTP
+          # -- Protocol for health checks (HTTP or HTTPS)
+          # @default -- HTTP
+          protocol: HTTP
+          # -- Interval between health checks in seconds
+          # @default -- 10
+          intervalSeconds: 10
+          # -- Timeout for health checks in seconds
+          # @default -- 5
+          timeoutSeconds: 5
+          # -- Success codes for health checks
+          # @default -- "200"
+          successCodes: "200"
+          # -- Number of consecutive successful health checks before marking healthy
+          # @default -- 3
+          healthyThresholdCount: 3
+          # -- Number of consecutive failed health checks before marking unhealthy
+          # @default -- 2
+          unhealthyThresholdCount: 2
+        targetGroup:
+          # Stickiness configuration
+          stickiness:
+            # -- Enable sticky sessions
+            # @default -- true
+            enabled: true
+            # -- Cookie duration for sticky sessions in seconds
+            # @default -- 18000
+            cookieDuration: 18000
+          # Slow start configuration
+          slowStart:
+            # -- Slow start duration in seconds
+            # @default -- 120
+            durationSeconds: 120
+          # Deregistration delay configuration
+          deregistrationDelay:
+            # -- Deregistration delay timeout in seconds
+            # @default -- 60
+            timeoutSeconds: 60
+          # Load balancing algorithm configuration
+          loadBalancing:
+            # -- Load balancing algorithm type
+            # @default -- least_outstanding_requests
+            algorithmType: least_outstanding_requests
