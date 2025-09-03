@@ -668,3 +668,19 @@ environments:
             # -- Load balancing algorithm type
             # @default -- least_outstanding_requests
             algorithmType: least_outstanding_requests
+
+# Network Policy configuration
+networkPolicy:
+  # Prometheus monitoring access configuration
+  allowPrometheusMonitoring:
+    # -- Enable NetworkPolicy for Prometheus monitoring access
+    # @default -- false
+    enabled: false
+    # -- Namespace selector for Prometheus pods
+    # @default -- {"kubernetes.io/metadata.name": "monitoring"}
+    namespaceSelector:
+      kubernetes.io/metadata.name: monitoring
+    # -- Pod selector for Prometheus pods (optional)
+    # @default -- {"app.kubernetes.io/name": "prometheus"}
+    podSelector:
+      app.kubernetes.io/name: prometheus
