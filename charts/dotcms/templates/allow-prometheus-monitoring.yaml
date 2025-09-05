@@ -13,15 +13,17 @@ spec:
   - Ingress
   ingress:
   - from:
+    {{- range .Values.networkPolicy.allowPrometheusMonitoring.namespaceSelectors }}
     - namespaceSelector:
         matchLabels:
-          {{- range $key, $value := .Values.networkPolicy.allowPrometheusMonitoring.namespaceSelector }}
+          {{- range $key, $value := . }}
           {{ $key }}: {{ $value | quote }}
           {{- end }}
-    {{- if .Values.networkPolicy.allowPrometheusMonitoring.podSelector }}
+    {{- end }}
+    {{- range .Values.networkPolicy.allowPrometheusMonitoring.podSelectors }}
     - podSelector:
         matchLabels:
-          {{- range $key, $value := .Values.networkPolicy.allowPrometheusMonitoring.podSelector }}
+          {{- range $key, $value := . }}
           {{ $key }}: {{ $value | quote }}
           {{- end }}
     {{- end }}

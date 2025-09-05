@@ -676,11 +676,11 @@ networkPolicy:
     # -- Enable NetworkPolicy for Prometheus monitoring access
     # @default -- false
     enabled: false
-    # -- Namespace selector for Prometheus pods
-    # @default -- {"kubernetes.io/metadata.name": "monitoring"}
-    namespaceSelector:
-      kubernetes.io/metadata.name: monitoring
-    # -- Pod selector for Prometheus pods (optional)
-    # @default -- {"app.kubernetes.io/name": "prometheus"}
-    podSelector:
-      app.kubernetes.io/name: prometheus
+    # -- Namespace selectors for monitoring pods (supports multiple namespaces)
+    # @default -- [{"kubernetes.io/metadata.name": "monitoring"}]
+    namespaceSelectors:
+      - kubernetes.io/metadata.name: monitoring
+    # -- Pod selectors for monitoring pods (supports multiple selectors)
+    # @default -- [{"app.kubernetes.io/name": "prometheus"}]
+    podSelectors:
+      - app.kubernetes.io/name: prometheus
