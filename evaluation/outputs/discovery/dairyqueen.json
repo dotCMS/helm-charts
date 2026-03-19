@@ -1,0 +1,3192 @@
+{
+  "customer": "dairyqueen",
+  "discoveryDate": "2026-03-18T00:00:00Z",
+  "structure": {
+    "environments": [
+      "prod",
+      "prod-1",
+      "test",
+      "test-1",
+      "uat",
+      "uat-1",
+      "international-prod",
+      "international-auth"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": [
+      "Two international environments (international-prod, international-auth) instead of standard pattern",
+      "Naming uses hyphenated suffixes (-1) for multiple variants of same env type",
+      "No namespace/secrets/sealed.yaml file present (sealed secrets not used)",
+      "PVC/PV naming conventions tie directly to env names"
+    ]
+  },
+  "customerLevel": {
+    "namespace": "dairyqueen",
+    "serviceAccountName": "dairyqueen-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_dairyqueen_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/dairyqueen/awssecret-FHbxMW",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-nodeport",
+        "allow-inter-namespace",
+        "allow-linkerd"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "prod": "fsap-05565a6a1b0c237aa",
+        "test": "fsap-02f3a6321a1e623d3",
+        "test-1": "fsap-00bf122cee1a6c4d4",
+        "uat": "fsap-09760e587c1b66177",
+        "uat-1": "fsap-0fdaad366b0a5d089",
+        "prod-1": "fsap-0f6f1f0758fb15ee1",
+        "international-auth": "fsap-01832449c33ddc65a",
+        "international-prod": "fsap-0e01e98a222f2e386"
+      },
+      "volumeHandle": "fs-0a70bee978c471a61"
+    }
+  },
+  "environments": {
+    "prod": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-prod",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "23.10.24",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-prod",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "Parallel",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "23.10.24_lts_v26_2e349a6",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:23.10.24_lts_v26_2e349a6"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "8",
+            "memory": "16Gi"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "16Gi"
+          }
+        },
+        "javaHeap": "12G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_prod_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-prod-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-prod-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx12G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-prod"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_ENABLE_SYSTEM_TABLE_CONFIG_SOURCE": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 10,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 5,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-prod"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "successCodes": "200",
+          "healthyThresholdCount": 5,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/prod"
+        },
+        "hosts": {
+          "default": "dairyqueen-prod-2310.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen prod",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-1",
+          "ver": "26.01",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-prod-1",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "16Gi"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "16Gi"
+          }
+        },
+        "javaHeap": "12G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx12G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "35 1 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-prod-1"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.dairyqueen::prod-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": 9,
+          "timeoutSeconds": 2,
+          "successCodes": "200",
+          "healthyThresholdCount": 2,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000",
+          "deregistration_delay.timeout_seconds": "30",
+          "load_balancing.algorithm.type": "least_outstanding_requests"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/prod-1"
+        },
+        "hosts": {
+          "default": null,
+          "additional": [
+            "dairyqueen-prod-1.dotcms.cloud",
+            "dairyqueen-prod.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen prod-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "test": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-test",
+        "labels": {
+          "app": "dotcms",
+          "env": "test",
+          "ver": "23.10.24",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-test",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "23.10.24_lts_v26_2e349a6",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:23.10.24_lts_v26_2e349a6"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "0.5",
+            "memory": "5Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "5Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_test_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-test-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-test-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ap-southeast-2.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-test"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 10,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 5,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-test"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "successCodes": "200",
+          "healthyThresholdCount": 5,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/test"
+        },
+        "hosts": {
+          "default": "dairyqueen-test-2310.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen test",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "test-1": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-test-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "test-1",
+          "ver": "25.11",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-test-1",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "1G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_test_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-test-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-test-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx1G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "26 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-test-1"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.dairyqueen::test-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-test-1"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": 9,
+          "timeoutSeconds": 2,
+          "successCodes": "200",
+          "healthyThresholdCount": 2,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000",
+          "deregistration_delay.timeout_seconds": "30",
+          "load_balancing.algorithm.type": "least_outstanding_requests"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/test-1"
+        },
+        "hosts": {
+          "default": null,
+          "additional": [
+            "dairyqueen-test-1.dotcms.cloud",
+            "dairyqueen-test.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen test-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "uat": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-uat",
+        "labels": {
+          "app": "dotcms",
+          "env": "uat",
+          "ver": "23.10.24",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-uat",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "23.10.24_lts_v26_2e349a6",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:23.10.24_lts_v26_2e349a6"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_uat_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-uat-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-uat-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ap-southeast-2.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-uat"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 10,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 5,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-uat"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "successCodes": "200",
+          "healthyThresholdCount": 5,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/uat"
+        },
+        "hosts": {
+          "default": "dairyqueen-uat-2310.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen uat",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "uat-1": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-uat-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "uat-1",
+          "ver": "25.11",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-uat-1",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "9Gi"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "9Gi"
+          }
+        },
+        "javaHeap": "1G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_uat_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-uat-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-uat-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx1G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "9 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-uat-1"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.dairyqueen::uat-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-uat-1"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": 9,
+          "timeoutSeconds": 2,
+          "successCodes": "200",
+          "healthyThresholdCount": 2,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000",
+          "deregistration_delay.timeout_seconds": "30",
+          "load_balancing.algorithm.type": "least_outstanding_requests"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/uat-1"
+        },
+        "hosts": {
+          "default": null,
+          "additional": [
+            "dairyqueen-uat-1.dotcms.cloud",
+            "dairyqueen-uat.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen uat-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "international-prod": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-international-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "international-prod-1",
+          "ver": "26.01",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-international-prod-1",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "3",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "5G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_international_prod_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-international-prod-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-international-prod-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx5G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": null
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "50 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-international-prod-1"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.dairyqueen::international-prod"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-international-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": 9,
+          "timeoutSeconds": 2,
+          "successCodes": "200",
+          "healthyThresholdCount": 2,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000",
+          "deregistration_delay.timeout_seconds": "30",
+          "load_balancing.algorithm.type": "least_outstanding_requests"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/dev-1"
+        },
+        "wafv2Arn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/dairyqueen-international-prod-k8s-2/0c32788e-334c-4c57-9306-84b0f51cf20f",
+        "hosts": {
+          "default": "dairyqueen-international-prod.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen dev-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    },
+    "international-auth": {
+      "identity": {
+        "fullName": "dotcms-dairyqueen-international-auth-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "international-auth-1",
+          "ver": "26.01",
+          "cust": "dairyqueen",
+          "fullname": "dotcms-dairyqueen-international-auth-1",
+          "app.dotcms.cloud/aws-region": "us-east-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": null,
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "3",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "5G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/dairyqueen_international_auth_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-international-auth-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-international-auth-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "CACHE_H22_RECOVER_IF_RESTARTED_IN_MILLISECONDS": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_GRAPHQLQUERYCACHE_SECONDS": {
+            "type": "static_value",
+            "value": "1200"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx5G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "always"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SITE_KEY_DNS_VALIDATION": {
+            "type": "static_value",
+            "value": null
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "0 3 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "dairyqueen-international-auth-1"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.dairyqueen::international-auth"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-dairyqueen-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 50,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/startup",
+          "port": 8082
+        },
+        "liveness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "successThreshold": 1,
+          "failureThreshold": 4,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        },
+        "readiness": {
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "successThreshold": 2,
+          "failureThreshold": 1,
+          "timeoutSeconds": 2,
+          "path": "/api/v1/probes/alive",
+          "port": 8082
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-dairyqueen-international-auth-1"
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c 'if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;'",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": 9,
+          "timeoutSeconds": 2,
+          "successCodes": "200",
+          "healthyThresholdCount": 2,
+          "unhealthyThresholdCount": 2
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000",
+          "deregistration_delay.timeout_seconds": "30",
+          "load_balancing.algorithm.type": "least_outstanding_requests"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "dairyqueen/dev-1"
+        },
+        "wafv2Arn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/dairyqueen-international-prod-k8s-2/0c32788e-334c-4c57-9306-84b0f51cf20f",
+        "hosts": {
+          "default": "dairyqueen-international-auth.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "dairyqueen",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for dairyqueen dev-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ]
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "namespace: dairyqueen",
+      "serviceAccountName: dairyqueen-sa",
+      "iamRoleArn",
+      "awsSecretsArn",
+      "cloudProvider: aws",
+      "Elasticsearch endpoints and auth type",
+      "Security subnet blacklist",
+      "Certificate ARN",
+      "Security groups",
+      "Linkerd injection enabled",
+      "Linkerd proxy wait before exit: 30s",
+      "ALB scheme: internet-facing",
+      "Target type: ip",
+      "SSL policy",
+      "S3 bucket for access logs",
+      "Vanta compliance tags",
+      "Termination grace period: 40s",
+      "All environments use terminationGracePeriodSeconds: 40",
+      "All environments use preStop sleep: 20s",
+      "All environments use postStart backup setup"
+    ],
+    "envSpecificFields": {
+      "replicas": {
+        "values": {
+          "prod": 2,
+          "prod-1": 2,
+          "test": 1,
+          "test-1": 1,
+          "uat": 2,
+          "uat-1": 1,
+          "international-prod": 1,
+          "international-auth": 1
+        },
+        "note": "Production envs (prod, prod-1, uat) run 2 replicas for HA; test and international envs run 1 replica"
+      },
+      "image.tag": {
+        "values": {
+          "prod": "23.10.24_lts_v26_2e349a6",
+          "prod-1": "26.02.27-01_3d130b5",
+          "test": "23.10.24_lts_v26_2e349a6",
+          "test-1": "26.02.27-01_3d130b5",
+          "uat": "23.10.24_lts_v26_2e349a6",
+          "uat-1": "26.02.27-01_3d130b5",
+          "international-prod": "26.02.27-01_3d130b5",
+          "international-auth": "26.02.27-01_3d130b5"
+        },
+        "note": "Two distinct image versions: 23.10.24 (old LTS) vs 26.02.27 (newer); prod/test/uat on 23.10.24, others on 26.02.27"
+      },
+      "resources.requests.cpu": {
+        "values": {
+          "prod": "8",
+          "prod-1": "4",
+          "test": "0.5",
+          "test-1": "2",
+          "uat": "1",
+          "uat-1": "4",
+          "international-prod": "1",
+          "international-auth": "1"
+        },
+        "note": "CPU requests scale with environment tier: prod gets 8, test gets 0.5, others scaled accordingly"
+      },
+      "resources.limits.cpu": {
+        "values": {
+          "prod": "8",
+          "prod-1": "8",
+          "test": "4",
+          "test-1": "4",
+          "uat": "4",
+          "uat-1": "8",
+          "international-prod": "3",
+          "international-auth": "3"
+        },
+        "note": "Limits allow burst capacity; international envs capped at 3 (lower than others)"
+      },
+      "javaHeap": {
+        "values": {
+          "prod": "12G",
+          "prod-1": "12G",
+          "test": "4G",
+          "test-1": "1G",
+          "uat": "4G",
+          "uat-1": "1G",
+          "international-prod": "5G",
+          "international-auth": "5G"
+        },
+        "note": "Java heap varies significantly: prod gets 12G, test/uat get 4G, test-1/uat-1 get 1G, international get 5G"
+      },
+      "DOT_MAIL_SMTP_HOST": {
+        "values": {
+          "prod": "email-smtp.us-east-1.amazonaws.com",
+          "prod-1": "email-smtp.us-east-1.amazonaws.com",
+          "test": "email-smtp.ap-southeast-2.amazonaws.com",
+          "test-1": "email-smtp.us-east-1.amazonaws.com",
+          "uat": "email-smtp.ap-southeast-2.amazonaws.com",
+          "uat-1": "email-smtp.us-east-1.amazonaws.com",
+          "international-prod": "email-smtp.us-east-1.amazonaws.com",
+          "international-auth": "email-smtp.us-east-1.amazonaws.com"
+        },
+        "note": "test and uat use ap-southeast-2 (Sydney), all others use us-east-1"
+      },
+      "DOT_MAIL_SMTP_PORT": {
+        "values": {
+          "prod": "25",
+          "prod-1": "587",
+          "test": "25",
+          "test-1": "587",
+          "uat": "25",
+          "uat-1": "587",
+          "international-prod": "587",
+          "international-auth": "587"
+        },
+        "note": "Old versions use port 25, newer versions (26.02.27) use port 587 (TLS submission)"
+      },
+      "TOMCAT_REDIS_SESSION_ENABLED": {
+        "values": {
+          "prod": false,
+          "prod-1": true,
+          "test": false,
+          "test-1": true,
+          "uat": false,
+          "uat-1": true,
+          "international-prod": true,
+          "international-auth": true
+        },
+        "note": "Old versions (23.10.24) disable Redis sessions; newer versions (26.02.27) enable them"
+      },
+      "GLOWROOT_ENABLED": {
+        "values": {
+          "prod": null,
+          "prod-1": true,
+          "test": null,
+          "test-1": false,
+          "uat": null,
+          "uat-1": false,
+          "international-prod": true,
+          "international-auth": true
+        },
+        "note": "Old versions have glowroot in CMS_JAVA_OPTS but not explicit flag; newer versions have explicit flag; test-1/uat-1 have it disabled"
+      },
+      "healthcheck.path": {
+        "values": {
+          "prod": "/api/v1/appconfiguration",
+          "prod-1": "/api/v1/probes/alive",
+          "test": "/api/v1/appconfiguration",
+          "test-1": "/api/v1/probes/alive",
+          "uat": "/api/v1/appconfiguration",
+          "uat-1": "/api/v1/probes/alive",
+          "international-prod": "/api/v1/probes/alive",
+          "international-auth": "/api/v1/probes/alive"
+        },
+        "note": "Old versions use /appconfiguration, newer versions use /probes/alive"
+      },
+      "healthcheck.intervalSeconds": {
+        "values": {
+          "prod": 30,
+          "prod-1": 9,
+          "test": 30,
+          "test-1": 9,
+          "uat": 30,
+          "uat-1": 9,
+          "international-prod": 9,
+          "international-auth": 9
+        },
+        "note": "Old versions check every 30s, newer versions every 9s (more aggressive)"
+      },
+      "healthcheck.healthyThresholdCount": {
+        "values": {
+          "prod": 5,
+          "prod-1": 2,
+          "test": 5,
+          "test-1": 2,
+          "uat": 5,
+          "uat-1": 2,
+          "international-prod": 2,
+          "international-auth": 2
+        },
+        "note": "Old versions require 5 successful checks; newer versions require 2"
+      },
+      "probe.periodSeconds.liveness": {
+        "values": {
+          "prod": 30,
+          "prod-1": 15,
+          "test": 30,
+          "test-1": 15,
+          "uat": 30,
+          "uat-1": 15,
+          "international-prod": 15,
+          "international-auth": 15
+        },
+        "note": "Old versions check every 30s; newer versions every 15s"
+      },
+      "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+        "values": {
+          "prod": "5",
+          "prod-1": "1",
+          "test": "5",
+          "test-1": "1",
+          "uat": "5",
+          "uat-1": "1",
+          "international-prod": "1",
+          "international-auth": "1"
+        },
+        "note": "Old versions bulk size 5; newer versions bulk size 1"
+      },
+      "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+        "values": {
+          "prod": "1",
+          "prod-1": "20",
+          "test": "1",
+          "test-1": "20",
+          "uat": "1",
+          "uat-1": "20",
+          "international-prod": "20",
+          "international-auth": "20"
+        },
+        "note": "Old versions bulk actions 1; newer versions bulk actions 20"
+      },
+      "ingress.hosts": {
+        "values": {
+          "prod": "dairyqueen-prod-2310.dotcms.cloud",
+          "prod-1": [
+            "dairyqueen-prod-1.dotcms.cloud",
+            "dairyqueen-prod.dotcms.cloud"
+          ],
+          "test": "dairyqueen-test-2310.dotcms.cloud",
+          "test-1": [
+            "dairyqueen-test-1.dotcms.cloud",
+            "dairyqueen-test.dotcms.cloud"
+          ],
+          "uat": "dairyqueen-uat-2310.dotcms.cloud",
+          "uat-1": [
+            "dairyqueen-uat-1.dotcms.cloud",
+            "dairyqueen-uat.dotcms.cloud"
+          ],
+          "international-prod": "dairyqueen-international-prod.dotcms.cloud",
+          "international-auth": "dairyqueen-international-auth.dotcms.cloud"
+        },
+        "note": "Old versions use version-suffix in hostname (2310); newer versions have primary + alias pattern"
+      },
+      "tolerations": {
+        "values": {
+          "prod": null,
+          "prod-1": "workload-tier=standard",
+          "test": null,
+          "test-1": "workload-tier=standard",
+          "uat": null,
+          "uat-1": "workload-tier=standard",
+          "international-prod": "workload-tier=standard",
+          "international-auth": "workload-tier=standard"
+        },
+        "note": "Newer versions have workload-tier tolerations and nodeSelector; old versions do not"
+      },
+      "nodeSelector": {
+        "values": {
+          "prod": null,
+          "prod-1": "workload-tier: standard",
+          "test": null,
+          "test-1": "workload-tier: standard",
+          "uat": null,
+          "uat-1": "workload-tier: standard",
+          "international-prod": "workload-tier: standard",
+          "international-auth": "workload-tier: standard"
+        },
+        "note": "Newer versions pin to standard workload tier; old versions unconstrained"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "probe.liveness.initialDelaySeconds",
+      "description": "prod-1, test-1, uat-1, international-prod, international-auth have null/missing initialDelaySeconds for liveness probe while prod, test, uat explicitly set to 30. This is inconsistent.",
+      "severity": "warning",
+      "recommendation": "Standardize initialDelaySeconds across all environments. Current gap may cause early false-negatives on newer versions."
+    },
+    {
+      "field": "CMS_JAVA_OPTS",
+      "description": "Old versions (prod, test, uat) include -javaagent:/data/shared/glowroot/glowroot.jar in CMS_JAVA_OPTS, but newer versions do not. Newer versions have separate GLOWROOT_ENABLED flag.",
+      "severity": "info",
+      "recommendation": "This reflects intentional migration from agent-based to flag-based glowroot configuration. Acceptable pattern difference."
+    },
+    {
+      "field": "podManagementPolicy",
+      "description": "prod explicitly sets podManagementPolicy: Parallel, but all other environments omit it (defaults to OrderedReady). This is inconsistent.",
+      "severity": "warning",
+      "recommendation": "Either explicitly set Parallel for all multi-replica envs (prod, prod-1, uat) or explicitly set OrderedReady for consistency."
+    },
+    {
+      "field": "services.ClusterIP",
+      "description": "Each environment has two services: a NodePort service for external ingress, and a headless ClusterIP (None) service for peer discovery. All follow this pattern correctly.",
+      "severity": "info",
+      "recommendation": "No action needed. Pattern is correct for StatefulSet use."
+    },
+    {
+      "field": "international-prod ALB WAF",
+      "description": "international-prod and international-auth are the ONLY environments with WAFv2 ACL annotation (wafv2-acl-arn). No other envs have WAF protection.",
+      "severity": "warning",
+      "recommendation": "Consider applying WAF to all environments for consistent security posture, or document why international is privileged."
+    },
+    {
+      "field": "affinity",
+      "description": "All environments use soft (preferred) pod anti-affinity. No required anti-affinity or pod disruption budgets (PDB) present. This allows scheduling on same node if necessary.",
+      "severity": "warning",
+      "recommendation": "Consider adding requiredDuringSchedulingIgnoredDuringExecution for prod/uat to guarantee availability, or add PodDisruptionBudget resources."
+    },
+    {
+      "field": "secrets",
+      "description": "No sealed secrets present. All secrets provided via AWS Secrets Manager integration only. Single point of failure if AWS secrets access is compromised.",
+      "severity": "info",
+      "recommendation": "Current approach is acceptable for AWS-native deployment. Monitor AWS IAM role usage and rotation."
+    },
+    {
+      "field": "DOT_SITE_KEY_DNS_VALIDATION",
+      "description": "All environments have DOT_SITE_KEY_DNS_VALIDATION set to false (or missing, implying false). This disables DNS validation for custom domain setup.",
+      "severity": "info",
+      "recommendation": "Confirm this is intentional. If using custom domains, DNS validation should be enabled for security."
+    },
+    {
+      "field": "healthcheck inconsistency across versions",
+      "description": "New version envs (prod-1, test-1, uat-1, international-*) use aggressive healthchecks (9s interval, 2 thresholds), while old versions use conservative (30s interval, 5 thresholds). This will cause faster churn on newer versions.",
+      "severity": "warning",
+      "recommendation": "After migration to v26.02.27 across all envs, align healthcheck parameters to new defaults (9s/2 thresholds) or revert to old (30s/5 thresholds) for consistency."
+    },
+    {
+      "field": "international-prod missing value on line 87",
+      "description": "international-prod statefulset has DOT_SITE_KEY_DNS_VALIDATION defined on line 87 with no value (empty). This is a YAML error.",
+      "severity": "critical",
+      "recommendation": "Fix the YAML syntax error. Either remove the line or add a value (false recommended)."
+    },
+    {
+      "field": "version inconsistency",
+      "description": "Customer has two distinct dotCMS versions in production: 23.10.24_lts (prod, test, uat) and 26.02.27 (prod-1, test-1, uat-1, international-*). This means 5 environments running old LTS while 4 running new version.",
+      "severity": "warning",
+      "recommendation": "Plan migration path to consolidate on v26.02.27. Staggered approach using the -1 variants is good; accelerate timeline for old versions."
+    }
+  ]
+}
