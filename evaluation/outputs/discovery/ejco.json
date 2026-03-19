@@ -1,0 +1,1585 @@
+{
+  "customer": "ejco",
+  "discoveryDate": "2026-03-19T15:14:51.389435+00:00",
+  "structure": {
+    "environments": [
+      "dev-1",
+      "poc-1",
+      "prod-1",
+      "staging-1"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "ejco",
+    "serviceAccountName": "ejco-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_ejco_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/ejco/awssecret-pkmgBB",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "ejco-dev-1-efs-pvc": "fsap-0dc2ec6f89f1c9393",
+        "ejco-staging-1-efs-pvc": "fsap-006893660dafba47d",
+        "ejco-prod-1-efs-pvc": "fsap-00b7bfca8f5f1005b",
+        "ejco-poc-1-efs-pvc": "fsap-0f2488b3a70d5d690"
+      },
+      "volumeHandle": "fs-edcda459"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "dev-1": {
+      "identity": {
+        "fullName": "dotcms-ejco-dev-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev-1",
+          "ver": "24.12",
+          "cust": "ejco",
+          "fullname": "dotcms-ejco-dev-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "5Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "5Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_dev_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-dev-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-dev-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "never"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "ejco-dev-1"
+          },
+          "DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+            "type": "static_value",
+            "value": "1000000000"
+          },
+          "DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+            "type": "static_value",
+            "value": "1024"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_INSTANCE_NAME": {
+            "type": "static_value",
+            "value": "dev-1"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-ejco-dev-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "ejco-dev-1-efs-pvc",
+        "csiSecretProviderClass": "sh-ejco-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/1f0b6485-0aa2-4f48-87c7-7d059095d35a",
+          "arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df",
+          "arn:aws:acm:us-east-1:948170117212:certificate/fe642960-7ed8-4ce4-8520-98fa2b1c437e"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "ejco/dev-1"
+        },
+        "hosts": {
+          "default": "ejco-dev-1.dotcms.cloud",
+          "additional": [
+            "ejco-dev.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "ejco",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for EJCo Upgrade",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-ejco-dev-1"
+        }
+      }
+    },
+    "poc-1": {
+      "identity": {
+        "fullName": "dotcms-ejco-poc-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "poc-1",
+          "ver": "25.06",
+          "cust": "ejco",
+          "fullname": "dotcms-ejco-poc-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_poc_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-poc-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-poc-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "never"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.ejco::poc-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "26 3 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "ejco-poc-1"
+          },
+          "DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+            "type": "static_value",
+            "value": "1000000000"
+          },
+          "DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+            "type": "static_value",
+            "value": "1024"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-ejco-poc-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "ejco-poc-1-efs-pvc",
+        "csiSecretProviderClass": "sh-ejco-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/1f0b6485-0aa2-4f48-87c7-7d059095d35a",
+          "arn:aws:acm:us-east-1:948170117212:certificate/fe642960-7ed8-4ce4-8520-98fa2b1c437e",
+          "arn:aws:acm:us-east-1:948170117212:certificate/1ecd7a34-e2fd-4674-a9cd-1668cdd7ca63"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "ejco/poc-1"
+        },
+        "hosts": {
+          "default": "ejco-poc-1.dotcms.cloud",
+          "additional": [
+            "ejco-poc.dotcms.cloud",
+            "*.ejco-poc.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "ejco",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for EJCo Upgrade",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-ejco-poc-1"
+        }
+      }
+    },
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-ejco-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-1",
+          "ver": "24.12",
+          "cust": "ejco",
+          "fullname": "dotcms-ejco-prod-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": ".5",
+            "memory": "7Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "7Gi"
+          }
+        },
+        "javaHeap": "6G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx6G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "never"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "ejco-prod-1"
+          },
+          "DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+            "type": "static_value",
+            "value": "1000000000"
+          },
+          "DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+            "type": "static_value",
+            "value": "1024"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_INSTANCE_NAME": {
+            "type": "static_value",
+            "value": "prod-1"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-ejco-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "ejco-prod-1-efs-pvc",
+        "csiSecretProviderClass": "sh-ejco-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/1f0b6485-0aa2-4f48-87c7-7d059095d35a",
+          "arn:aws:acm:us-east-1:948170117212:certificate/02d5f41a-88c3-48cc-ad4e-805b7e020b29",
+          "arn:aws:acm:us-east-1:948170117212:certificate/94c72caf-c144-4e48-8358-17ef9afae0d1",
+          "arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df",
+          "arn:aws:acm:us-east-1:948170117212:certificate/fe642960-7ed8-4ce4-8520-98fa2b1c437e",
+          "arn:aws:acm:us-east-1:948170117212:certificate/09d2de9a-664f-428a-968d-7929547ec822",
+          "arn:aws:acm:us-east-1:948170117212:certificate/f067d83f-f209-4287-9045-c6b1343ab2d6"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/ejco-waf/6034b452-ff35-4717-bf15-315c00e43d37",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "3600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "ejco/prod-1"
+        },
+        "hosts": {
+          "default": "ejco-prod-1.dotcms.cloud",
+          "additional": [
+            "ejco-prod.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "ejco",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for EJCo Upgrade",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-ejco-prod-1"
+        }
+      }
+    },
+    "staging-1": {
+      "identity": {
+        "fullName": "dotcms-ejco-staging-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "staging-1",
+          "ver": "24.12",
+          "cust": "ejco",
+          "fullname": "dotcms-ejco-staging-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "0.5",
+            "memory": "5Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "5Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_staging_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-staging-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-staging-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "never"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-ejco-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "ejco-staging-1"
+          },
+          "DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+            "type": "static_value",
+            "value": "1000000000"
+          },
+          "DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+            "type": "static_value",
+            "value": "1024"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_INSTANCE_NAME": {
+            "type": "static_value",
+            "value": "staging-1"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-ejco-staging-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "ejco-staging-1-efs-pvc",
+        "csiSecretProviderClass": "sh-ejco-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/1f0b6485-0aa2-4f48-87c7-7d059095d35a",
+          "arn:aws:acm:us-east-1:948170117212:certificate/22dbe950-ec56-4fd6-b323-e20777bd50df",
+          "arn:aws:acm:us-east-1:948170117212:certificate/fe642960-7ed8-4ce4-8520-98fa2b1c437e"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "ejco/staging-1"
+        },
+        "hosts": {
+          "default": "ejco-staging-1.dotcms.cloud",
+          "additional": [
+            "ejco-staging.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "ejco",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for EJCo Upgrade",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-ejco-staging-1"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.database.DB_DNSNAME",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.resources.limits.cpu",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-1": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_dev_1_db",
+          "poc-1": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_poc_1_db",
+          "prod-1": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_prod_1_db",
+          "staging-1": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/ejco_staging_1_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "dev-1": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork",
+          "poc-1": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-1": "-Xmx6G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork",
+          "staging-1": "-Xmx4G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.image.tag": {
+        "values": {
+          "dev-1": "24.12.27_lts_v16_f12f6e4",
+          "poc-1": "26.02.27-01_3d130b5",
+          "prod-1": "24.12.27_lts_v16_f12f6e4",
+          "staging-1": "24.12.27_lts_v16_f12f6e4"
+        },
+        "note": "Different dotCMS versions per environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "dev-1": "4G",
+          "poc-1": "4G",
+          "prod-1": "6G",
+          "staging-1": "4G"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev-1": "1",
+          "poc-1": "1",
+          "prod-1": "2",
+          "staging-1": "1"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "dev-1": "5Gi",
+          "poc-1": "6Gi",
+          "prod-1": "7Gi",
+          "staging-1": "5Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "dev-1": "1",
+          "poc-1": "2",
+          "prod-1": ".5",
+          "staging-1": "0.5"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "dev-1": "5Gi",
+          "poc-1": "6Gi",
+          "prod-1": "7Gi",
+          "staging-1": "5Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-1.workload.replicas",
+      "description": "Single replica in dev-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.poc-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.poc-1.workload.replicas",
+      "description": "Single replica in poc-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.poc-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in poc-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.poc-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.staging-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.staging-1.workload.replicas",
+      "description": "Single replica in staging-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.staging-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in staging-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.staging-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    }
+  ]
+}

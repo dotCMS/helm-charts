@@ -1,0 +1,277 @@
+{
+  "customer": "rotorooter",
+  "status": "pass",
+  "environmentCount": 3,
+  "totalChecks": 48,
+  "matches": 48,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "dev-2",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rotorooter_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/rotorooter/awssecret-5EYO7P"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-04b88b1a9672916f1"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.12.27_lts_v16_f12f6e4"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-2",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rotorooter_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/rotorooter/awssecret-5EYO7P"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-04b88b1a9672916f1"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.12.27_lts_v16_f12f6e4"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "staging-2",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rotorooter_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/rotorooter/awssecret-5EYO7P"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-04b88b1a9672916f1"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.12.27_lts_v16_f12f6e4"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

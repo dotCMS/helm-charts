@@ -1,0 +1,41 @@
+{
+  "analysisDate": "2026-03-19",
+  "totalCustomers": 84,
+  "pass": 84,
+  "warn": 0,
+  "fail": 0,
+  "averageMatchRate": 100.0,
+  "overallStatus": "pass",
+  "mismatchesByField": {},
+  "knownImprovements": [
+    "DOT_COOKIES_HTTP_ONLY",
+    "preStopSleepSeconds",
+    "ingressClassName",
+    "affinity.type"
+  ],
+  "methodology": "Semantic field comparison via normalized discovery JSONs. helm template not available \u2014 validation done at values.yaml \u2192 manifest field level.",
+  "validatedFields": [
+    "region",
+    "iam_arn",
+    "secrets_arn",
+    "vol_handle",
+    "tag",
+    "replicas",
+    "cpu_req",
+    "mem_req",
+    "cpu_lim",
+    "mem_lim",
+    "java_heap",
+    "cert_arn",
+    "ssl_policy",
+    "waf_arn",
+    "access_point",
+    "security_groups"
+  ],
+  "notValidated": [
+    "Network policy rendering (chart auto-deploys standard set)",
+    "RBAC resource rendering (chart auto-deploys per env)",
+    "Env var rendering (chart uses SECRET: prefix notation)",
+    "Init containers (backup/restore \u2014 chart-managed, not customer-specific)"
+  ]
+}

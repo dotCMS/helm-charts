@@ -1,0 +1,2419 @@
+{
+  "customer": "lennox",
+  "discoveryDate": "2026-03-19T15:14:52.302129+00:00",
+  "structure": {
+    "environments": [
+      "dev-2",
+      "prod-2",
+      "qa-2",
+      "sandbox-1",
+      "sandbox-2",
+      "staging-2"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "lennox",
+    "serviceAccountName": "lennox-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_lennox_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/lennox/awssecret-SjmgMg",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "": "fsap-0452890841b01de81"
+      },
+      "volumeHandle": "fs-09c96959b73953268"
+    },
+    "hasSealedSecrets": true
+  },
+  "environments": {
+    "dev-2": {
+      "identity": {
+        "fullName": "dotcms-lennox-dev-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev-2",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-dev-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "16Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "16Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_dev_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-dev-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-dev-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::dev-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "DOT_FEATURE_FLAG_EXPERIMENTS": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "51 4 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-dev-2"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_ANALYTICS_IDP_URL": {
+            "type": "static_value",
+            "value": "https://dotcms-analytics-21ahdlayk.auth.us-east-1.amazoncognito.com/oauth2/token"
+          },
+          "DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-dev-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-dev-2-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/dev-2"
+        },
+        "hosts": {
+          "default": "lennox-dev.dotcms.cloud",
+          "additional": [
+            "lennox-dev-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox dev-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-dev-2"
+        }
+      }
+    },
+    "prod-2": {
+      "identity": {
+        "fullName": "dotcms-lennox-prod-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-2",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-prod-2"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "5",
+            "memory": "14Gi"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "14Gi"
+          }
+        },
+        "javaHeap": "10G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_prod_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-prod-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-prod-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx10G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::prod-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "43 4 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-prod-2"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-prod-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-prod-2-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "60",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/prod-2"
+        },
+        "hosts": {
+          "default": "lennox-prod-us.dotcms.cloud",
+          "additional": [
+            "lennox-prod-2-us.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox prod-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-prod-2"
+        }
+      }
+    },
+    "qa-2": {
+      "identity": {
+        "fullName": "dotcms-lennox-qa-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "qa-2",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-qa-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "16Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "16Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_qa_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-qa-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-qa-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::qa-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "45 3 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-qa-2"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-qa-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-qa-2-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/qa-2"
+        },
+        "hosts": {
+          "default": "lennox-qa.dotcms.cloud",
+          "additional": [
+            "lennox-test.dotcms.cloud",
+            "lennox-qa-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox qa-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-qa-2"
+        }
+      }
+    },
+    "sandbox-1": {
+      "identity": {
+        "fullName": "dotcms-lennox-sandbox-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "sandbox-1",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-sandbox-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_sandbox_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-sandbox-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-sandbox-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::sandbox-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "16 2 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-sandbox-1"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-sandbox-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-sandbox-1-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "60",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/sandbox-1"
+        },
+        "hosts": {
+          "default": "*.lennox-sandbox-1.dotcms.cloud",
+          "additional": [
+            "lennox-sandbox-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox sandbox-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-sandbox-1"
+        }
+      }
+    },
+    "sandbox-2": {
+      "identity": {
+        "fullName": "dotcms-lennox-sandbox-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "sandbox-2",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-sandbox-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_sandbox_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-sandbox-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-sandbox-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::sandbox-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "31 1 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-sandbox-2"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-sandbox-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-sandbox-2-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "60",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/sandbox-2"
+        },
+        "hosts": {
+          "default": "lennox-sandbox-2.dotcms.cloud",
+          "additional": []
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox sandbox-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-sandbox-2"
+        }
+      }
+    },
+    "staging-2": {
+      "identity": {
+        "fullName": "dotcms-lennox-staging-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "staging-2",
+          "ver": "25.08",
+          "cust": "lennox",
+          "fullname": "dotcms-lennox-staging-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "16Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "16Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_staging_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-staging-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-staging-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-lennox-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+            "type": "static_value",
+            "value": "DEFAULT"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.lennox::staging-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "42 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "lennox-staging-2"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          },
+          "DOT_ALLOW_ACCESS_TO_PRIVATE_SUBNETS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "CMS_MAX_HTTP_HEADER_SIZE": {
+            "type": "static_value",
+            "value": "64576"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-lennox-staging-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "lennox-staging-2-efs-pvc",
+        "csiSecretProviderClass": "sh-lennox-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/591ca66a-3ad8-445b-b985-425788f57956"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "60",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "lennox/staging-2"
+        },
+        "hosts": {
+          "default": "lennox-staging.dotcms.cloud",
+          "additional": [
+            "lennox-staging-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "lennox",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for Lennox staging-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-lennox-staging-2"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-2": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_dev_2_db",
+          "prod-2": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_prod_2_db",
+          "qa-2": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_qa_2_db",
+          "sandbox-1": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_sandbox_1_db",
+          "sandbox-2": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_sandbox_2_db",
+          "staging-2": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/lennox_staging_2_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "dev-2": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-2": "-Xmx10G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "qa-2": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "sandbox-1": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "sandbox-2": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "staging-2": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "dev-2": "8G",
+          "prod-2": "10G",
+          "qa-2": "8G",
+          "sandbox-1": "7G",
+          "sandbox-2": "7G",
+          "staging-2": "8G"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev-2": "1",
+          "prod-2": "2",
+          "qa-2": "1",
+          "sandbox-1": "1",
+          "sandbox-2": "1",
+          "staging-2": "1"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "dev-2": "4",
+          "prod-2": "8",
+          "qa-2": "4",
+          "sandbox-1": "4",
+          "sandbox-2": "4",
+          "staging-2": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "dev-2": "16Gi",
+          "prod-2": "14Gi",
+          "qa-2": "16Gi",
+          "sandbox-1": "10Gi",
+          "sandbox-2": "10Gi",
+          "staging-2": "16Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "dev-2": "2",
+          "prod-2": "5",
+          "qa-2": "2",
+          "sandbox-1": "2",
+          "sandbox-2": "2",
+          "staging-2": "2"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "dev-2": "16Gi",
+          "prod-2": "14Gi",
+          "qa-2": "16Gi",
+          "sandbox-1": "10Gi",
+          "sandbox-2": "10Gi",
+          "staging-2": "16Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-2.workload.replicas",
+      "description": "Single replica in dev-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.qa-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.qa-2.workload.replicas",
+      "description": "Single replica in qa-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.qa-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in qa-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.qa-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.sandbox-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.sandbox-1.workload.replicas",
+      "description": "Single replica in sandbox-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.sandbox-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in sandbox-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.sandbox-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.sandbox-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.sandbox-2.workload.replicas",
+      "description": "Single replica in sandbox-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.sandbox-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in sandbox-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.sandbox-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.staging-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.staging-2.workload.replicas",
+      "description": "Single replica in staging-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.staging-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in staging-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.staging-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "customerLevel.sealedSecrets",
+      "description": "Customer uses sealed secrets in addition to AWS SecretProviderClass.",
+      "severity": "info",
+      "recommendation": "Document sealed secret usage before migration to Helm chart"
+    }
+  ]
+}

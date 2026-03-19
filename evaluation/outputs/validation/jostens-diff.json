@@ -1,0 +1,805 @@
+{
+  "customer": "jostens",
+  "status": "pass",
+  "environmentCount": 9,
+  "totalChecks": 144,
+  "matches": 144,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "auth-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0f5929c40eacfc237"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "dev-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0d113493ec820e414"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "mascotshop-dev",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0be7f16d8bc33cd6d"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "mascotshop-prod",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0ed4ace72df942549"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "mascotshop-staging",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "3"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "3500"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0901072cd0892b8cc"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prochamp-dev",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "3"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/jostens-nonprod-k8s/f6221e11-e93f-478e-ab12-b514db7c6f20"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0c986f3f9c1223343"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prochamp-prod",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "5"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/jostens-prod-k8s/bce0c945-e521-4c59-b164-0975ee3b49ef"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0c2fe52c5d854077b"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/jostens-prod-k8s-2/0bf4875b-1012-439d-9044-701cec62f209"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-042cd2a24f2e40b55"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "uat-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_jostens_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/jostens/awssecret-AhKix1"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-02c9df4aea26bb276"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0704f36e8c38b5cf1"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

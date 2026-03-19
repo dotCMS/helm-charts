@@ -1,0 +1,172 @@
+{
+  "customer": "newellbrands",
+  "generatedAt": "2026-03-19",
+  "chartVersion": "1.0.34",
+  "totalDiscoveryFields": 30,
+  "mapped": 29,
+  "unmapped": 2,
+  "requiresChartFix": [
+    "BUG-003 (preStop)",
+    "BUG-004 (ALB healthcheck path)",
+    "affinity.type preferred"
+  ],
+  "mappings": [
+    {
+      "discoveryField": "customerLevel.namespace",
+      "chartField": "customerName",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "customerLevel.region",
+      "chartField": "aws.region",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "customerLevel.iamRoleArn",
+      "chartField": "serviceAccount.annotations.eks.amazonaws.com/role-arn",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "customerLevel.awsSecretsArn",
+      "chartField": "secrets.aws.secretArn",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "customerLevel.volumes.volumeHandle",
+      "chartField": "volumes.shared.volumeHandle",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "customerLevel.volumes.accessPoints",
+      "chartField": "environments.{name}.volumes.shared.accessPoint",
+      "method": "per-env via mergeEnvironment"
+    },
+    {
+      "discoveryField": "workload.image.tag",
+      "chartField": "tag (global) or environments.{name}.tag",
+      "method": "base + per-env override"
+    },
+    {
+      "discoveryField": "workload.image.repository",
+      "chartField": "repository",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "workload.replicas",
+      "chartField": "replicas (global) or environments.{name}.replicas",
+      "method": "base + per-env override"
+    },
+    {
+      "discoveryField": "workload.resources",
+      "chartField": "resources (global) or environments.{name}.resources",
+      "method": "base + per-env override"
+    },
+    {
+      "discoveryField": "workload.javaHeap",
+      "chartField": "javaMemory (int, Gi)",
+      "method": "unit conversion: '4G' \u2192 4"
+    },
+    {
+      "discoveryField": "workload.terminationGracePeriodSeconds",
+      "chartField": "terminationGracePeriodSeconds",
+      "method": "covered by corrected default (40)"
+    },
+    {
+      "discoveryField": "affinity.type",
+      "chartField": "affinity.requireDifferentHosts (post-fix: affinity.type)",
+      "method": "requires BUG-003 fix"
+    },
+    {
+      "discoveryField": "lifecycle.preStopSleepSeconds",
+      "chartField": "lifecycle.preStopSleepSeconds",
+      "method": "requires BUG-003 fix"
+    },
+    {
+      "discoveryField": "annotations.linkerd.enabled",
+      "chartField": "linkerd.enabled",
+      "method": "covered by corrected default (true)"
+    },
+    {
+      "discoveryField": "annotations.linkerd.proxyWaitBeforeExit",
+      "chartField": "linkerd.proxyWaitBeforeExitSeconds",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "ingress.securityGroups",
+      "chartField": "ingress.alb.securityGroups.default",
+      "method": "direct"
+    },
+    {
+      "discoveryField": "ingress.certificateArns",
+      "chartField": "ingress.alb.hosts.default.certificateArn + additionalCertificateArns",
+      "method": "split"
+    },
+    {
+      "discoveryField": "ingress.sslPolicy",
+      "chartField": "ingress.alb.hosts.default.sslPolicy",
+      "method": "direct (default covers 96.1%)"
+    },
+    {
+      "discoveryField": "ingress.wafAclArn",
+      "chartField": "ingress.alb.hosts.wafArn",
+      "method": "direct (opt-in)"
+    },
+    {
+      "discoveryField": "ingress.hosts.default",
+      "chartField": "customExternalHost (if non-standard)",
+      "method": "conditional"
+    },
+    {
+      "discoveryField": "ingress.healthcheck.path",
+      "chartField": "ingress.alb.healthcheck.path",
+      "method": "requires BUG-004 fix"
+    },
+    {
+      "discoveryField": "ingress.healthcheck.intervalSeconds",
+      "chartField": "ingress.alb.healthcheck.intervalSeconds",
+      "method": "covered by corrected default (30)"
+    },
+    {
+      "discoveryField": "ingress.lba.access_logs_enabled",
+      "chartField": "ingress.alb.hosts.accessLogs.enabled",
+      "method": "covered by corrected default (true)"
+    },
+    {
+      "discoveryField": "ingress.lba.idle_timeout",
+      "chartField": "ingress.alb.hosts.idleTimeout",
+      "method": "covered by corrected default (600)"
+    },
+    {
+      "discoveryField": "customerLevel.networkPolicies.standard",
+      "chartField": "templates: default-deny, allow-*.yaml",
+      "method": "auto-deployed \u2014 no override needed"
+    },
+    {
+      "discoveryField": "features.glowroot",
+      "chartField": "feature.glowroot.enabled",
+      "method": "requires values.yaml addition"
+    },
+    {
+      "discoveryField": "features.redisSessions",
+      "chartField": "feature.redisSessions.enabled",
+      "method": "requires values.yaml addition"
+    },
+    {
+      "discoveryField": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "chartField": "envVarsDefaults.DOT_COOKIES_HTTP_ONLY",
+      "method": "fixed in corrected default (true)"
+    }
+  ],
+  "unmappablePaths": [
+    {
+      "discoveryField": "customerLevel.hasSealedSecrets",
+      "reason": "Chart does not support sealed secrets. Deploy separately.",
+      "workaround": "Maintain sealed secrets as standalone kubectl resources alongside chart."
+    },
+    {
+      "discoveryField": "customerLevel.networkPolicies.custom",
+      "reason": "Chart only supports the 4 standard network policies.",
+      "workaround": "Deploy custom NetworkPolicies as standalone resources."
+    }
+  ]
+}

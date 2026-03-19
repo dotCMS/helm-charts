@@ -1,0 +1,277 @@
+{
+  "customer": "arqiva",
+  "status": "pass",
+  "environmentCount": 3,
+  "totalChecks": 48,
+  "matches": 48,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "dev-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "eu-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_arqiva_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:eu-central-1:948170117212:secret:sh/arqiva/awssecret-Ue8xct"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0219794fe740bea9b"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:eu-central-1:948170117212:regional/webacl/arqiva-nonprod-waf/f6077d76-378f-42ef-be48-48362acd636e"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0c94a3edf0e39a9d5"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:eu-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "eu-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_arqiva_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:eu-central-1:948170117212:secret:sh/arqiva/awssecret-Ue8xct"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0219794fe740bea9b"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:eu-central-1:948170117212:regional/webacl/Arqiva-Prod-WAF-ACL/45845a44-d3c7-4d17-8b46-869d5ad98f3e"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-083989115de4a06ed"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:eu-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "uat-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "eu-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_arqiva_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:eu-central-1:948170117212:secret:sh/arqiva/awssecret-Ue8xct"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0219794fe740bea9b"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:eu-central-1:948170117212:regional/webacl/arqiva-nonprod-waf/f6077d76-378f-42ef-be48-48362acd636e"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-07f53c045f95706b4"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:eu-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

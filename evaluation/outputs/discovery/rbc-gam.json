@@ -1,0 +1,2274 @@
+{
+  "customer": "rbc-gam",
+  "discoveryDate": "2026-03-19T15:14:53.233655+00:00",
+  "structure": {
+    "environments": [
+      "dev-1",
+      "institutional-1",
+      "prod-1",
+      "retail",
+      "uat-1",
+      "us-sandbox"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "rbc-gam",
+    "serviceAccountName": "rbc-gam-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it",
+    "cloudProvider": "aws",
+    "region": "ca-central-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "": "fsap-0afb3aa29dc026d1a"
+      },
+      "volumeHandle": "fs-0f146b5fc91fbabec"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "dev-1": {
+      "identity": {
+        "fullName": "dotcms-rbc-gam-dev-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev",
+          "ver": "24.04",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-gam-dev-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.04.24_lts_v23_4fe06ee",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.04.24_lts_v23_4fe06ee"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "8Gi",
+            "ephemeral-storage": "5G"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "8Gi"
+          }
+        },
+        "javaHeap": "5G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_dev_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-dev-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-dev-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ca-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx5G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {},
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-gam-dev-1"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          },
+          "DOT_BASIC_METADATA_EXTENDED_KEYS": {
+            "type": "static_value",
+            "value": "content,contentType,fileSize,isImage,length,modDate,name,path,title,version,keywords"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-gam-dev-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-gam-dev-1-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/9f2f18ae-cb9b-4c70-9c50-8d6c958af898",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/fd0333cd-e1a9-4321-b37d-5d9d306e13a6",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/43f555fc-5aa2-4339-bd9b-7bf652933b80",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/93e60729-4296-4005-a123-43b504d67053"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "rbc-gam/dev"
+        },
+        "hosts": {
+          "default": "rbc-gam-dev.dotcms.cloud",
+          "additional": [
+            "*.rbc-gam-dev.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam dev",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-gam-dev-1"
+        }
+      }
+    },
+    "institutional-1": {
+      "identity": {
+        "fullName": "dotcms-rbc-gam-institutional-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "institutional",
+          "ver": "26.01",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-gam-institutional-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "11Gi",
+            "ephemeral-storage": "5G"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "11Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_institutional_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-institutional-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-institutional-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ca-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SIZE": {
+            "type": "static_value",
+            "value": "500"
+          },
+          "DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {},
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "53 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-gam-institutional-1"
+          },
+          "DOT_DEFAULT_WIDGET_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "required",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-gam-institutional-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-gam-institutional-1-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/92b5684a-494f-4c67-aab3-c95580dad4a8"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "rbc-gam/institutional"
+        },
+        "hosts": {
+          "default": "rbc-gam-institutional.dotcms.cloud",
+          "additional": [
+            "rbc-gam-institutional-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam institutional",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-gam-institutional-1"
+        }
+      }
+    },
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-rbc-gam-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "24.04",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-gam-prod-1"
+        }
+      },
+      "workload": {
+        "replicas": 3,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.04.24_lts_v23_4fe06ee",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.04.24_lts_v23_4fe06ee"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "15Gi",
+            "ephemeral-storage": "5G"
+          },
+          "limits": {
+            "cpu": "8",
+            "memory": "15Gi"
+          }
+        },
+        "javaHeap": "10G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ca-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SIZE": {
+            "type": "static_value",
+            "value": "500"
+          },
+          "DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx10G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {},
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-gam-prod-1"
+          },
+          "DOT_DEFAULT_WIDGET_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "required",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-gam-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-gam-prod-1-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3fe6d677-8822-4695-8d22-578088a37d67",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/92b5684a-494f-4c67-aab3-c95580dad4a8",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/f5628219-6eb1-4d63-a2ea-19bd38c31ca8",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/43f555fc-5aa2-4339-bd9b-7bf652933b80",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/ef05d3f2-45bc-4a0a-90d4-ef4f208cb578",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/639004dd-48d4-453a-852c-5ce29b4749ce",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/9760922e-8fbe-4175-9627-ad7f562cc2ee",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/edc290f7-3c26-4bfc-a1f1-68b817bb55c3",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/f86a00f3-56eb-4809-b10d-887c23f0ab9d",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/ded7cb8c-5127-410a-ae34-78b80839b1bc",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/93e60729-4296-4005-a123-43b504d67053",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/e45b1c36-54f8-4abc-8418-04541a289bd3"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "rbc-gam/prod"
+        },
+        "hosts": {
+          "default": "rbc-gam-prod.dotcms.cloud",
+          "additional": [
+            "*.rbc-gam-prod.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam prod",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-gam-prod-1"
+        }
+      }
+    },
+    "retail": {
+      "identity": {
+        "fullName": "dotcms-rbc-gam-retail",
+        "labels": {
+          "app": "dotcms",
+          "env": "retail",
+          "ver": "25.09",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-gam-retail"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "5Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "5Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_retail_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-retail-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-retail-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ca-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.rbc-gam::retail"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "18 1 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-gam-retail"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 2
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-gam-retail"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-gam-retail-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3b4ab7b5-1624-428b-9dc0-bea45b42aa3a",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/92b5684a-494f-4c67-aab3-c95580dad4a8"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": "9",
+          "timeoutSeconds": "2",
+          "healthyThresholdCount": "2",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "deregistration_delay.timeout_seconds": "30",
+          "slow_start.duration_seconds": "60",
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "rbc-gam/retail",
+          "idle_timeout.timeout_seconds": "600"
+        },
+        "hosts": {
+          "default": "rbc-gam-retail.dotcms.cloud",
+          "additional": [
+            "*.rbc-gam-retail.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam retail"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-gam-retail"
+        }
+      }
+    },
+    "uat-1": {
+      "identity": {
+        "fullName": "dotcms-rbc-gam-uat-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "uat",
+          "ver": "24.04",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-gam-uat-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.04.24_lts_v23_4fe06ee",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.04.24_lts_v23_4fe06ee"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "10Gi",
+            "ephemeral-storage": "5G"
+          },
+          "limits": {
+            "cpu": "10",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_uat_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-uat-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-uat-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.ca-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {},
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-gam-uat-1"
+          },
+          "DOT_SAMESITE_COOKIES": {
+            "type": "static_value",
+            "value": "None"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-gam-uat-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-gam-uat-1-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/43f555fc-5aa2-4339-bd9b-7bf652933b80",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/06052eac-7545-4ffe-af58-58f0d1555ce3",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/9f2f18ae-cb9b-4c70-9c50-8d6c958af898",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/c8a8588a-c0fc-43db-a77b-ecf2d5da6b35",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/9760922e-8fbe-4175-9627-ad7f562cc2ee",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/edc290f7-3c26-4bfc-a1f1-68b817bb55c3",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/c1d0adde-53aa-456f-8d94-a3c2bd3accbc",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/93e60729-4296-4005-a123-43b504d67053"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "rbc-gam/uat"
+        },
+        "hosts": {
+          "default": "rbc-gam-uat.dotcms.cloud",
+          "additional": [
+            "*.rbc-gam-uat.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam uat",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-gam-uat-1"
+        }
+      }
+    },
+    "us-sandbox": {
+      "identity": {
+        "fullName": "dotcms-rbc-us-sandbox",
+        "labels": {
+          "app": "dotcms",
+          "env": "sandbox",
+          "ver": "25.10",
+          "cust": "rbc-gam",
+          "fullname": "dotcms-rbc-us-sandbox"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_us_sandbox_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-us-sandbox-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-us-sandbox-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://canada-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "ses-smtp-user.ca-central-1.2021-05"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rbc-gam-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "5000"
+          },
+          "DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "5000"
+          },
+          "DOT_CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_DEFAULT_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_CONTENTLETCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_VELOCITYCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_VELOCITYMACROCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_APITOKENCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.timedcache.TimedCacheProvider"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_COOKIES_SECURE_FLAG": {
+            "type": "static_value",
+            "value": "never"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.rbc-gam::us-sandbox"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "21 4 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rbc-us-sandbox"
+          },
+          "DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+            "type": "static_value",
+            "value": "1000000000"
+          },
+          "DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+            "type": "static_value",
+            "value": "1024"
+          },
+          "DOT_AUTOWIRE_CLUSTER_TRANSPORT": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rbc-us-sandbox"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rbc-us-sandbox-efs-pvc",
+        "csiSecretProviderClass": "sh-rbc-gam-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:ca-central-1:948170117212:certificate/3230b58b-4eae-4ad0-8fa5-6911a4724349",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/4ca8b7db-2aa5-4a51-848a-2625a2d918e6",
+          "arn:aws:acm:ca-central-1:948170117212:certificate/9b1905c0-8992-4fe8-ba1a-b6305f0dfe69"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-08819e2f6f498c78a",
+          "sg-0155ff6d6e80ffcb0"
+        ],
+        "wafAclArn": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-ca-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "rbc-gam/dev"
+        },
+        "hosts": {
+          "default": "rbc-us-sandbox.dotcms.cloud",
+          "additional": [
+            "*.rbc-us-sandbox.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rbc-gam",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rbc-gam dev",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rbc-us-sandbox"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "annotations.linkerd.enabled",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "affinity.type": {
+        "values": {
+          "dev-1": "preferred",
+          "institutional-1": "required",
+          "prod-1": "required",
+          "retail": "preferred",
+          "uat-1": "preferred",
+          "us-sandbox": "preferred"
+        },
+        "note": "Varies by environment"
+      },
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-1": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_dev_1_db",
+          "institutional-1": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_institutional_1_db",
+          "prod-1": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_prod_1_db",
+          "retail": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_retail_db",
+          "uat-1": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_uat_1_db",
+          "us-sandbox": "jdbc:postgresql://k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/rbc_gam_us_sandbox_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.database.DB_DNSNAME": {
+        "values": {
+          "dev-1": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/",
+          "institutional-1": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/",
+          "prod-1": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/",
+          "retail": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/",
+          "uat-1": "None",
+          "us-sandbox": "k8s-ca-1-green-2zsk6z.cifbptvllfii.ca-central-1.rds.amazonaws.com/"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "dev-1": "-Xmx5G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork",
+          "institutional-1": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-1": "-Xmx10G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork",
+          "retail": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "uat-1": "-Xmx8G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork",
+          "us-sandbox": "-Xmx8G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.image.tag": {
+        "values": {
+          "dev-1": "24.04.24_lts_v23_4fe06ee",
+          "institutional-1": "26.02.27-01_3d130b5",
+          "prod-1": "24.04.24_lts_v23_4fe06ee",
+          "retail": "26.02.27-01_3d130b5",
+          "uat-1": "24.04.24_lts_v23_4fe06ee",
+          "us-sandbox": "26.02.27-01_3d130b5"
+        },
+        "note": "Different dotCMS versions per environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "dev-1": "5G",
+          "institutional-1": "8G",
+          "prod-1": "10G",
+          "retail": "4G",
+          "uat-1": "8G",
+          "us-sandbox": "8G"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev-1": "1",
+          "institutional-1": "1",
+          "prod-1": "3",
+          "retail": "1",
+          "uat-1": "1",
+          "us-sandbox": "1"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "dev-1": "6",
+          "institutional-1": "8",
+          "prod-1": "8",
+          "retail": "6",
+          "uat-1": "10",
+          "us-sandbox": "6"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "dev-1": "8Gi",
+          "institutional-1": "11Gi",
+          "prod-1": "15Gi",
+          "retail": "5Gi",
+          "uat-1": "10Gi",
+          "us-sandbox": "10Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "dev-1": "4",
+          "institutional-1": "4",
+          "prod-1": "4",
+          "retail": "1",
+          "uat-1": "4",
+          "us-sandbox": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "dev-1": "8Gi",
+          "institutional-1": "11Gi",
+          "prod-1": "15Gi",
+          "retail": "5Gi",
+          "uat-1": "10Gi",
+          "us-sandbox": "10Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-1.workload.replicas",
+      "description": "Single replica in dev-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.institutional-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.institutional-1.workload.replicas",
+      "description": "Single replica in institutional-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.institutional-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.retail.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.retail.workload.replicas",
+      "description": "Single replica in retail \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.retail.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in retail. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.retail.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.uat-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.uat-1.workload.replicas",
+      "description": "Single replica in uat-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.uat-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in uat-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.uat-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.us-sandbox.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.us-sandbox.workload.replicas",
+      "description": "Single replica in us-sandbox \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.us-sandbox.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in us-sandbox. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.us-sandbox.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    }
+  ]
+}

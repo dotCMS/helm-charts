@@ -1,0 +1,1084 @@
+{
+  "customer": "rotorooter",
+  "discoveryDate": "2026-03-19T15:14:53.345450+00:00",
+  "structure": {
+    "environments": [
+      "dev-2",
+      "prod-2",
+      "staging-2"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "rotorooter",
+    "serviceAccountName": "rotorooter-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_rotorooter_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/rotorooter/awssecret-5EYO7P",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "": "fsap-02ff654ae01e73632"
+      },
+      "volumeHandle": "fs-04b88b1a9672916f1"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "dev-2": {
+      "identity": {
+        "fullName": "dotcms-rotorooter-dev-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev",
+          "ver": "24.12",
+          "cust": "rotorooter",
+          "fullname": "dotcms-rotorooter-dev-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_dev_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-dev-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-dev-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.rotorooter::dev-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rotorooter-dev-2"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rotorooter-dev-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rotorooter-dev-2-efs-pvc",
+        "csiSecretProviderClass": "sh-rotorooter-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "rotorooter/dev-2"
+        },
+        "hosts": {
+          "default": "rotorooter-dev.dotcms.cloud",
+          "additional": [
+            "rotorooter-dev-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rotorooter",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rotorooter dev-2",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rotorooter-dev-2"
+        }
+      }
+    },
+    "prod-2": {
+      "identity": {
+        "fullName": "dotcms-rotorooter-prod-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "24.12",
+          "cust": "rotorooter",
+          "fullname": "dotcms-rotorooter-prod-2"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_prod_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-prod-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-prod-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.rotorooter::prod-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rotorooter-prod-2"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rotorooter-prod-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rotorooter-prod-2-efs-pvc",
+        "csiSecretProviderClass": "sh-rotorooter-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "rotorooter/prod-2"
+        },
+        "hosts": {
+          "default": "rotorooter-prod.dotcms.cloud",
+          "additional": [
+            "rotorooter-prod-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rotorooter",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rotorooter prod-2",
+          "VantaNonProd": "false"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rotorooter-prod-2"
+        }
+      }
+    },
+    "staging-2": {
+      "identity": {
+        "fullName": "dotcms-rotorooter-staging-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "24.12",
+          "cust": "rotorooter",
+          "fullname": "dotcms-rotorooter-staging-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "24.12.27_lts_v16_f12f6e4",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:24.12.27_lts_v16_f12f6e4"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_staging_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-staging-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-staging-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-rotorooter-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "25"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "5"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.rotorooter::staging-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "rotorooter-staging-2"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-rotorooter-staging-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "rotorooter-staging-2-efs-pvc",
+        "csiSecretProviderClass": "sh-rotorooter-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "rotorooter/staging-2"
+        },
+        "hosts": {
+          "default": "rotorooter-staging.dotcms.cloud",
+          "additional": [
+            "rotorooter-staging-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "rotorooter",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for rotorooter staging-2",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-rotorooter-staging-2"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.database.DB_DNSNAME",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "envVars.java.CMS_JAVA_OPTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.javaHeap",
+      "workload.resources.limits.cpu",
+      "workload.resources.limits.memory",
+      "workload.resources.requests.cpu",
+      "workload.resources.requests.memory",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-2": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_dev_2_db",
+          "prod-2": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_prod_2_db",
+          "staging-2": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/rotorooter_staging_2_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev-2": "1",
+          "prod-2": "2",
+          "staging-2": "1"
+        },
+        "note": "Different scaling per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-2.workload.replicas",
+      "description": "Single replica in dev-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.staging-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.staging-2.workload.replicas",
+      "description": "Single replica in staging-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.staging-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in staging-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.staging-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    }
+  ]
+}

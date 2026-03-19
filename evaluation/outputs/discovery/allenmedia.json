@@ -1,0 +1,761 @@
+{
+  "customer": "allenmedia",
+  "discoveryDate": "2026-03-19T15:14:50.335502+00:00",
+  "structure": {
+    "environments": [
+      "dev",
+      "prod"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "allenmedia",
+    "serviceAccountName": "allenmedia-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_allenmedia_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/allenmedia/awssecret-OQwxfF",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "allenmedia-dev-efs-pvc": "fsap-0d078a273664036ec",
+        "allenmedia-prod-efs-pvc": "fsap-04a9102c91dfe6d67"
+      },
+      "volumeHandle": "fs-06a3df7be7ace7317"
+    },
+    "hasSealedSecrets": true
+  },
+  "environments": {
+    "dev": {
+      "identity": {
+        "fullName": "dotcms-allenmedia-dev",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev",
+          "ver": "23.01",
+          "cust": "allenmedia",
+          "fullname": "dotcms-allenmedia-dev"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "23.01.24_lts_93544717",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:23.01.24_lts_93544717"
+        },
+        "resources": {
+          "requests": {
+            "cpu": ".5",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/allenmedia_dev_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-dev-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-dev-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_ESAUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "allenmedia-dev"
+          },
+          "DOT_CONTENT_ALLOW_ZERO_LENGTH_FILES": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COM_LIFERAY_UTIL_XSS_ESAPI_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-allenmedia-dev"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "allenmedia-dev-efs-pvc",
+        "csiSecretProviderClass": "sh-allenmedia-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/b382c6fa-e70a-47ba-a60c-a961593e2f04"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "3600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "allenmedia/dev"
+        },
+        "hosts": {
+          "default": "allenmedia-dev.dotcms.cloud",
+          "additional": [
+            "*.allenmedia-dev.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "allenmedia",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for allenmedia dev"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-allenmedia-dev"
+        }
+      }
+    },
+    "prod": {
+      "identity": {
+        "fullName": "dotcms-allenmedia-prod",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-2310",
+          "ver": "23.10",
+          "cust": "allenmedia",
+          "fullname": "dotcms-allenmedia-prod"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "23.10.24_lts_v26_2e349a6",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:23.10.24_lts_v26_2e349a6"
+        },
+        "resources": {
+          "requests": {
+            "cpu": ".5",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "8G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/allenmedia_prod_2310_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-prod-2310-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-prod-2310-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-allenmedia-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx8G -XX:+PrintFlagsFinal -javaagent:/data/shared/glowroot/glowroot.jar -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_ESAUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "allenmedia-prod"
+          },
+          "DOT_CONTENT_ALLOW_ZERO_LENGTH_FILES": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_COM_LIFERAY_UTIL_XSS_ESAPI_VALIDATION": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-allenmedia-prod"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "allenmedia-prod-efs-pvc",
+        "csiSecretProviderClass": "sh-allenmedia-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/b382c6fa-e70a-47ba-a60c-a961593e2f04"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "3600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "allenmedia/dev"
+        },
+        "hosts": {
+          "default": "allenmedia-prod.dotcms.cloud",
+          "additional": [
+            "*.allenmedia-prod.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "allenmedia",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for allenmedia dev"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-allenmedia-prod"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.database.DB_DNSNAME",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "envVars.java.CMS_JAVA_OPTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.javaHeap",
+      "workload.resources.limits.cpu",
+      "workload.resources.limits.memory",
+      "workload.resources.requests.cpu",
+      "workload.resources.requests.memory",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/allenmedia_dev_db",
+          "prod": "jdbc:postgresql://k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com/allenmedia_prod_2310_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "workload.image.tag": {
+        "values": {
+          "dev": "23.01.24_lts_93544717",
+          "prod": "23.10.24_lts_v26_2e349a6"
+        },
+        "note": "Different dotCMS versions per environment"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev": "1",
+          "prod": "2"
+        },
+        "note": "Different scaling per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev.workload.replicas",
+      "description": "Single replica in dev \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "customerLevel.sealedSecrets",
+      "description": "Customer uses sealed secrets in addition to AWS SecretProviderClass.",
+      "severity": "info",
+      "recommendation": "Document sealed secret usage before migration to Helm chart"
+    }
+  ]
+}

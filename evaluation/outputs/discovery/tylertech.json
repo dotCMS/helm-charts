@@ -1,0 +1,1689 @@
+{
+  "customer": "tylertech",
+  "discoveryDate": "2026-03-19T15:14:54.198040+00:00",
+  "structure": {
+    "environments": [
+      "auth-1",
+      "dev-1",
+      "prod-1",
+      "staging-1"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "tylertech",
+    "serviceAccountName": "tylertech-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_tylertech_us_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/tylertech/awssecret-l09XkL",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "tylertech-dev-1-efs-pvc": "fsap-06b1b06ade3ee0ca6",
+        "tylertech-auth-1-efs-pvc": "fsap-0207684125a357cd2",
+        "tylertech-staging-1-efs-pvc": "fsap-081c9d698fa692d44",
+        "tylertech-prod-1-efs-pvc": "fsap-0f883f1d71670cba0"
+      },
+      "volumeHandle": "fs-06bc63399966ed195"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "auth-1": {
+      "identity": {
+        "fullName": "dotcms-tylertech-auth-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "auth",
+          "ver": "26.01",
+          "cust": "tylertech",
+          "fullname": "dotcms-tylertech-auth-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "Parallel",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "3",
+            "memory": "13Gi"
+          },
+          "limits": {
+            "cpu": "5",
+            "memory": "13Gi"
+          }
+        },
+        "javaHeap": "9G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_auth_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-auth-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-auth-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx9G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.tylertech::auth-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "7 3 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "tylertech-auth-1"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 2
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-tylertech-auth-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "tylertech-auth-1-efs-pvc",
+        "csiSecretProviderClass": "sh-tylertech-awssecret"
+      },
+      "lifecycle": {
+        "postStart": null,
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/7234d2d7-91aa-4114-b92f-b087f541e241"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": "9",
+          "timeoutSeconds": "2",
+          "healthyThresholdCount": "2",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "deregistration_delay.timeout_seconds": "30",
+          "slow_start.duration_seconds": "60",
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "tylertech/auth-1",
+          "idle_timeout.timeout_seconds": "600"
+        },
+        "hosts": {
+          "default": "tylertech-auth.dotcms.cloud",
+          "additional": [
+            "tylertech-auth-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "tylertech",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for tylertech auth-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-tylertech-auth-1"
+        }
+      }
+    },
+    "dev-1": {
+      "identity": {
+        "fullName": "dotcms-tylertech-dev-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev",
+          "ver": "25.07",
+          "cust": "tylertech",
+          "fullname": "dotcms-tylertech-dev-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "Parallel",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "2",
+            "memory": "9Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "9Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_dev_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-dev-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-dev-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.tylertech::dev-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "32 4 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "tylertech-dev-1"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 2
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-tylertech-dev-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "tylertech-dev-1-efs-pvc",
+        "csiSecretProviderClass": "sh-tylertech-awssecret"
+      },
+      "lifecycle": {
+        "postStart": null,
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": "9",
+          "timeoutSeconds": "2",
+          "healthyThresholdCount": "2",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "deregistration_delay.timeout_seconds": "30",
+          "slow_start.duration_seconds": "60",
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "tylertech/dev-1-1",
+          "idle_timeout.timeout_seconds": "600"
+        },
+        "hosts": {
+          "default": "tylertech-dev.dotcms.cloud",
+          "additional": [
+            "tylertech-dev-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "tylertech",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for tylertech dev-1-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-tylertech-dev-1"
+        }
+      }
+    },
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-tylertech-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-1",
+          "ver": "26.01",
+          "cust": "tylertech",
+          "fullname": "dotcms-tylertech-prod-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "Parallel",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "15Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "15Gi"
+          }
+        },
+        "javaHeap": "12G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx12G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.tylertech::prod-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "13 0 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "tylertech-prod-1"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 2
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-tylertech-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "tylertech-prod-1-efs-pvc",
+        "csiSecretProviderClass": "sh-tylertech-awssecret"
+      },
+      "lifecycle": {
+        "postStart": null,
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": "9",
+          "timeoutSeconds": "2",
+          "healthyThresholdCount": "2",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "deregistration_delay.timeout_seconds": "30",
+          "slow_start.duration_seconds": "60",
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "tylertech/prod-1",
+          "idle_timeout.timeout_seconds": "600"
+        },
+        "hosts": {
+          "default": "tylertech-prod.dotcms.cloud",
+          "additional": [
+            "tylertech-prod-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "tylertech",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for tylertech prod-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-tylertech-prod-1"
+        }
+      }
+    },
+    "staging-1": {
+      "identity": {
+        "fullName": "dotcms-tylertech-staging-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "staging",
+          "ver": "26.01",
+          "cust": "tylertech",
+          "fullname": "dotcms-tylertech-staging-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "Parallel",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "13Gi"
+          },
+          "limits": {
+            "cpu": "3",
+            "memory": "13Gi"
+          }
+        },
+        "javaHeap": "9G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-communal-green-w2xpxt.cafdyqpndbn1.us-east-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_staging_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-staging-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-staging-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx9G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          },
+          "CMS_REMOTEIP_REMOTEIPHEADER": {
+            "type": "static_value",
+            "value": "X-VLSCustom-XFF"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.tylertech::staging-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-tylertech-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "13 2 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "tylertech-staging-1"
+          },
+          "DOT_JSONTOOL_GENERATE_JACKSON": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+            "type": "static_value",
+            "value": "write"
+          },
+          "DOT_REST_API_REJECT_WITH_NO_USER": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 15,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": null,
+          "periodSeconds": 7,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 2
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-tylertech-staging-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "tylertech-staging-1-efs-pvc",
+        "csiSecretProviderClass": "sh-tylertech-awssecret"
+      },
+      "lifecycle": {
+        "postStart": null,
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/probes/alive",
+          "intervalSeconds": "9",
+          "timeoutSeconds": "2",
+          "healthyThresholdCount": "2",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "deregistration_delay.timeout_seconds": "30",
+          "slow_start.duration_seconds": "60",
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "tylertech/staging-1",
+          "idle_timeout.timeout_seconds": "600"
+        },
+        "hosts": {
+          "default": "tylertech-staging.dotcms.cloud",
+          "additional": [
+            "tylertech-staging-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "tylertech",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for tylertech staging-1"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-tylertech-staging-1"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.database.DB_DNSNAME",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "auth-1": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_auth_1_db",
+          "dev-1": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_dev_1_db",
+          "prod-1": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_prod_1_db",
+          "staging-1": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/tylertech_staging_1_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "auth-1": "-Xmx9G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "dev-1": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-1": "-Xmx12G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "staging-1": "-Xmx9G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "auth-1": "9G",
+          "dev-1": "7G",
+          "prod-1": "12G",
+          "staging-1": "9G"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.replicas": {
+        "values": {
+          "auth-1": "2",
+          "dev-1": "1",
+          "prod-1": "2",
+          "staging-1": "2"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "auth-1": "5",
+          "dev-1": "4",
+          "prod-1": "6",
+          "staging-1": "3"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "auth-1": "13Gi",
+          "dev-1": "9Gi",
+          "prod-1": "15Gi",
+          "staging-1": "13Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "auth-1": "3",
+          "dev-1": "2",
+          "prod-1": "1",
+          "staging-1": "1"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "auth-1": "13Gi",
+          "dev-1": "9Gi",
+          "prod-1": "15Gi",
+          "staging-1": "13Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.auth-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.auth-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in auth-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.auth-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.auth-1.tolerations",
+      "description": "Custom tolerations defined: ['workload-tier']. Requires specific node pool configuration.",
+      "severity": "info",
+      "recommendation": "Document node pool requirements for Helm values migration"
+    },
+    {
+      "field": "environments.dev-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-1.workload.replicas",
+      "description": "Single replica in dev-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-1.tolerations",
+      "description": "Custom tolerations defined: ['workload-tier']. Requires specific node pool configuration.",
+      "severity": "info",
+      "recommendation": "Document node pool requirements for Helm values migration"
+    },
+    {
+      "field": "environments.staging-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.staging-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in staging-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.staging-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.staging-1.tolerations",
+      "description": "Custom tolerations defined: ['workload-tier']. Requires specific node pool configuration.",
+      "severity": "info",
+      "recommendation": "Document node pool requirements for Helm values migration"
+    }
+  ]
+}

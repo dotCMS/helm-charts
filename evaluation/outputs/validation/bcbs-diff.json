@@ -1,0 +1,277 @@
+{
+  "customer": "bcbs",
+  "status": "pass",
+  "environmentCount": 3,
+  "totalChecks": 48,
+  "matches": 48,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "dev-2310",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_bcbs_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/bcbs/awssecret-im5UzV"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0dc45d6b24424d431"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "6Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/bcbs-nonprod/c2b2b75f-4f8d-4145-b6b1-931f6c7e4321"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0788126cbcd0a4da7"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-2310",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_bcbs_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/bcbs/awssecret-im5UzV"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0dc45d6b24424d431"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/bcbs-prod/36230ff5-df0d-4266-aadb-50eabcf0fcd9"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0cf62440fd938701a"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "uat-2310",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_bcbs_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/bcbs/awssecret-im5UzV"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0dc45d6b24424d431"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/bcbs-nonprod/c2b2b75f-4f8d-4145-b6b1-931f6c7e4321"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-02ffa9d249e06cfac"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

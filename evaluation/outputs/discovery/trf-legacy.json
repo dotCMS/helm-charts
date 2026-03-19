@@ -1,0 +1,1215 @@
+{
+  "customer": "trf-legacy",
+  "discoveryDate": "2026-03-19T15:14:54.087287+00:00",
+  "structure": {
+    "environments": [
+      "dev-1",
+      "prod-1",
+      "staging-1"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "trf-legacy",
+    "serviceAccountName": "trf-legacy-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_trf-legacy_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:eu-central-1:948170117212:secret:sh/trf-legacy/awssecret-17KBZc",
+    "cloudProvider": "aws",
+    "region": "eu-central-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "": "fsap-0639041aab3c97755"
+      },
+      "volumeHandle": "fs-06b42d11065970661"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "dev-1": {
+      "identity": {
+        "fullName": "dotcms-trf-legacy-dev-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "25.06",
+          "cust": "trf-legacy",
+          "fullname": "dotcms-trf-legacy-dev-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 10,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "6",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_dev_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-dev-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-dev-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://frankfurt-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.eu-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "trf::legacy-dev"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-frankfurt-prod-1.hmfw8p.euc1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "14 4 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "trf-legacy-dev-1"
+          },
+          "DOT_CMS_INDEX_PAGE": {
+            "type": "static_value",
+            "value": "index.html"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 30,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-trf-legacy-dev-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "trf-legacy-dev-1-efs-pvc",
+        "csiSecretProviderClass": "sh-trf-legacy-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": null
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": null
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:eu-central-1:948170117212:certificate/3f5fceb2-d03e-45b5-b6d0-67cd01a31fc5",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5c49d25-9915-457e-83f3-218a6845ca69",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/e114e3ae-2e5b-42cd-8113-638462ea7862",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/99e6f6c4-6e10-44d0-9092-e51433cc2779",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5ad6026-0b85-4ff6-aa39-06dee0b61703"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0ecf846d922b3a8a4",
+          "sg-03c39f2abdc832f3d"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-eu-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "trf-legacy/dev-1"
+        },
+        "hosts": {
+          "default": "trf-legacy-dev-1.dotcms.cloud",
+          "additional": [
+            "trf-legacy-dev.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "trf-legacy",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for trf-legacy prod",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-trf-legacy-dev-1"
+        }
+      }
+    },
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-trf-legacy-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "25.06",
+          "cust": "trf-legacy",
+          "fullname": "dotcms-trf-legacy-prod-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 10,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://frankfurt-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.eu-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "trf::legacy-prod"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-frankfurt-prod-1.hmfw8p.euc1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "32 2 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "trf-legacy-prod-1"
+          },
+          "DOT_CMS_INDEX_PAGE": {
+            "type": "static_value",
+            "value": "index.html"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 30,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-trf-legacy-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "trf-legacy-prod-1-efs-pvc",
+        "csiSecretProviderClass": "sh-trf-legacy-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": null
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": null
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:eu-central-1:948170117212:certificate/3f5fceb2-d03e-45b5-b6d0-67cd01a31fc5",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5c49d25-9915-457e-83f3-218a6845ca69",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/e114e3ae-2e5b-42cd-8113-638462ea7862",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/5bc745cc-1227-440f-8072-4e6093848c79",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/3f043c23-9faf-408d-bad9-ed05fef687e5",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/99e6f6c4-6e10-44d0-9092-e51433cc2779",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5ad6026-0b85-4ff6-aa39-06dee0b61703",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/97b04313-4844-489b-a420-d2f12b50f41f"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0ecf846d922b3a8a4",
+          "sg-03c39f2abdc832f3d"
+        ],
+        "wafAclArn": "arn:aws:wafv2:eu-central-1:948170117212:regional/webacl/trf-legacy-prod-k8s-2/7dc58ad6-293f-4075-a1d5-ede4a582a77a",
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-eu-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "trf-legacy/prod-1"
+        },
+        "hosts": {
+          "default": "trf-legacy-prod-1.dotcms.cloud",
+          "additional": [
+            "trf-legacy-prod.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "trf-legacy",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for trf-legacy prod",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-trf-legacy-prod-1"
+        }
+      }
+    },
+    "staging-1": {
+      "identity": {
+        "fullName": "dotcms-trf-legacy-staging-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod",
+          "ver": "25.06",
+          "cust": "trf-legacy",
+          "fullname": "dotcms-trf-legacy-staging-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 10,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "6Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6Gi"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_DNSNAME": {
+            "type": "static_value",
+            "value": "k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com"
+          },
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_staging_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-staging-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-staging-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://frankfurt-es-1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.eu-central-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {},
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "trf::legacy-staging"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-frankfurt-prod-1.hmfw8p.euc1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_PORT": {
+            "type": "static_value",
+            "value": "6379"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-trf-legacy-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "55 2 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "trf-legacy-staging-1"
+          },
+          "DOT_CMS_INDEX_PAGE": {
+            "type": "static_value",
+            "value": "index.html"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 30,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-trf-legacy-staging-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "trf-legacy-staging-1-efs-pvc",
+        "csiSecretProviderClass": "sh-trf-legacy-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": null
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": null
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {}
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:eu-central-1:948170117212:certificate/3f5fceb2-d03e-45b5-b6d0-67cd01a31fc5",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5c49d25-9915-457e-83f3-218a6845ca69",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/e114e3ae-2e5b-42cd-8113-638462ea7862",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/99e6f6c4-6e10-44d0-9092-e51433cc2779",
+          "arn:aws:acm:eu-central-1:948170117212:certificate/c5ad6026-0b85-4ff6-aa39-06dee0b61703"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0ecf846d922b3a8a4",
+          "sg-03c39f2abdc832f3d"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "600",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-eu-central-1-alb-access-logs",
+          "access_logs.s3.prefix": "trf-legacy/staging-1"
+        },
+        "hosts": {
+          "default": "trf-legacy-staging-1.dotcms.cloud",
+          "additional": [
+            "trf-legacy-staging.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "trf-legacy",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for trf-legacy prod",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-trf-legacy-staging-1"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.database.DB_DNSNAME",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.replicas",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-1": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_dev_1_db",
+          "prod-1": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_prod_1_db",
+          "staging-1": "jdbc:postgresql://k8s-comm-1-green-vgyfon.cr12ntsxp2j5.eu-central-1.rds.amazonaws.com/trf_legacy_staging_1_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "dev-1": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-1": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "staging-1": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "dev-1": "7G",
+          "prod-1": "4G",
+          "staging-1": "4G"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "dev-1": "6",
+          "prod-1": "4",
+          "staging-1": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "dev-1": "10Gi",
+          "prod-1": "6Gi",
+          "staging-1": "6Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "dev-1": "6",
+          "prod-1": "4",
+          "staging-1": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "dev-1": "10Gi",
+          "prod-1": "6Gi",
+          "staging-1": "6Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-1.workload.replicas",
+      "description": "Single replica in dev-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.dev-1.lifecycle.preStop",
+      "description": "No preStop hook defined in dev-1. Requests may be dropped during pod termination.",
+      "severity": "warning",
+      "recommendation": "Add preStop sleep to drain connections before SIGTERM"
+    },
+    {
+      "field": "environments.prod-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-1.workload.replicas",
+      "description": "Single replica in prod-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.prod-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-1.lifecycle.preStop",
+      "description": "No preStop hook defined in prod-1. Requests may be dropped during pod termination.",
+      "severity": "warning",
+      "recommendation": "Add preStop sleep to drain connections before SIGTERM"
+    },
+    {
+      "field": "environments.staging-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.staging-1.workload.replicas",
+      "description": "Single replica in staging-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.staging-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in staging-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.staging-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.staging-1.lifecycle.preStop",
+      "description": "No preStop hook defined in staging-1. Requests may be dropped during pod termination.",
+      "severity": "warning",
+      "recommendation": "Add preStop sleep to drain connections before SIGTERM"
+    }
+  ]
+}

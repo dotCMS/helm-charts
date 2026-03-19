@@ -1,0 +1,277 @@
+{
+  "customer": "whitecastle",
+  "status": "pass",
+  "environmentCount": 3,
+  "totalChecks": 48,
+  "matches": 48,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "dev-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_whitecastle_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/whitecastle/awssecret-xXZMEh"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-01abfc45849ce6a51"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "0.5"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "7"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/whitecastle-k8s/04f82e2f-8d61-4993-9e94-9fc6ed935844"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0611905186f18daf7"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_whitecastle_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/whitecastle/awssecret-xXZMEh"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-01abfc45849ce6a51"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "7"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/whitecastle-k8s/04f82e2f-8d61-4993-9e94-9fc6ed935844"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0c0d2478e105b4ee1"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "uat-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_whitecastle_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/whitecastle/awssecret-xXZMEh"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-01abfc45849ce6a51"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "0.5"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "7"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/whitecastle-k8s/04f82e2f-8d61-4993-9e94-9fc6ed935844"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-07f68cfe20943653a"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

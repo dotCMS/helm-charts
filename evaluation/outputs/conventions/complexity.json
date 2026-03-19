@@ -1,0 +1,119 @@
+{
+  "analysisDate": "2026-03-19T15:14:58.575065+00:00",
+  "customerBreakdown": [
+    {
+      "customer": "jostens",
+      "envCount": 9,
+      "estimatedRequiredParams": 70,
+      "estimatedOptionalParams": 4,
+      "totalParams": 74
+    },
+    {
+      "customer": "wawanesa",
+      "envCount": 8,
+      "estimatedRequiredParams": 63,
+      "estimatedOptionalParams": 4,
+      "totalParams": 67
+    },
+    {
+      "customer": "greensky",
+      "envCount": 8,
+      "estimatedRequiredParams": 63,
+      "estimatedOptionalParams": 3,
+      "totalParams": 66
+    },
+    {
+      "customer": "merkle",
+      "envCount": 8,
+      "estimatedRequiredParams": 63,
+      "estimatedOptionalParams": 3,
+      "totalParams": 66
+    },
+    {
+      "customer": "dairyqueen",
+      "envCount": 8,
+      "estimatedRequiredParams": 63,
+      "estimatedOptionalParams": 1,
+      "totalParams": 64
+    },
+    {
+      "customer": "hyundaimexico",
+      "envCount": 6,
+      "estimatedRequiredParams": 49,
+      "estimatedOptionalParams": 4,
+      "totalParams": 53
+    },
+    {
+      "customer": "lennox",
+      "envCount": 6,
+      "estimatedRequiredParams": 49,
+      "estimatedOptionalParams": 3,
+      "totalParams": 52
+    },
+    {
+      "customer": "prosperitylife",
+      "envCount": 6,
+      "estimatedRequiredParams": 49,
+      "estimatedOptionalParams": 3,
+      "totalParams": 52
+    },
+    {
+      "customer": "rbc-gam",
+      "envCount": 6,
+      "estimatedRequiredParams": 49,
+      "estimatedOptionalParams": 3,
+      "totalParams": 52
+    },
+    {
+      "customer": "svpworldwide",
+      "envCount": 6,
+      "estimatedRequiredParams": 49,
+      "estimatedOptionalParams": 2,
+      "totalParams": 51
+    },
+    {
+      "customer": "carveredison",
+      "envCount": 5,
+      "estimatedRequiredParams": 42,
+      "estimatedOptionalParams": 4,
+      "totalParams": 46
+    },
+    {
+      "customer": "telus",
+      "envCount": 5,
+      "estimatedRequiredParams": 42,
+      "estimatedOptionalParams": 2,
+      "totalParams": 44
+    },
+    {
+      "customer": "ctt-grupo",
+      "envCount": 4,
+      "estimatedRequiredParams": 35,
+      "estimatedOptionalParams": 4,
+      "totalParams": 39
+    },
+    {
+      "customer": "ejco",
+      "envCount": 4,
+      "estimatedRequiredParams": 35,
+      "estimatedOptionalParams": 4,
+      "totalParams": 39
+    },
+    {
+      "customer": "ilag",
+      "envCount": 4,
+      "estimatedRequiredParams": 35,
+      "estimatedOptionalParams": 4,
+      "totalParams": 39
+    }
+  ],
+  "summary": {
+    "minParams": 15,
+    "maxParams": 74,
+    "meanParams": 31.3,
+    "medianParams": 31,
+    "conclusion": "Parameterization (Helm territory)"
+  },
+  "requiredParameterCount": 14,
+  "optionalParameterCount": 11
+}

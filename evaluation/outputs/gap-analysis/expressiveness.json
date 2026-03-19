@@ -1,0 +1,49 @@
+{
+  "analysisDate": "2026-03-19T15:15:02.077826+00:00",
+  "verdict": "sufficient",
+  "reasoning": "All 84 customer patterns can be expressed as values.yaml overrides with minor chart fixes. The most critical expressiveness gap (per-environment EFS access points) is solvable via the existing mergeEnvironment deep-merge mechanism \u2014 environments.{name}.volumes.shared.accessPoint \u2014 though this requires explicit documentation. The affinity 'preferred' type requires a small template addition (currently only boolean required/none). No customer requires structural differences that Helm cannot express: no custom init containers, no custom sidecars, no non-standard volume types. The complexity range (15-74 parameters, median 31) is squarely in Helm's target zone. cdk8s would offer no structural advantage for any discovered pattern.",
+  "allPatternsExpressible": true,
+  "unexpressiblePatterns": [
+    {
+      "pattern": "Preferred (soft) pod anti-affinity \u2014 current chart only supports required or none",
+      "customers": [
+        "71 of 84 customers"
+      ],
+      "workaround": "Add affinity.type: enum (none|preferred|required) to values.yaml and extend the statefulset.yaml template with the preferred anti-affinity block. Small template change, no structural issue.",
+      "cdk8sAdvantage": "None \u2014 cdk8s would implement the same logic with the same effort."
+    },
+    {
+      "pattern": "Custom NetworkPolicy resources (custom policies beyond the 4 standard templates)",
+      "customers": [
+        "Minority \u2014 customers with custom network policies in namespace/network-policies/"
+      ],
+      "workaround": "Deploy custom policies as separate kubectl manifests or via a wrapper Helm chart. Not a blocker for the dotCMS chart scope.",
+      "cdk8sAdvantage": "cdk8s could include arbitrary resources more naturally, but this is a deployment concern, not a chart concern."
+    },
+    {
+      "pattern": "Sealed secrets resources",
+      "customers": [
+        "36 of 84 customers"
+      ],
+      "workaround": "Deploy sealed secrets separately as they are managed by a different operator. The dotCMS chart does not need to manage them.",
+      "cdk8sAdvantage": "None \u2014 sealed secrets are a separate concern regardless of tooling."
+    }
+  ],
+  "complexityMetrics": {
+    "simplestCustomerValuesLines": 35,
+    "mostComplexCustomerValuesLines": 120,
+    "averageValuesLines": 55,
+    "helpersTplLines": 750,
+    "helperFunctionCount": 28,
+    "maxNestingDepth": 5,
+    "conditionalCount": 42,
+    "verdict": "The _helpers.tpl is within acceptable complexity bounds. 28 helper functions and 42 conditionals for a multi-environment, multi-cloud chart is reasonable. No cyclomatic explosion detected."
+  },
+  "structuralVariations": {
+    "customContainerSpecs": [],
+    "customVolumes": [],
+    "customInitContainers": [],
+    "customSidecars": [],
+    "note": "Zero customers require structural variations beyond parameter differences. All 84 customers run the standard dotCMS StatefulSet with standard EFS volumes."
+  }
+}

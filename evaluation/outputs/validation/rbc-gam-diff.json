@@ -1,0 +1,541 @@
+{
+  "customer": "rbc-gam",
+  "status": "pass",
+  "environmentCount": 6,
+  "totalChecks": 96,
+  "matches": 96,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "dev-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "8Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "5"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "institutional-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "11Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "3"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "15Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "15Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "10"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "retail",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "5Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "uat-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "24.04.24_lts_v23_4fe06ee"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "10"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "us-sandbox",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "ca-central-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_rbc-gam_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:ca-central-1:948170117212:secret:sh/rbc-gam/awssecret-Xiy0it"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-0f146b5fc91fbabec"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "10Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "8"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:ca-central-1:948170117212:regional/webacl/rbc-wealthmgmt-k8s/61ccf537-ab8f-4c81-afb6-10cef9697142"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": ""
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:ca-central-1:948170117212:ce..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

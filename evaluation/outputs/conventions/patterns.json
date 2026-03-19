@@ -1,0 +1,2152 @@
+{
+  "analysisDate": "2026-03-19T15:14:58.575065+00:00",
+  "totalCustomers": 84,
+  "totalEnvironments": 255,
+  "fields": {
+    "workload.replicas": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 6,
+      "mode": "1",
+      "modePct": 55.3,
+      "distribution": {
+        "1": 141,
+        "2": 96,
+        "3": 7,
+        "0": 6,
+        "4": 3,
+        "5": 2
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "workload.podManagementPolicy": {
+      "category": "common",
+      "frequency": 248,
+      "frequencyPct": 97.3,
+      "distinctValues": 2,
+      "mode": "OrderedReady",
+      "modePct": 91.1,
+      "distribution": {
+        "OrderedReady": 226,
+        "Parallel": 22
+      },
+      "recommendedDefault": "OrderedReady",
+      "parameterType": "optional_with_default"
+    },
+    "workload.terminationGracePeriodSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "40",
+      "modePct": 98.8,
+      "distribution": {
+        "40": 252,
+        "10": 3
+      },
+      "recommendedDefault": "40",
+      "parameterType": "required"
+    },
+    "workload.image.repository": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "mirror.gcr.io/dotcms/dotcms",
+      "modePct": 100.0,
+      "distribution": {
+        "mirror.gcr.io/dotcms/dotcms": 255
+      },
+      "recommendedDefault": "mirror.gcr.io/dotcms/dotcms",
+      "parameterType": "hard_default"
+    },
+    "workload.javaHeap": {
+      "category": "common",
+      "frequency": 254,
+      "frequencyPct": 99.6,
+      "distinctValues": 18,
+      "mode": "4G",
+      "modePct": 47.6,
+      "distribution": {
+        "4G": 121,
+        "6G": 33,
+        "8G": 24,
+        "7G": 21,
+        "5G": 17,
+        "10G": 12,
+        "3G": 9,
+        "12G": 3,
+        "11G": 2,
+        "1G": 2
+      },
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "workload.resources.requests.cpu": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 10,
+      "mode": "2",
+      "modePct": 29.0,
+      "distribution": {
+        "2": 74,
+        "4": 63,
+        "1": 42,
+        ".5": 34,
+        "3": 17,
+        "5": 9,
+        "0.5": 8,
+        "6": 4,
+        "8": 3,
+        "1.5": 1
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "workload.resources.requests.memory": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 19,
+      "mode": "6Gi",
+      "modePct": 32.2,
+      "distribution": {
+        "6Gi": 82,
+        "5Gi": 48,
+        "10Gi": 24,
+        "9Gi": 20,
+        "7Gi": 20,
+        "8Gi": 14,
+        "12Gi": 7,
+        "11Gi": 7,
+        "16Gi": 6,
+        "14Gi": 5
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "workload.resources.limits.cpu": {
+      "category": "common",
+      "frequency": 254,
+      "frequencyPct": 99.6,
+      "distinctValues": 7,
+      "mode": "4",
+      "modePct": 58.3,
+      "distribution": {
+        "4": 148,
+        "6": 47,
+        "8": 27,
+        "12": 16,
+        "5": 10,
+        "10": 3,
+        "3": 3
+      },
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "workload.resources.limits.memory": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 19,
+      "mode": "6Gi",
+      "modePct": 32.2,
+      "distribution": {
+        "6Gi": 82,
+        "5Gi": 47,
+        "10Gi": 25,
+        "9Gi": 20,
+        "7Gi": 20,
+        "8Gi": 14,
+        "12Gi": 7,
+        "11Gi": 7,
+        "16Gi": 6,
+        "14Gi": 5
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "affinity.type": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "preferred",
+      "modePct": 81.2,
+      "distribution": {
+        "preferred": 207,
+        "required": 48
+      },
+      "recommendedDefault": "preferred",
+      "parameterType": "required"
+    },
+    "affinity.topologyKey": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "kubernetes.io/hostname",
+      "modePct": 100.0,
+      "distribution": {
+        "kubernetes.io/hostname": 255
+      },
+      "recommendedDefault": "kubernetes.io/hostname",
+      "parameterType": "hard_default"
+    },
+    "lifecycle.preStopSleepSeconds": {
+      "category": "common",
+      "frequency": 252,
+      "frequencyPct": 98.8,
+      "distinctValues": 1,
+      "mode": "20",
+      "modePct": 100.0,
+      "distribution": {
+        "20": 252
+      },
+      "recommendedDefault": "20",
+      "parameterType": "optional_with_default"
+    },
+    "lifecycle.postStart": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "True",
+      "modePct": 92.9,
+      "distribution": {
+        "True": 237,
+        "False": 18
+      },
+      "recommendedDefault": "True",
+      "parameterType": "required"
+    },
+    "annotations.linkerd.enabled": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "True",
+      "modePct": 99.6,
+      "distribution": {
+        "True": 254,
+        "False": 1
+      },
+      "recommendedDefault": "True",
+      "parameterType": "required"
+    },
+    "annotations.linkerd.proxyWaitBeforeExit": {
+      "category": "common",
+      "frequency": 252,
+      "frequencyPct": 98.8,
+      "distinctValues": 1,
+      "mode": "30",
+      "modePct": 100.0,
+      "distribution": {
+        "30": 252
+      },
+      "recommendedDefault": "30",
+      "parameterType": "optional_with_default"
+    },
+    "annotations.prometheus.enabled": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "False",
+      "modePct": 100.0,
+      "distribution": {
+        "False": 255
+      },
+      "recommendedDefault": "False",
+      "parameterType": "hard_default"
+    },
+    "ingress.scheme": {
+      "category": "common",
+      "frequency": 494,
+      "frequencyPct": 193.7,
+      "distinctValues": 1,
+      "mode": "internet-facing",
+      "modePct": 100.0,
+      "distribution": {
+        "internet-facing": 494
+      },
+      "recommendedDefault": "internet-facing",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.targetType": {
+      "category": "common",
+      "frequency": 247,
+      "frequencyPct": 96.9,
+      "distinctValues": 1,
+      "mode": "ip",
+      "modePct": 100.0,
+      "distribution": {
+        "ip": 247
+      },
+      "recommendedDefault": "ip",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.sslPolicy": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 3,
+      "mode": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "modePct": 96.1,
+      "distribution": {
+        "ELBSecurityPolicy-FS-1-2-Res-2020-10": 245,
+        "ELBSecurityPolicy-TLS13-1-2-Res-2021-06": 8,
+        "ELBSecurityPolicy-2016-08": 2
+      },
+      "recommendedDefault": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "parameterType": "required"
+    },
+    "ingress.classAnnotation": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "True",
+      "modePct": 96.9,
+      "distribution": {
+        "True": 247,
+        "False": 8
+      },
+      "recommendedDefault": "True",
+      "parameterType": "required"
+    },
+    "ingress.classSpec": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "False",
+      "modePct": 100.0,
+      "distribution": {
+        "False": 255
+      },
+      "recommendedDefault": "False",
+      "parameterType": "hard_default"
+    },
+    "ingress.wafEnabled": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "False",
+      "modePct": 67.1,
+      "distribution": {
+        "False": 171,
+        "True": 84
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.path": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 3,
+      "mode": "/api/v1/appconfiguration",
+      "modePct": 82.4,
+      "distribution": {
+        "/api/v1/appconfiguration": 210,
+        "/api/v1/probes/alive": 43,
+        "/api/v1/system-status": 2
+      },
+      "recommendedDefault": "/api/v1/appconfiguration",
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.intervalSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "30",
+      "modePct": 83.1,
+      "distribution": {
+        "30": 212,
+        "9": 43
+      },
+      "recommendedDefault": "30",
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.timeoutSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "5",
+      "modePct": 83.1,
+      "distribution": {
+        "5": 212,
+        "2": 43
+      },
+      "recommendedDefault": "5",
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.healthyThresholdCount": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "5",
+      "modePct": 82.4,
+      "distribution": {
+        "5": 210,
+        "2": 45
+      },
+      "recommendedDefault": "5",
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.unhealthyThresholdCount": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "2",
+      "modePct": 99.6,
+      "distribution": {
+        "2": 254,
+        "5": 1
+      },
+      "recommendedDefault": "2",
+      "parameterType": "required"
+    },
+    "ingress.healthcheck.successCodes": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "200",
+      "modePct": 100.0,
+      "distribution": {
+        "200": 255
+      },
+      "recommendedDefault": "200",
+      "parameterType": "hard_default"
+    },
+    "ingress.tga.deregistration_delay": {
+      "category": "minority",
+      "frequency": 42,
+      "frequencyPct": 16.5,
+      "distinctValues": 1,
+      "mode": "30",
+      "modePct": 100.0,
+      "distribution": {
+        "30": 42
+      },
+      "recommendedDefault": "30",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.tga.slow_start": {
+      "category": "minority",
+      "frequency": 28,
+      "frequencyPct": 11.0,
+      "distinctValues": 2,
+      "mode": "60",
+      "modePct": 85.7,
+      "distribution": {
+        "60": 24,
+        "120": 4
+      },
+      "recommendedDefault": "60",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.tga.stickiness_enabled": {
+      "category": "common",
+      "frequency": 253,
+      "frequencyPct": 99.2,
+      "distinctValues": 2,
+      "mode": "true",
+      "modePct": 99.6,
+      "distribution": {
+        "true": 252,
+        "false": 1
+      },
+      "recommendedDefault": "true",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.tga.stickiness_duration": {
+      "category": "common",
+      "frequency": 252,
+      "frequencyPct": 98.8,
+      "distinctValues": 1,
+      "mode": "18000",
+      "modePct": 100.0,
+      "distribution": {
+        "18000": 252
+      },
+      "recommendedDefault": "18000",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.lba.access_logs_enabled": {
+      "category": "common",
+      "frequency": 250,
+      "frequencyPct": 98.0,
+      "distinctValues": 1,
+      "mode": "true",
+      "modePct": 100.0,
+      "distribution": {
+        "true": 250
+      },
+      "recommendedDefault": "true",
+      "parameterType": "optional_with_default"
+    },
+    "ingress.lba.idle_timeout": {
+      "category": "common",
+      "frequency": 210,
+      "frequencyPct": 82.4,
+      "distinctValues": 7,
+      "mode": "600",
+      "modePct": 56.7,
+      "distribution": {
+        "600": 119,
+        "60": 61,
+        "3600": 12,
+        "300": 12,
+        "120": 2,
+        "1800": 2,
+        "180": 2
+      },
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "service.type": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "NodePort",
+      "modePct": 100.0,
+      "distribution": {
+        "NodePort": 255
+      },
+      "recommendedDefault": "NodePort",
+      "parameterType": "hard_default"
+    },
+    "probes.startup.path": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "/api/v1/probes/startup",
+      "modePct": 100.0,
+      "distribution": {
+        "/api/v1/probes/startup": 255
+      },
+      "recommendedDefault": "/api/v1/probes/startup",
+      "parameterType": "hard_default"
+    },
+    "probes.startup.initialDelaySeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "30",
+      "modePct": 98.0,
+      "distribution": {
+        "30": 250,
+        "60": 5
+      },
+      "recommendedDefault": "30",
+      "parameterType": "required"
+    },
+    "probes.startup.periodSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "10",
+      "modePct": 95.7,
+      "distribution": {
+        "10": 244,
+        "5": 11
+      },
+      "recommendedDefault": "10",
+      "parameterType": "required"
+    },
+    "probes.startup.failureThreshold": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 6,
+      "mode": "50",
+      "modePct": 78.4,
+      "distribution": {
+        "50": 200,
+        "30": 27,
+        "150": 14,
+        "18": 6,
+        "140": 4,
+        "180": 4
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "probes.startup.successThreshold": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "1",
+      "modePct": 100.0,
+      "distribution": {
+        "1": 255
+      },
+      "recommendedDefault": "1",
+      "parameterType": "hard_default"
+    },
+    "probes.startup.timeoutSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 3,
+      "mode": "2",
+      "modePct": 94.9,
+      "distribution": {
+        "2": 242,
+        "1": 9,
+        "3": 4
+      },
+      "recommendedDefault": "2",
+      "parameterType": "required"
+    },
+    "probes.liveness.path": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "/api/v1/probes/alive",
+      "modePct": 100.0,
+      "distribution": {
+        "/api/v1/probes/alive": 255
+      },
+      "recommendedDefault": "/api/v1/probes/alive",
+      "parameterType": "hard_default"
+    },
+    "probes.liveness.initialDelaySeconds": {
+      "category": "common",
+      "frequency": 212,
+      "frequencyPct": 83.1,
+      "distinctValues": 2,
+      "mode": "30",
+      "modePct": 94.3,
+      "distribution": {
+        "30": 200,
+        "1": 12
+      },
+      "recommendedDefault": "30",
+      "parameterType": "optional_with_default"
+    },
+    "probes.liveness.periodSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "30",
+      "modePct": 83.1,
+      "distribution": {
+        "30": 212,
+        "15": 43
+      },
+      "recommendedDefault": "30",
+      "parameterType": "required"
+    },
+    "probes.liveness.failureThreshold": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 4,
+      "mode": "4",
+      "modePct": 94.5,
+      "distribution": {
+        "4": 241,
+        "1": 12,
+        "3": 1,
+        "2": 1
+      },
+      "recommendedDefault": "4",
+      "parameterType": "required"
+    },
+    "probes.liveness.successThreshold": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "1",
+      "modePct": 100.0,
+      "distribution": {
+        "1": 255
+      },
+      "recommendedDefault": "1",
+      "parameterType": "hard_default"
+    },
+    "probes.liveness.timeoutSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "10",
+      "modePct": 83.1,
+      "distribution": {
+        "10": 212,
+        "2": 43
+      },
+      "recommendedDefault": "10",
+      "parameterType": "required"
+    },
+    "probes.readiness.path": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "/api/v1/probes/alive",
+      "modePct": 100.0,
+      "distribution": {
+        "/api/v1/probes/alive": 255
+      },
+      "recommendedDefault": "/api/v1/probes/alive",
+      "parameterType": "hard_default"
+    },
+    "probes.readiness.initialDelaySeconds": {
+      "category": "common",
+      "frequency": 212,
+      "frequencyPct": 83.1,
+      "distinctValues": 2,
+      "mode": "30",
+      "modePct": 95.3,
+      "distribution": {
+        "30": 202,
+        "1": 10
+      },
+      "recommendedDefault": "30",
+      "parameterType": "optional_with_default"
+    },
+    "probes.readiness.periodSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 3,
+      "mode": "30",
+      "modePct": 78.8,
+      "distribution": {
+        "30": 201,
+        "7": 43,
+        "10": 11
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "probes.readiness.failureThreshold": {
+      "category": "universal",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "1",
+      "modePct": 100.0,
+      "distribution": {
+        "1": 255
+      },
+      "recommendedDefault": "1",
+      "parameterType": "hard_default"
+    },
+    "probes.readiness.successThreshold": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "2",
+      "modePct": 95.7,
+      "distribution": {
+        "2": 244,
+        "1": 11
+      },
+      "recommendedDefault": "2",
+      "parameterType": "required"
+    },
+    "probes.readiness.timeoutSeconds": {
+      "category": "universal_variable",
+      "frequency": 255,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "5",
+      "modePct": 83.1,
+      "distribution": {
+        "5": 212,
+        "2": 43
+      },
+      "recommendedDefault": "5",
+      "parameterType": "required"
+    },
+    "customerLevel.region": {
+      "category": "universal_variable",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 5,
+      "mode": "us-east-1",
+      "modePct": 66.7,
+      "distribution": {
+        "us-east-1": 56,
+        "eu-central-1": 12,
+        "ca-central-1": 12,
+        "ap-southeast-2": 3,
+        "us-west-1": 1
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "customerLevel.cloudProvider": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "aws",
+      "modePct": 100.0,
+      "distribution": {
+        "aws": 84
+      },
+      "recommendedDefault": "aws",
+      "parameterType": "hard_default"
+    },
+    "customerLevel.volumes.storageClass": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "efs-sc",
+      "modePct": 100.0,
+      "distribution": {
+        "efs-sc": 84
+      },
+      "recommendedDefault": "efs-sc",
+      "parameterType": "hard_default"
+    },
+    "customerLevel.hasSealedSecrets": {
+      "category": "universal_variable",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "False",
+      "modePct": 57.1,
+      "distribution": {
+        "False": 48,
+        "True": 36
+      },
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "customerLevel.networkPolicies.count_standard": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 1,
+      "mode": "4",
+      "modePct": 100.0,
+      "distribution": {
+        "4": 84
+      },
+      "recommendedDefault": "4",
+      "parameterType": "hard_default"
+    },
+    "customerLevel.networkPolicies.has_custom": {
+      "category": "universal_variable",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": 2,
+      "mode": "False",
+      "modePct": 98.8,
+      "distribution": {
+        "False": 83,
+        "True": 1
+      },
+      "recommendedDefault": "False",
+      "parameterType": "required"
+    },
+    "envVars.DB_BASE_URL": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DB_USERNAME": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DB_PASSWORD": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_ES_ENDPOINTS": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_ES_AUTH_BASIC_USER": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_ES_AUTH_BASIC_PASSWORD": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.CMS_JAVA_OPTS": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_SYSTEM_STATUS_API_IP_ACL": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_DOTGENERATED_DEFAULT_PATH": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_DOTCMS_CLUSTER_ID": {
+      "category": "universal",
+      "frequency": 84,
+      "frequencyPct": 100.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "required"
+    },
+    "envVars.DOT_MAIL_SMTP_HOST": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_PORT": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_AUTH": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+      "category": "common",
+      "frequency": 83,
+      "frequencyPct": 98.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_ES_AUTH_TYPE": {
+      "category": "common",
+      "frequency": 82,
+      "frequencyPct": 97.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_USER": {
+      "category": "common",
+      "frequency": 82,
+      "frequencyPct": 97.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_MAIL_SMTP_PASSWORD": {
+      "category": "common",
+      "frequency": 82,
+      "frequencyPct": 97.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+      "category": "common",
+      "frequency": 81,
+      "frequencyPct": 96.4,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_COOKIES_HTTP_ONLY": {
+      "category": "common",
+      "frequency": 78,
+      "frequencyPct": 92.9,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+      "category": "common",
+      "frequency": 78,
+      "frequencyPct": 92.9,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_ENABLED": {
+      "category": "common",
+      "frequency": 78,
+      "frequencyPct": 92.9,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+      "category": "common",
+      "frequency": 74,
+      "frequencyPct": 88.1,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DB_DNSNAME": {
+      "category": "common",
+      "frequency": 70,
+      "frequencyPct": 83.3,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.GLOWROOT_ENABLED": {
+      "category": "common",
+      "frequency": 69,
+      "frequencyPct": 82.1,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.GLOWROOT_AGENT_ID": {
+      "category": "common",
+      "frequency": 69,
+      "frequencyPct": 82.1,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.GLOWROOT_COLLECTOR_ADDRESS": {
+      "category": "common",
+      "frequency": 69,
+      "frequencyPct": 82.1,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_HOST": {
+      "category": "common",
+      "frequency": 66,
+      "frequencyPct": 78.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_USERNAME": {
+      "category": "common",
+      "frequency": 66,
+      "frequencyPct": 78.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_PASSWORD": {
+      "category": "common",
+      "frequency": 66,
+      "frequencyPct": 78.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+      "category": "common",
+      "frequency": 66,
+      "frequencyPct": 78.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+      "category": "common",
+      "frequency": 66,
+      "frequencyPct": 78.6,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_TELEMETRY_SAVE_SCHEDULE": {
+      "category": "common",
+      "frequency": 65,
+      "frequencyPct": 77.4,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+      "category": "common",
+      "frequency": 65,
+      "frequencyPct": 77.4,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "optional_with_default"
+    },
+    "envVars.DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+      "category": "minority",
+      "frequency": 56,
+      "frequencyPct": 66.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+      "category": "minority",
+      "frequency": 56,
+      "frequencyPct": 66.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_REINDEX_RECORDS_TO_FETCH": {
+      "category": "minority",
+      "frequency": 56,
+      "frequencyPct": 66.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+      "category": "minority",
+      "frequency": 46,
+      "frequencyPct": 54.8,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_DEFAULT_CONTENT_TO_DEFAULT_LANGUAGE": {
+      "category": "minority",
+      "frequency": 35,
+      "frequencyPct": 41.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_PORT": {
+      "category": "minority",
+      "frequency": 31,
+      "frequencyPct": 36.9,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CONTENT_APIS_ALLOW_ANONYMOUS": {
+      "category": "minority",
+      "frequency": 22,
+      "frequencyPct": 26.2,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_REST_API_REJECT_WITH_NO_USER": {
+      "category": "minority",
+      "frequency": 17,
+      "frequencyPct": 20.2,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_JSONTOOL_GENERATE_JACKSON": {
+      "category": "minority",
+      "frequency": 16,
+      "frequencyPct": 19.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_COOKIES_SECURE_FLAG": {
+      "category": "minority",
+      "frequency": 16,
+      "frequencyPct": 19.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES": {
+      "category": "minority",
+      "frequency": 16,
+      "frequencyPct": 19.0,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.CMS_REMOTEIP_REMOTEIPHEADER": {
+      "category": "minority",
+      "frequency": 14,
+      "frequencyPct": 16.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CMS_INDEX_PAGE": {
+      "category": "minority",
+      "frequency": 14,
+      "frequencyPct": 16.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_IDENTIFIERSTRIPEDLOCKDOTCMS_CONCURRENT_LOCKS_STRIPES": {
+      "category": "minority",
+      "frequency": 14,
+      "frequencyPct": 16.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_DOTCMS_CONCURRENT_QUEUECAPACITY": {
+      "category": "minority",
+      "frequency": 13,
+      "frequencyPct": 15.5,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_AUTOWIRE_CLUSTER_TRANSPORT": {
+      "category": "minority",
+      "frequency": 13,
+      "frequencyPct": 15.5,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_CONTENTLETCACHE_SIZE": {
+      "category": "minority",
+      "frequency": 11,
+      "frequencyPct": 13.1,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+      "category": "minority",
+      "frequency": 10,
+      "frequencyPct": 11.9,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SIZE": {
+      "category": "minority",
+      "frequency": 9,
+      "frequencyPct": 10.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+      "category": "minority",
+      "frequency": 9,
+      "frequencyPct": 10.7,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_RELATEDCONTENTCACHE_SIZE": {
+      "category": "minority",
+      "frequency": 8,
+      "frequencyPct": 9.5,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_FEATURE_FLAG_EXPERIMENTS": {
+      "category": "minority",
+      "frequency": 7,
+      "frequencyPct": 8.3,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_ANALYTICS_IDP_URL": {
+      "category": "minority",
+      "frequency": 7,
+      "frequencyPct": 8.3,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION": {
+      "category": "minority",
+      "frequency": 7,
+      "frequencyPct": 8.3,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    },
+    "envVars.DOT_CACHE_FOLDERCACHE_SIZE": {
+      "category": "minority",
+      "frequency": 7,
+      "frequencyPct": 8.3,
+      "distinctValues": null,
+      "mode": null,
+      "modePct": null,
+      "distribution": {},
+      "recommendedDefault": null,
+      "parameterType": "customer_override"
+    }
+  },
+  "namingConventions": {
+    "statefulsetName": {
+      "pattern": "dotcms-{customer}-{env}",
+      "compliance": 94.5,
+      "compliant": 241,
+      "total": 255
+    },
+    "ingressHost": {
+      "pattern": "{customer}-{env}.dotcms.cloud",
+      "compliance": 52.5,
+      "compliant": 134,
+      "total": 255,
+      "deviations": [
+        {
+          "customer": "acsc",
+          "env": "dev-1",
+          "expected": "acsc-dev-1.dotcms.cloud",
+          "actual": "acsc-dev.dotcms.cloud"
+        },
+        {
+          "customer": "acsc",
+          "env": "prod-1",
+          "expected": "acsc-prod-1.dotcms.cloud",
+          "actual": "acsc-prod.dotcms.cloud"
+        },
+        {
+          "customer": "acsc",
+          "env": "staging-1",
+          "expected": "acsc-staging-1.dotcms.cloud",
+          "actual": "acsc-staging.dotcms.cloud"
+        },
+        {
+          "customer": "aegon",
+          "env": "dev-1",
+          "expected": "aegon-dev-1.dotcms.cloud",
+          "actual": "aegon-dev.dotcms.cloud"
+        },
+        {
+          "customer": "aegon",
+          "env": "prod-1",
+          "expected": "aegon-prod-1.dotcms.cloud",
+          "actual": "aegon-prod.dotcms.cloud"
+        },
+        {
+          "customer": "albright",
+          "env": "prod-1",
+          "expected": "albright-prod-1.dotcms.cloud",
+          "actual": "albright-prod.dotcms.cloud"
+        },
+        {
+          "customer": "archealth",
+          "env": "prod-1",
+          "expected": "archealth-prod-1.dotcms.cloud",
+          "actual": "archealth-prod.dotcms.cloud"
+        },
+        {
+          "customer": "archealth",
+          "env": "staging-1",
+          "expected": "archealth-staging-1.dotcms.cloud",
+          "actual": "archealth-staging.dotcms.cloud"
+        },
+        {
+          "customer": "bcbs",
+          "env": "dev-2310",
+          "expected": "bcbs-dev-2310.dotcms.cloud",
+          "actual": "bcbs-dev.dotcms.cloud"
+        },
+        {
+          "customer": "bcbs",
+          "env": "prod-2310",
+          "expected": "bcbs-prod-2310.dotcms.cloud",
+          "actual": "bcbs-prod.dotcms.cloud"
+        },
+        {
+          "customer": "bcbs",
+          "env": "uat-2310",
+          "expected": "bcbs-uat-2310.dotcms.cloud",
+          "actual": "bcbs-uat.dotcms.cloud"
+        },
+        {
+          "customer": "boarshead",
+          "env": "dev-1",
+          "expected": "boarshead-dev-1.dotcms.cloud",
+          "actual": "boarshead-dev.dotcms.cloud"
+        },
+        {
+          "customer": "boarshead",
+          "env": "prod-1",
+          "expected": "boarshead-prod-1.dotcms.cloud",
+          "actual": "boarshead-prod.dotcms.cloud"
+        },
+        {
+          "customer": "boarshead",
+          "env": "uat-1",
+          "expected": "boarshead-uat-1.dotcms.cloud",
+          "actual": "boarshead-uat.dotcms.cloud"
+        },
+        {
+          "customer": "carveredison",
+          "env": "auth-1",
+          "expected": "carveredison-auth-1.dotcms.cloud",
+          "actual": "carveredison-auth.dotcms.cloud"
+        },
+        {
+          "customer": "carveredison",
+          "env": "dev-1",
+          "expected": "carveredison-dev-1.dotcms.cloud",
+          "actual": "carveredison-dev.dotcms.cloud"
+        },
+        {
+          "customer": "carveredison",
+          "env": "prod-1",
+          "expected": "carveredison-prod-1.dotcms.cloud",
+          "actual": "carveredison-prod.dotcms.cloud"
+        },
+        {
+          "customer": "carveredison",
+          "env": "test-1",
+          "expected": "carveredison-test-1.dotcms.cloud",
+          "actual": "carveredison-test.dotcms.cloud"
+        },
+        {
+          "customer": "carveredison",
+          "env": "uat-1",
+          "expected": "carveredison-uat-1.dotcms.cloud",
+          "actual": "carveredison-uat.dotcms.cloud"
+        },
+        {
+          "customer": "cisco",
+          "env": "prod-1",
+          "expected": "cisco-prod-1.dotcms.cloud",
+          "actual": "cisco-prod.dotcms.cloud"
+        }
+      ]
+    }
+  },
+  "features": {
+    "linkerd_injection": {
+      "adoptionCount": 84,
+      "adoptionPct": 100.0,
+      "customers": [
+        "acsc",
+        "aegon",
+        "albright",
+        "allenmedia",
+        "aptar",
+        "archealth",
+        "arqiva",
+        "astate",
+        "bcbs",
+        "boarshead",
+        "caliber",
+        "carfinance",
+        "carveredison",
+        "cisco",
+        "citgo",
+        "cityfurniture",
+        "cmcc",
+        "coop",
+        "crakmedia",
+        "ctt-grupo",
+        "ctt-grupobanco",
+        "dairyqueen",
+        "duncan",
+        "ejco",
+        "endowmentproject",
+        "esa",
+        "estes",
+        "estes-dr",
+        "firstmac",
+        "greatclips",
+        "greensky",
+        "hyundaimexico",
+        "ilag",
+        "jostens",
+        "lakecounty",
+        "leavitt",
+        "lennox",
+        "lennox-dr",
+        "lennox-emea",
+        "lni",
+        "marywooduniversity",
+        "merkle",
+        "mlh",
+        "msu",
+        "muskegon",
+        "newell",
+        "newellbrands",
+        "pfw",
+        "pollard",
+        "prodbim",
+        "prosperitylife",
+        "rbc-gam",
+        "rbc-phncom",
+        "revvable",
+        "rotorooter",
+        "sefi",
+        "serverscom",
+        "shsu",
+        "sonnet",
+        "southernphone",
+        "suny",
+        "svpworldwide",
+        "tallgrass",
+        "telus",
+        "telus-csd",
+        "telus-onesource",
+        "telus-onesource-dr",
+        "thousandeyes",
+        "trf-context",
+        "trf-legacy",
+        "tutorperini",
+        "tylertech",
+        "uakron",
+        "unicity",
+        "vanguard",
+        "virtuoso",
+        "vivalab",
+        "voxx",
+        "wawanesa",
+        "whitecastle",
+        "wmg",
+        "worldline",
+        "wpunj",
+        "wth"
+      ]
+    },
+    "prometheus_scraping": {
+      "adoptionCount": 0,
+      "adoptionPct": 0.0,
+      "customers": []
+    },
+    "glowroot": {
+      "adoptionCount": 68,
+      "adoptionPct": 81.0,
+      "customers": [
+        "acsc",
+        "aegon",
+        "aptar",
+        "archealth",
+        "arqiva",
+        "boarshead",
+        "caliber",
+        "carfinance",
+        "carveredison",
+        "cisco",
+        "citgo",
+        "cityfurniture",
+        "coop",
+        "crakmedia",
+        "ctt-grupo",
+        "ctt-grupobanco",
+        "duncan",
+        "ejco",
+        "estes",
+        "estes-dr",
+        "firstmac",
+        "greatclips",
+        "greensky",
+        "hyundaimexico",
+        "ilag",
+        "jostens",
+        "lakecounty",
+        "leavitt",
+        "lennox",
+        "lennox-dr",
+        "lni",
+        "marywooduniversity",
+        "merkle",
+        "mlh",
+        "msu",
+        "muskegon",
+        "newell",
+        "newellbrands",
+        "pollard",
+        "prodbim",
+        "prosperitylife",
+        "rbc-gam",
+        "rotorooter",
+        "sefi",
+        "serverscom",
+        "shsu",
+        "sonnet",
+        "southernphone",
+        "suny",
+        "tallgrass",
+        "telus-csd",
+        "telus-onesource",
+        "telus-onesource-dr",
+        "thousandeyes",
+        "trf-context",
+        "trf-legacy",
+        "tutorperini",
+        "tylertech",
+        "uakron",
+        "vanguard",
+        "virtuoso",
+        "vivalab",
+        "voxx",
+        "wawanesa",
+        "wmg",
+        "worldline",
+        "wpunj",
+        "wth"
+      ]
+    },
+    "redis_sessions": {
+      "adoptionCount": 78,
+      "adoptionPct": 92.9,
+      "customers": [
+        "acsc",
+        "aegon",
+        "albright",
+        "allenmedia",
+        "aptar",
+        "archealth",
+        "arqiva",
+        "astate",
+        "bcbs",
+        "boarshead",
+        "caliber",
+        "carfinance",
+        "carveredison",
+        "cisco",
+        "citgo",
+        "cityfurniture",
+        "coop",
+        "crakmedia",
+        "ctt-grupo",
+        "ctt-grupobanco",
+        "duncan",
+        "ejco",
+        "endowmentproject",
+        "esa",
+        "estes",
+        "estes-dr",
+        "firstmac",
+        "greatclips",
+        "greensky",
+        "hyundaimexico",
+        "ilag",
+        "jostens",
+        "lakecounty",
+        "leavitt",
+        "lennox",
+        "lennox-dr",
+        "lennox-emea",
+        "lni",
+        "marywooduniversity",
+        "merkle",
+        "mlh",
+        "msu",
+        "muskegon",
+        "newell",
+        "newellbrands",
+        "pfw",
+        "pollard",
+        "prodbim",
+        "prosperitylife",
+        "revvable",
+        "rotorooter",
+        "sefi",
+        "serverscom",
+        "shsu",
+        "sonnet",
+        "southernphone",
+        "suny",
+        "svpworldwide",
+        "tallgrass",
+        "telus",
+        "telus-csd",
+        "telus-onesource",
+        "telus-onesource-dr",
+        "trf-context",
+        "trf-legacy",
+        "tutorperini",
+        "tylertech",
+        "uakron",
+        "unicity",
+        "vanguard",
+        "virtuoso",
+        "vivalab",
+        "voxx",
+        "wawanesa",
+        "whitecastle",
+        "wmg",
+        "wpunj",
+        "wth"
+      ]
+    },
+    "telemetry": {
+      "adoptionCount": 66,
+      "adoptionPct": 78.6,
+      "customers": [
+        "acsc",
+        "aegon",
+        "aptar",
+        "archealth",
+        "arqiva",
+        "bcbs",
+        "boarshead",
+        "carfinance",
+        "cisco",
+        "citgo",
+        "cityfurniture",
+        "coop",
+        "crakmedia",
+        "ctt-grupo",
+        "ctt-grupobanco",
+        "dairyqueen",
+        "duncan",
+        "ejco",
+        "estes",
+        "estes-dr",
+        "firstmac",
+        "greatclips",
+        "greensky",
+        "hyundaimexico",
+        "ilag",
+        "jostens",
+        "lakecounty",
+        "leavitt",
+        "lennox",
+        "lennox-dr",
+        "lni",
+        "marywooduniversity",
+        "merkle",
+        "mlh",
+        "msu",
+        "newell",
+        "newellbrands",
+        "pollard",
+        "prodbim",
+        "prosperitylife",
+        "rbc-gam",
+        "revvable",
+        "sefi",
+        "serverscom",
+        "shsu",
+        "sonnet",
+        "southernphone",
+        "suny",
+        "svpworldwide",
+        "tallgrass",
+        "telus",
+        "telus-csd",
+        "telus-onesource",
+        "telus-onesource-dr",
+        "trf-context",
+        "trf-legacy",
+        "tutorperini",
+        "tylertech",
+        "uakron",
+        "vanguard",
+        "virtuoso",
+        "vivalab",
+        "voxx",
+        "wawanesa",
+        "wpunj",
+        "wth"
+      ]
+    },
+    "waf": {
+      "adoptionCount": 29,
+      "adoptionPct": 34.5,
+      "customers": [
+        "acsc",
+        "arqiva",
+        "bcbs",
+        "carveredison",
+        "citgo",
+        "coop",
+        "ctt-grupo",
+        "ctt-grupobanco",
+        "ejco",
+        "esa",
+        "hyundaimexico",
+        "ilag",
+        "jostens",
+        "leavitt",
+        "lni",
+        "mlh",
+        "muskegon",
+        "pollard",
+        "rbc-gam",
+        "rbc-phncom",
+        "sonnet",
+        "telus-onesource",
+        "trf-context",
+        "trf-legacy",
+        "tylertech",
+        "vanguard",
+        "wawanesa",
+        "whitecastle",
+        "wth"
+      ]
+    },
+    "sealed_secrets": {
+      "adoptionCount": 36,
+      "adoptionPct": 42.9,
+      "customers": [
+        "albright",
+        "allenmedia",
+        "aptar",
+        "astate",
+        "bcbs",
+        "caliber",
+        "carveredison",
+        "cityfurniture",
+        "cmcc",
+        "coop",
+        "crakmedia",
+        "endowmentproject",
+        "esa",
+        "estes",
+        "greatclips",
+        "greensky",
+        "ilag",
+        "jostens",
+        "lennox",
+        "lennox-emea",
+        "marywooduniversity",
+        "merkle",
+        "mlh",
+        "newell",
+        "pfw",
+        "prosperitylife",
+        "serverscom",
+        "shsu",
+        "sonnet",
+        "svpworldwide",
+        "telus",
+        "unicity",
+        "vanguard",
+        "whitecastle",
+        "wmg",
+        "worldline"
+      ]
+    },
+    "custom_tolerations": {
+      "adoptionCount": 0,
+      "adoptionPct": 0.0,
+      "customers": []
+    },
+    "multi_replica_prod": {
+      "adoptionCount": 71,
+      "adoptionPct": 84.5,
+      "customers": [
+        "acsc",
+        "allenmedia",
+        "aptar",
+        "archealth",
+        "arqiva",
+        "bcbs",
+        "boarshead",
+        "caliber",
+        "carfinance",
+        "carveredison",
+        "cisco",
+        "cityfurniture",
+        "coop",
+        "crakmedia",
+        "ctt-grupo",
+        "dairyqueen",
+        "ejco",
+        "esa",
+        "estes",
+        "estes-dr",
+        "firstmac",
+        "greatclips",
+        "greensky",
+        "hyundaimexico",
+        "jostens",
+        "lakecounty",
+        "leavitt",
+        "lennox",
+        "lennox-emea",
+        "lni",
+        "merkle",
+        "mlh",
+        "msu",
+        "muskegon",
+        "newell",
+        "newellbrands",
+        "pfw",
+        "pollard",
+        "prodbim",
+        "prosperitylife",
+        "rbc-gam",
+        "rbc-phncom",
+        "revvable",
+        "rotorooter",
+        "sefi",
+        "shsu",
+        "sonnet",
+        "southernphone",
+        "suny",
+        "svpworldwide",
+        "tallgrass",
+        "telus",
+        "telus-csd",
+        "telus-onesource",
+        "telus-onesource-dr",
+        "thousandeyes",
+        "trf-context",
+        "tutorperini",
+        "tylertech",
+        "uakron",
+        "unicity",
+        "vanguard",
+        "virtuoso",
+        "vivalab",
+        "voxx",
+        "wawanesa",
+        "whitecastle",
+        "wmg",
+        "worldline",
+        "wpunj",
+        "wth"
+      ]
+    }
+  }
+}

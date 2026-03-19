@@ -1,0 +1,409 @@
+{
+  "analysisDate": "2026-03-19T15:15:02.077826+00:00",
+  "chartVersion": "1.0.34",
+  "summary": {
+    "totalRequirements": 56,
+    "covered": 31,
+    "covered_wrong_default": 16,
+    "partially_covered": 4,
+    "missing": 2,
+    "unnecessary": 3,
+    "coverageScore": "55.4%",
+    "criticalGaps": 2,
+    "wrongDefaults": 16
+  },
+  "details": {
+    "workload.replicas": {
+      "status": "covered",
+      "chartPath": "replicas",
+      "discoveredDefault": "varies",
+      "chartDefault": "1",
+      "note": "Supported. Overridable per environment via mergeEnvironment."
+    },
+    "workload.podManagementPolicy": {
+      "status": "covered_wrong_default",
+      "chartPath": "podManagementPolicy",
+      "discoveredDefault": "OrderedReady",
+      "chartDefault": "OrderedReady",
+      "note": "Default matches (91.1% OrderedReady). Supported."
+    },
+    "workload.terminationGracePeriodSeconds": {
+      "status": "covered_wrong_default",
+      "chartPath": "terminationGracePeriodSeconds",
+      "discoveredDefault": "40",
+      "chartDefault": "10",
+      "note": "WRONG DEFAULT: Chart defaults to 10s. 98.8% of customer environments use 40s. A 10s grace period causes data loss during rolling updates on busy dotCMS instances."
+    },
+    "workload.image.repository": {
+      "status": "covered",
+      "chartPath": "repository",
+      "discoveredDefault": "mirror.gcr.io/dotcms/dotcms",
+      "chartDefault": "dotcms/dotcms-test",
+      "note": "Supported. Default is a test image \u2014 must be overridden in production values."
+    },
+    "workload.image.tag": {
+      "status": "covered",
+      "chartPath": "tag",
+      "discoveredDefault": "varies per customer",
+      "chartDefault": "1.0.0-SNAPSHOT",
+      "note": "Supported. Required parameter \u2014 must be provided per customer."
+    },
+    "workload.resources.requests.cpu": {
+      "status": "covered",
+      "chartPath": "resources.requests.cpu",
+      "discoveredDefault": "varies",
+      "chartDefault": "500m",
+      "note": "Supported. Overridable per environment."
+    },
+    "workload.resources.requests.memory": {
+      "status": "covered",
+      "chartPath": "resources.requests.memory",
+      "discoveredDefault": "varies",
+      "chartDefault": "5Gi",
+      "note": "Supported. Overridable per environment."
+    },
+    "workload.resources.limits.cpu": {
+      "status": "covered",
+      "chartPath": "resources.limits.cpu",
+      "discoveredDefault": "varies",
+      "chartDefault": "2",
+      "note": "Supported. Overridable per environment."
+    },
+    "workload.resources.limits.memory": {
+      "status": "covered",
+      "chartPath": "resources.limits.memory",
+      "discoveredDefault": "varies",
+      "chartDefault": "5Gi",
+      "note": "Supported. Overridable per environment."
+    },
+    "workload.javaHeap": {
+      "status": "covered",
+      "chartPath": "javaMemory",
+      "discoveredDefault": "varies",
+      "chartDefault": "2",
+      "note": "Supported via javaMemory value. Chart appends -Xmx{javaMemory}G to CMS_JAVA_OPTS."
+    },
+    "affinity.type": {
+      "status": "partially_covered",
+      "chartPath": "affinity.requireDifferentHosts",
+      "discoveredDefault": "preferred (81.2%)",
+      "chartDefault": "false (none)",
+      "note": "CRITICAL GAP: Chart only supports boolean \u2014 true=required, false=none. There is NO support for 'preferred' (soft) anti-affinity. 81.2% of customer environments use preferred. The chart either over-enforces (required blocks scheduling when only 1 node available) or under-enforces (false = no anti-affinity at all). Fix: add affinity.type enum: none|preferred|required."
+    },
+    "affinity.topologyKey": {
+      "status": "covered",
+      "chartPath": "affinity (hardcoded)",
+      "discoveredDefault": "kubernetes.io/hostname",
+      "chartDefault": "kubernetes.io/hostname",
+      "note": "Hardcoded in template. Correct value. No override needed."
+    },
+    "lifecycle.preStopSleepSeconds": {
+      "status": "covered_wrong_default",
+      "chartPath": "N/A \u2014 hardcoded in _helpers.tpl:332",
+      "discoveredDefault": "20",
+      "chartDefault": "1",
+      "note": "CRITICAL BUG: preStop sleep is hardcoded to 1 second (sleep '1'). 100% of customers that define preStop use 20 seconds. 1 second is insufficient to drain in-flight requests before SIGTERM, causing dropped connections during pod termination. Fix: make configurable via values (e.g. lifecycle.preStopSleepSeconds: 20)."
+    },
+    "lifecycle.postStart": {
+      "status": "covered",
+      "chartPath": "useLicense / _helpers.tpl:320",
+      "discoveredDefault": "present (license copy)",
+      "chartDefault": "conditional",
+      "note": "Supported. Rendered when useLicense=true. Correct behavior."
+    },
+    "ingress.scheme": {
+      "status": "covered",
+      "chartPath": "hardcoded internet-facing",
+      "discoveredDefault": "internet-facing",
+      "chartDefault": "internet-facing",
+      "note": "Hardcoded in ingress template. Matches convention."
+    },
+    "ingress.targetType": {
+      "status": "covered",
+      "chartPath": "hardcoded ip",
+      "discoveredDefault": "ip",
+      "chartDefault": "ip",
+      "note": "Hardcoded in ingress template. Matches convention."
+    },
+    "ingress.sslPolicy": {
+      "status": "covered",
+      "chartPath": "ingress.alb.hosts.default.sslPolicy",
+      "discoveredDefault": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "chartDefault": "''(empty, required)",
+      "note": "Supported but no default set \u2014 required field with empty default. Should default to ELBSecurityPolicy-FS-1-2-Res-2020-10 (96.1% adoption)."
+    },
+    "ingress.class.annotation_and_spec_conflict": {
+      "status": "partially_covered",
+      "chartPath": "ingress-dotcms-cluster.yaml:11 + :43",
+      "discoveredDefault": "annotation only (96.9%)",
+      "chartDefault": "BOTH set",
+      "note": "BUG: Template sets BOTH 'kubernetes.io/ingress.class' annotation (deprecated) AND 'spec.ingressClassName' simultaneously. Customers use annotation only (96.9%). Adding spec field is new behavior that may conflict with older ALB controller versions. Fix: use spec.ingressClassName only, remove deprecated annotation."
+    },
+    "ingress.healthcheck.path": {
+      "status": "covered_wrong_default",
+      "chartPath": "readinessProbe.httpGet.path (indirect)",
+      "discoveredDefault": "/api/v1/appconfiguration",
+      "chartDefault": "/dotmgt/readyz",
+      "note": "WRONG DEFAULT: Chart routes ALB healthcheck to readinessProbe path (/dotmgt/readyz, port 8090). 82.4% of customers use /api/v1/appconfiguration on port 8082 (the main app port). The management port (8090) and readiness path are internal \u2014 using them for ALB healthcheck creates a dependency on the management port being exposed. Fix: add ingress.alb.healthcheck.path with default /api/v1/appconfiguration on port 8082."
+    },
+    "ingress.healthcheck.intervalSeconds": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.healthcheck.intervalSeconds",
+      "discoveredDefault": "30",
+      "chartDefault": "10",
+      "note": "WRONG DEFAULT: Chart defaults to 10s interval. 83.1% of customers use 30s. 10s is too aggressive and increases ALB cost."
+    },
+    "ingress.healthcheck.timeoutSeconds": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.healthcheck.timeoutSeconds",
+      "discoveredDefault": "2",
+      "chartDefault": "5",
+      "note": "WRONG DEFAULT: Chart defaults to 5s. Customers use 2s. Minor but should align."
+    },
+    "ingress.healthcheck.healthyThresholdCount": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.healthcheck.healthyThresholdCount",
+      "discoveredDefault": "2",
+      "chartDefault": "3",
+      "note": "WRONG DEFAULT: Chart defaults to 3. Customers use 2. Faster healthy detection."
+    },
+    "ingress.healthcheck.unhealthyThresholdCount": {
+      "status": "covered",
+      "chartPath": "ingress.alb.healthcheck.unhealthyThresholdCount",
+      "discoveredDefault": "2",
+      "chartDefault": "2",
+      "note": "Correct default."
+    },
+    "ingress.tga.deregistration_delay": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.targetGroup.deregistrationDelay.timeoutSeconds",
+      "discoveredDefault": "30",
+      "chartDefault": "60",
+      "note": "WRONG DEFAULT: Chart defaults to 60s. Customers use 30s. Higher deregistration delay increases downtime during deployments."
+    },
+    "ingress.tga.stickiness_enabled": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.hosts.stickySessions.enabled",
+      "discoveredDefault": "true",
+      "chartDefault": "false",
+      "note": "WRONG DEFAULT: stickySessions.enabled defaults to false. All customers use sticky sessions (dotCMS stateful sessions require it). Note: chart has DUPLICATE stickiness config in both hosts.stickySessions and targetGroup.stickiness. The targetGroup path defaults to true (correct) but hosts.stickySessions defaults to false. The helper at _helpers.tpl:548 uses the hosts.stickySessions path \u2014 bug."
+    },
+    "ingress.tga.slow_start": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.targetGroup.slowStart.durationSeconds",
+      "discoveredDefault": "60",
+      "chartDefault": "120",
+      "note": "WRONG DEFAULT: Chart defaults to 120s. Customers use 60s."
+    },
+    "ingress.lba.access_logs_enabled": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.hosts.accessLogs.enabled",
+      "discoveredDefault": "true",
+      "chartDefault": "false",
+      "note": "WRONG DEFAULT: Chart defaults to false. All customers have access logs enabled. S3 bucket name follows pattern dotcms-{region}-alb-access-logs."
+    },
+    "ingress.lba.idle_timeout": {
+      "status": "covered_wrong_default",
+      "chartPath": "ingress.alb.hosts.idleTimeout",
+      "discoveredDefault": "600",
+      "chartDefault": "3600",
+      "note": "WRONG DEFAULT: Chart defaults to 3600s. Customers use 600s."
+    },
+    "ingress.wafAclArn": {
+      "status": "covered",
+      "chartPath": "ingress.alb.hosts.wafArn",
+      "discoveredDefault": "customer-specific",
+      "chartDefault": "''(empty)",
+      "note": "Supported. Empty default is correct (34.5% adoption \u2014 opt-in is right)."
+    },
+    "ingress.securityGroups": {
+      "status": "covered",
+      "chartPath": "ingress.alb.securityGroups",
+      "discoveredDefault": "customer-specific",
+      "chartDefault": "[]",
+      "note": "Supported. Required parameter for ALB deployments."
+    },
+    "ingress.certificateArns": {
+      "status": "covered",
+      "chartPath": "ingress.alb.hosts.default.certificateArn + additionalCertificateArns",
+      "discoveredDefault": "customer-specific",
+      "chartDefault": "''(empty)",
+      "note": "Supported. Required parameter for HTTPS."
+    },
+    "ingress.vantaTags": {
+      "status": "partially_covered",
+      "chartPath": "ingress-dotcms-cluster.yaml:15",
+      "discoveredDefault": "dynamic",
+      "chartDefault": "VantaNonProd=true hardcoded",
+      "note": "BUG: VantaNonProd tag is hardcoded to 'true' for ALL environments including production. Should be conditional: VantaNonProd=false for prod environments."
+    },
+    "customerLevel.volumes.accessPointPerEnv": {
+      "status": "partially_covered",
+      "chartPath": "volumes.shared.accessPoint (via mergeEnvironment)",
+      "discoveredDefault": "different per env",
+      "chartDefault": "''(single value)",
+      "note": "EXPRESSIBLE but undocumented: The mergeEnvironment helper deep-merges env-specific values, so 'volumes.shared.accessPoint' CAN be overridden per environment by placing it inside environments.{envName}.volumes.shared.accessPoint. This is not documented and the values.yaml schema only shows a single accessPoint. Must be documented explicitly and validated in Spec 05."
+    },
+    "customerLevel.volumes.volumeHandle": {
+      "status": "covered",
+      "chartPath": "volumes.shared.volumeHandle",
+      "discoveredDefault": "per customer",
+      "chartDefault": "''(empty)",
+      "note": "Supported. Single EFS filesystem handle per customer (all envs share same FS)."
+    },
+    "customerLevel.volumes.storageClass": {
+      "status": "covered",
+      "chartPath": "auto-detected from cloudProvider",
+      "discoveredDefault": "efs-sc",
+      "chartDefault": "efs-sc (for aws)",
+      "note": "Supported. cloudProvider=aws automatically sets storageClassName=efs-sc."
+    },
+    "customerLevel.serviceAccountName": {
+      "status": "covered_wrong_default",
+      "chartPath": "serviceAccountName / serviceAccount.create",
+      "discoveredDefault": "{customer}-sa",
+      "chartDefault": "{customer}-app-sa",
+      "note": "NAMING MISMATCH: Chart generates '{customer}-app-sa' by default. Customers use '{customer}-sa' (without -app- infix). serviceAccountName can be overridden via values but must be set explicitly for all 84 customers. Fix: change default pattern or document required override."
+    },
+    "customerLevel.iamRoleArn": {
+      "status": "covered",
+      "chartPath": "serviceAccount.annotations.eks.amazonaws.com/role-arn",
+      "discoveredDefault": "customer-specific",
+      "chartDefault": "''(empty)",
+      "note": "Supported via service-account.yaml annotations. Required parameter."
+    },
+    "customerLevel.networkPolicies.standard": {
+      "status": "covered",
+      "chartPath": "templates/default-deny.yaml, allow-*.yaml",
+      "discoveredDefault": "standard set",
+      "chartDefault": "all templates present",
+      "note": "Supported. All 4 standard network policies are templated."
+    },
+    "customerLevel.networkPolicies.custom": {
+      "status": "missing",
+      "chartPath": "N/A",
+      "discoveredDefault": "present for some customers",
+      "chartDefault": "not supported",
+      "note": "MISSING: No mechanism to inject custom NetworkPolicy resources via values. Customers with custom policies need a separate manifest or chart extension. Low priority (only affects customers with deviations from standard)."
+    },
+    "customerLevel.awsSecretsArn": {
+      "status": "covered",
+      "chartPath": "aws-secret-provider.yaml + secrets.useSecretsStoreCSI",
+      "discoveredDefault": "customer-specific",
+      "chartDefault": "''(empty)",
+      "note": "Supported via SecretProviderClass template. Required parameter."
+    },
+    "customerLevel.hasSealedSecrets": {
+      "status": "missing",
+      "chartPath": "N/A",
+      "discoveredDefault": "36 customers use sealed secrets",
+      "chartDefault": "not supported",
+      "note": "MISSING: No mechanism to deploy sealed secrets resources via chart. 36 customers use sealed secrets alongside the chart. These will need to be deployed separately or via a wrapper chart. Medium priority \u2014 sealed secrets are a separate concern from the dotCMS chart."
+    },
+    "annotations.linkerd.enabled": {
+      "status": "covered_wrong_default",
+      "chartPath": "linkerd.enabled",
+      "discoveredDefault": "true (100%)",
+      "chartDefault": "false",
+      "note": "WRONG DEFAULT: 100% of customers use Linkerd. Default must be true. With false, all deployments will miss the sidecar injection annotation \u2014 breaking service mesh connectivity for every new customer."
+    },
+    "annotations.linkerd.proxyWaitBeforeExit": {
+      "status": "covered",
+      "chartPath": "linkerd.proxyWaitBeforeExitSeconds",
+      "discoveredDefault": "varies",
+      "chartDefault": "90",
+      "note": "Supported. Default of 90s is safe."
+    },
+    "annotations.prometheus.enabled": {
+      "status": "covered",
+      "chartPath": "prometheus.enabled",
+      "discoveredDefault": "false (0% actual use)",
+      "chartDefault": "true",
+      "note": "NOTE: Chart defaults prometheus.enabled=true but 0% of customers have prometheus annotations. This suggests either: (a) the chart feature was never deployed, or (b) prometheus scraping happens at infrastructure level, not pod annotation level. Recommend: verify with platform team; default should likely be false."
+    },
+    "envVars.security.DOT_COOKIES_HTTP_ONLY": {
+      "status": "covered_wrong_default",
+      "chartPath": "envVarsDefaults.DOT_COOKIES_HTTP_ONLY",
+      "discoveredDefault": "true (security req)",
+      "chartDefault": "false",
+      "note": "CRITICAL WRONG DEFAULT: Confirmed platform-wide. Chart explicitly sets false. HttpOnly=false allows JavaScript access to session cookies (XSS risk). Fix: change default to true. Validate no customers have legitimate need for false."
+    },
+    "envVars.security.DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+      "status": "covered",
+      "chartPath": "envVarsDefaults.DOT_REMOTE_CALL_SUBNET_BLACKLIST",
+      "discoveredDefault": "standard CIDR set",
+      "chartDefault": "standard CIDR set",
+      "note": "Covered. Default matches convention."
+    },
+    "features.glowroot": {
+      "status": "covered",
+      "chartPath": "feature.glowroot.enabled (in _helpers.tpl)",
+      "discoveredDefault": "enabled 81%",
+      "chartDefault": "not in values.yaml",
+      "note": "PARTIALLY DOCUMENTED: Template supports Glowroot via feature.glowroot.enabled but this path is not documented in values.yaml. 81% of customers use Glowroot. Fix: add feature.glowroot block to values.yaml with enabled: true as default."
+    },
+    "features.redisSessions": {
+      "status": "covered",
+      "chartPath": "feature.redisSessions.enabled (in _helpers.tpl)",
+      "discoveredDefault": "enabled 92.9%",
+      "chartDefault": "not in values.yaml",
+      "note": "PARTIALLY DOCUMENTED: Template supports Redis sessions but not documented in values.yaml. 92.9% adoption \u2014 should be enabled by default. Fix: add feature.redisSessions block to values.yaml with enabled: true as default."
+    },
+    "features.telemetry": {
+      "status": "covered_wrong_default",
+      "chartPath": "telemetry.enabled",
+      "discoveredDefault": "true (78.6%)",
+      "chartDefault": "false",
+      "note": "WRONG DEFAULT: 78.6% of customers use telemetry. Should default to true."
+    },
+    "features.analytics": {
+      "status": "covered",
+      "chartPath": "feature.analytics.enabled (in _helpers.tpl)",
+      "discoveredDefault": "minority",
+      "chartDefault": "false",
+      "note": "Supported but minority feature. Opt-in is correct."
+    },
+    "service.type": {
+      "status": "covered",
+      "chartPath": "service-dotcms.yaml",
+      "discoveredDefault": "NodePort",
+      "chartDefault": "NodePort",
+      "note": "Correct. Chart generates NodePort service for ALB."
+    },
+    "pdb.enabled": {
+      "status": "covered",
+      "chartPath": "pdb.enabled",
+      "discoveredDefault": "auto",
+      "chartDefault": "auto",
+      "note": "CORRECT: pdb.enabled=auto activates PDB when replicas > 1. This is exactly what 71/84 customers need given the TylerTech incident."
+    },
+    "structure.multipleEnvironments": {
+      "status": "covered",
+      "chartPath": "environments map + myapp.mergeEnvironment",
+      "discoveredDefault": "2-9 envs per customer",
+      "chartDefault": "supported",
+      "note": "CORE FEATURE: The environments map with deep-merge via mergeEnvironment correctly handles multi-environment customers. Each environment generates its own StatefulSet, Ingress, Service, PVC, and PV. This is the chart's primary mechanism and it works."
+    },
+    "database.local.enabled": {
+      "status": "unnecessary",
+      "chartPath": "database.local.enabled",
+      "discoveredDefault": "not used (external DB)",
+      "chartDefault": "true",
+      "note": "UNNECESSARY: Chart defaults to local DB container. No customer uses local DB \u2014 all use external managed PostgreSQL. Should default to false. Currently creates dead deployment resources by default."
+    },
+    "opensearch.local.enabled": {
+      "status": "unnecessary",
+      "chartPath": "opensearch.local.enabled",
+      "discoveredDefault": "not used (external ES)",
+      "chartDefault": "true",
+      "note": "UNNECESSARY: Chart defaults to local OpenSearch container. All customers use external Elasticsearch. Should default to false."
+    },
+    "redis.local.enabled": {
+      "status": "unnecessary",
+      "chartPath": "redis.local.enabled",
+      "discoveredDefault": "not used (external Redis)",
+      "chartDefault": "true",
+      "note": "UNNECESSARY: Chart defaults to local Redis container. All customers use external Redis (ElastiCache or similar). Should default to false."
+    }
+  }
+}

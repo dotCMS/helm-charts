@@ -1,0 +1,75 @@
+{
+  "analysisDate": "2026-03-19T15:15:02.077826+00:00",
+  "chartVersion": "1.0.34",
+  "summary": {
+    "total": 7,
+    "critical": 1,
+    "high": 3,
+    "medium": 3
+  },
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "file": "templates/rbac.yaml",
+      "line": "10-17",
+      "severity": "high",
+      "description": "Duplicate 'name' field in Role metadata (lines 10-11) and duplicate 'helm.sh/hook-weight' + 'helm.sh/resource-policy' annotations (lines 14-17 and 43-44). Helm YAML parser will silently use the last value. The duplicate 'rules' block (lines 19-29 repeat lines 19-28) generates an invalid Role with doubled rules \u2014 behavior depends on Kubernetes version.",
+      "impact": "Role may be created with unexpected permissions. Duplicate metadata keys violate YAML spec. The RoleBinding also has duplicate annotations (lines 43-44).",
+      "fix": "Remove duplicate name field, duplicate annotations, and duplicate rules entries. The admin Role should have a single rules block and single name field."
+    },
+    {
+      "id": "BUG-002",
+      "file": "templates/ingress-dotcms-cluster.yaml",
+      "line": "11 + 43",
+      "severity": "high",
+      "description": "Both deprecated 'kubernetes.io/ingress.class' annotation (line 11) AND spec.ingressClassName (line 43) are set simultaneously on every Ingress resource. This creates conflicting routing signals for the ALB Ingress Controller.",
+      "impact": "With ALB controller v2.4+, spec.ingressClassName takes precedence and the annotation is ignored \u2014 but both being present is still a misconfiguration that may cause unexpected behavior on older controller versions. Additionally, spec.ingressClassName=alb is NEW behavior not present in any existing customer manifest \u2014 introducing it during migration is a semantic change that must be explicitly validated.",
+      "fix": "Remove 'kubernetes.io/ingress.class' annotation. Use only spec.ingressClassName. Add this as a migration validation check in Spec 06."
+    },
+    {
+      "id": "BUG-003",
+      "file": "templates/_helpers.tpl",
+      "line": "329-333",
+      "severity": "critical",
+      "description": "preStop lifecycle hook is hardcoded to 'sleep 1' for ALL pods. This value is not configurable via values.yaml. The actual production convention is 20 seconds (100% of customers that define preStop).",
+      "impact": "1-second preStop means pods receive SIGTERM immediately after deregistering from the load balancer. In-flight requests that arrived within the 1-second window are dropped. In production with sticky sessions, this can cause session loss and user-visible errors during every rolling update.",
+      "fix": "Add 'lifecycle.preStopSleepSeconds: 20' to values.yaml. Replace hardcoded 'sleep 1' with '{{ .Values.lifecycle.preStopSleepSeconds | default 20 }}'."
+    },
+    {
+      "id": "BUG-004",
+      "file": "templates/ingress-dotcms-cluster.yaml",
+      "line": "18-19",
+      "severity": "high",
+      "description": "ALB healthcheck port and path are derived from readinessProbe (port 8090, path /dotmgt/readyz). ALB healthchecks should target the application port (8082) and the application health path. 82.4% of customers use /api/v1/appconfiguration on port 8082 for ALB healthchecks.",
+      "impact": "ALB checks the management port (8090) instead of the application port (8082). If the management port is not exposed at the security group level, ALB healthchecks fail and the target is marked unhealthy. The chart conflates Kubernetes probe configuration with ALB healthcheck configuration \u2014 they serve different purposes.",
+      "fix": "Add separate ingress.alb.healthcheck.path and ingress.alb.healthcheck.port values. Default to /api/v1/appconfiguration and 8082 respectively. Do not derive from readinessProbe."
+    },
+    {
+      "id": "BUG-005",
+      "file": "templates/ingress-dotcms-cluster.yaml",
+      "line": "15",
+      "severity": "medium",
+      "description": "VantaNonProd tag is hardcoded to 'true' for ALL environments: 'alb.ingress.kubernetes.io/tags: ... VantaNonProd=true'. Production environments should have VantaNonProd=false.",
+      "impact": "All production ALBs are tagged as non-production in the Vanta compliance system. This may cause incorrect compliance scoping and security review gaps for production workloads.",
+      "fix": "Make VantaNonProd conditional: VantaNonProd={{ if contains \"prod\" .Values.environment }}false{{ else }}true{{ end }}."
+    },
+    {
+      "id": "BUG-006",
+      "file": "templates/ingress-dotcms-cluster.yaml + templates/_helpers.tpl",
+      "line": "25-30 (template) + 548 (helper)",
+      "severity": "medium",
+      "description": "When ingress.type=alb, the target-group-attributes annotation is rendered TWICE: once directly in the template (lines 25-30) and again via the dotcms.ingress.alb.annotations helper (helper line 548). The two renderings use different value paths and may produce different values.",
+      "impact": "Duplicate annotation keys \u2014 last-write-wins in Kubernetes. The effective TGA config is unpredictable. The template version uses 'dig' on nested paths; the helper version uses direct paths. They may diverge when env-specific overrides are applied.",
+      "fix": "Remove the TGA block from the template (lines 25-30) and rely solely on the helper. Or remove TGA from the helper and keep only the template version. Do not have both."
+    },
+    {
+      "id": "BUG-007",
+      "file": "templates/_helpers.tpl",
+      "line": "548",
+      "severity": "medium",
+      "description": "In dotcms.ingress.alb.annotations helper, stickiness is gated on a string literal '\"dotcms.ingress.alb.hosts.stickySessions.enabled\"' instead of the actual value: {{- if \"dotcms.ingress.alb.hosts.stickySessions.enabled\" }}. A non-empty string is always truthy in Go templates \u2014 this condition is ALWAYS true regardless of the stickySessions.enabled value.",
+      "impact": "stickiness.enabled=true is always appended to target-group-attributes even when stickySessions.enabled=false. The stickiness.enabled flag in values.yaml has no effect.",
+      "fix": "Replace with: {{- if .Values.ingress.alb.hosts.stickySessions.enabled }}"
+    }
+  ]
+}

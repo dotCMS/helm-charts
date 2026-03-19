@@ -1,0 +1,852 @@
+{
+  "customer": "thousandeyes",
+  "discoveryDate": "2026-03-19T15:14:53.997223+00:00",
+  "structure": {
+    "environments": [
+      "prod-1",
+      "uat-1"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "thousandeyes",
+    "serviceAccountName": "thousandeyes-sa",
+    "iamRoleArn": "arn:aws:iam::253070893565:role/EKS_thousandeyes_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-west-1:253070893565:secret:sh/thousandeyes/awssecret-mkvaqR",
+    "cloudProvider": "aws",
+    "region": "us-west-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {},
+      "volumeHandle": "fs-01cc455fe34e5bd02::fsap-09cee8fc7ca83e580"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "prod-1": {
+      "identity": {
+        "fullName": "dotcms-thousandeyes-prod-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-1",
+          "ver": "25.07",
+          "cust": "thousandeyes",
+          "fullname": "dotcms-thousandeyes-prod-1"
+        }
+      },
+      "workload": {
+        "replicas": 2,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "25.07.10_lts_v7_1ef5623",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:25.07.10_lts_v7_1ef5623"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "3",
+            "memory": "11Gi"
+          },
+          "limits": {
+            "cpu": "12",
+            "memory": "11Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-thousandeyes.ceruiaph9bpq.us-west-1.rds.amazonaws.com/thousandeyes_prod_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-prod-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-prod-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://thousandeyes-es.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "75000"
+          },
+          "DOT_CACHE_FOLDERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_IDENTIFIER404CACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_RELATEDCONTENTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_SHORTYIDCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_TAGINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_TRANSLATEDQUERYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_VANITYURLDIRECTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "50000"
+          },
+          "DOT_CACHE_VELOCITYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork -Djersey.config.server.wadl.disableWadl=true"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.thoudsandeyes::prod-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_VELOCITY_INCLUDE_ALLOWED_EXTENSIONS": {
+            "type": "static_value",
+            "value": "txt,css,js,html,htm,json,svg"
+          },
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "thousandeyes-prod-1"
+          },
+          "DOT_DEFAULT_PAGE_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_PUSH_PUBLISHING_RULES_OVERWRITE": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 150,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "required",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-thousandeyes-prod-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "thousandeyes-prod-1-efs-pvc",
+        "csiSecretProviderClass": "sh-thousandeyes-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-west-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-west-1:253070893565:certificate/49b3dd36-9800-42ed-8d8e-5b1ba15f9f68"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-04b1962c44385b767",
+          "sg-042051848fa69c315"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.bucket": "thousandeyes-alb-access-logs",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.prefix": "thousandeyes/prod-1"
+        },
+        "hosts": {
+          "default": "thousandeyes-prod.dotcms.cloud",
+          "additional": [
+            "thousandeyes-prod-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "thousandeyes",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for thousandeyes prod-1",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-thousandeyes-prod-1"
+        }
+      }
+    },
+    "uat-1": {
+      "identity": {
+        "fullName": "dotcms-thousandeyes-uat-1",
+        "labels": {
+          "app": "dotcms",
+          "env": "uat-1",
+          "ver": "25.07",
+          "cust": "thousandeyes",
+          "fullname": "dotcms-thousandeyes-uat-1"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "25.07.10_lts_v7_1ef5623",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:25.07.10_lts_v7_1ef5623"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "3",
+            "memory": "10Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "10Gi"
+          }
+        },
+        "javaHeap": "7G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-thousandeyes.ceruiaph9bpq.us-west-1.rds.amazonaws.com/thousandeyes_uat_1_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-uat-1-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-uat-1-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://thousandeyes-es.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-thousandeyes-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "75000"
+          },
+          "DOT_CACHE_FOLDERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_IDENTIFIER404CACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_RELATEDCONTENTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_SHORTYIDCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_TAGINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_TRANSLATEDQUERYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_VANITYURLDIRECTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "50000"
+          },
+          "DOT_CACHE_VELOCITYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx7G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork -Djersey.config.server.wadl.disableWadl=true"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.thoudsandeyes::uat-1"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          }
+        },
+        "telemetry": {},
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "thousandeyes-uat-1"
+          },
+          "DOT_VELOCITY_INCLUDE_ALLOWED_EXTENSIONS": {
+            "type": "static_value",
+            "value": "txt,css,js,html,htm,json,svg"
+          },
+          "DOT_DEFAULT_PAGE_TO_DEFAULT_LANGUAGE": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_PUSH_PUBLISHING_RULES_OVERWRITE": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 150,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-thousandeyes-uat-1"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "thousandeyes-uat-1-efs-pvc",
+        "csiSecretProviderClass": "sh-thousandeyes-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-west-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-west-1:253070893565:certificate/49b3dd36-9800-42ed-8d8e-5b1ba15f9f68"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-04b1962c44385b767",
+          "sg-042051848fa69c315"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "5",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "thousandeyes-alb-access-logs",
+          "access_logs.s3.prefix": "thousandeyes/uat-1"
+        },
+        "hosts": {
+          "default": "thousandeyes-uat.dotcms.cloud",
+          "additional": [
+            "thousandeyes-uat-1.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "thousandeyes",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for thousandeyes uat-1",
+          "VantaNonProd": "true"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-thousandeyes-uat-1"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "annotations.linkerd.enabled",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "envVars.java.CMS_JAVA_OPTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.javaHeap",
+      "workload.resources.requests.cpu",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "affinity.type": {
+        "values": {
+          "prod-1": "required",
+          "uat-1": "preferred"
+        },
+        "note": "Varies by environment"
+      },
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "prod-1": "jdbc:postgresql://k8s-thousandeyes.ceruiaph9bpq.us-west-1.rds.amazonaws.com/thousandeyes_prod_1_db",
+          "uat-1": "jdbc:postgresql://k8s-thousandeyes.ceruiaph9bpq.us-west-1.rds.amazonaws.com/thousandeyes_uat_1_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "workload.replicas": {
+        "values": {
+          "prod-1": "2",
+          "uat-1": "1"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "prod-1": "12",
+          "uat-1": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "prod-1": "11Gi",
+          "uat-1": "10Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "prod-1": "11Gi",
+          "uat-1": "10Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.prod-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.uat-1.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.uat-1.workload.replicas",
+      "description": "Single replica in uat-1 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.uat-1.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in uat-1. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.uat-1.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    }
+  ]
+}

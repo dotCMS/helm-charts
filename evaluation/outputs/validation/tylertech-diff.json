@@ -1,0 +1,365 @@
+{
+  "customer": "tylertech",
+  "status": "pass",
+  "environmentCount": 4,
+  "totalChecks": 64,
+  "matches": 64,
+  "mismatches": 0,
+  "knownDiffs": 0,
+  "matchRate": 100.0,
+  "environments": [
+    {
+      "environment": "auth-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_tylertech_us_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/tylertech/awssecret-l09XkL"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-06bc63399966ed195"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "3"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "13Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "5"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "13Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "9"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0207684125a357cd2"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "dev-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_tylertech_us_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/tylertech/awssecret-l09XkL"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-06bc63399966ed195"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "9Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "4"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "9Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "7"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-06b1b06ade3ee0ca6"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "prod-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_tylertech_us_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/tylertech/awssecret-l09XkL"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-06bc63399966ed195"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "15Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "6"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "15Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "12"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-0f883f1d71670cba0"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    },
+    {
+      "environment": "staging-1",
+      "checks": [
+        {
+          "field": "region",
+          "status": "match",
+          "value": "us-east-1"
+        },
+        {
+          "field": "iam_arn",
+          "status": "match",
+          "value": "arn:aws:iam::948170117212:role/EKS_tylertech_us_ReadSecretsRole"
+        },
+        {
+          "field": "secrets_arn",
+          "status": "match",
+          "value": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/tylertech/awssecret-l09XkL"
+        },
+        {
+          "field": "vol_handle",
+          "status": "match",
+          "value": "fs-06bc63399966ed195"
+        },
+        {
+          "field": "tag",
+          "status": "match",
+          "value": "26.02.27-01_3d130b5"
+        },
+        {
+          "field": "replicas",
+          "status": "match",
+          "value": "2"
+        },
+        {
+          "field": "cpu_req",
+          "status": "match",
+          "value": "1"
+        },
+        {
+          "field": "mem_req",
+          "status": "match",
+          "value": "13Gi"
+        },
+        {
+          "field": "cpu_lim",
+          "status": "match",
+          "value": "3"
+        },
+        {
+          "field": "mem_lim",
+          "status": "match",
+          "value": "13Gi"
+        },
+        {
+          "field": "java_heap",
+          "status": "match",
+          "value": "9"
+        },
+        {
+          "field": "ssl_policy",
+          "status": "match",
+          "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10"
+        },
+        {
+          "field": "waf_arn",
+          "status": "match",
+          "value": "arn:aws:wafv2:us-east-1:948170117212:regional/webacl/tylertech-k8s-2/b0340712-7eea-49c1-a2c3-51dde4b95010"
+        },
+        {
+          "field": "access_point",
+          "status": "match",
+          "value": "fsap-081c9d698fa692d44"
+        },
+        {
+          "field": "cert_arn",
+          "status": "match",
+          "value": "arn:aws:acm:us-east-1:948170117212:certi..."
+        },
+        {
+          "field": "security_groups",
+          "status": "match",
+          "count": 2
+        }
+      ],
+      "matches": 16,
+      "mismatches": 0,
+      "knownDiffs": 0
+    }
+  ],
+  "unmatchedFields": []
+}

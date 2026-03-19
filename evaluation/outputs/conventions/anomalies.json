@@ -1,0 +1,3617 @@
+{
+  "analysisDate": "2026-03-19T15:14:58.575065+00:00",
+  "summary": {
+    "driftCount": 91,
+    "securityConcernCount": 222,
+    "misconfigurationCount": 0,
+    "uniquePatternCount": 56
+  },
+  "drift": [
+    {
+      "customer": "acsc",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "acsc",
+      "environment": "staging-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "allenmedia",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "aptar",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "aptar",
+      "environment": "sandbox",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "aptar",
+      "environment": "staging",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "archealth",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "bcbs",
+      "environment": "prod-2310",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "bcbs",
+      "environment": "uat-2310",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "boarshead",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "boarshead",
+      "environment": "uat-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "caliber",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "carfinance",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "cityfurniture",
+      "environment": "auth-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "cityfurniture",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "staging-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "dairyqueen",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "dairyqueen",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "dairyqueen",
+      "environment": "uat",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "ejco",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "esa",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "estes-dr",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "estes",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "estes",
+      "environment": "uat-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "greatclips",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "greensky",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "greensky",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "jostens",
+      "environment": "mascotshop-prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "jostens",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "lakecounty",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "leavitt",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "lennox",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "lni",
+      "environment": "demo-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "lni",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "merkle",
+      "environment": "prod2301",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "merkle",
+      "environment": "review2301",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "mlh",
+      "environment": "auth-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "mlh",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "msu",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "muskegon",
+      "environment": "auth-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "muskegon",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "newell",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "newell",
+      "environment": "staging-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "pfw",
+      "environment": "prod2404",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "pollard",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "revvable",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "rotorooter",
+      "environment": "prod-2",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "sefi",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "shsu",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "suny",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tallgrass",
+      "environment": "dev-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tallgrass",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "telus-csd",
+      "environment": "dev-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "telus",
+      "environment": "cws-dev",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-2016-08",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "telus",
+      "environment": "cws-prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "telus",
+      "environment": "cws-prod",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-2016-08",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-auth",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-dev",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tutorperini",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "auth-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "staging-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "uakron",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "unicity",
+      "environment": "prod",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "vanguard",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "virtuoso",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "voxx",
+      "environment": "auth",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "dev-1",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "dev-2",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "prod-1",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "prod-2",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "qa-1",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "qa-2",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "staging-1",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "staging-2",
+      "field": "ingress.sslPolicy",
+      "currentValue": "ELBSecurityPolicy-TLS13-1-2-Res-2021-06",
+      "expectedValue": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "severity": "warning",
+      "possibleReason": "Provisioned at different time with different security policy",
+      "recommendation": "investigate \u2014 older policies may not meet current TLS compliance requirements"
+    },
+    {
+      "customer": "whitecastle",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "wmg",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "wmg",
+      "environment": "prod-2403",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "wpunj",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    },
+    {
+      "customer": "wth",
+      "environment": "prod-1",
+      "field": "affinity.type",
+      "currentValue": "preferred",
+      "expectedValue": "required",
+      "severity": "critical",
+      "possibleReason": "Default was never hardened after initial provisioning",
+      "recommendation": "align to convention \u2014 upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable Helm chart PDB"
+    }
+  ],
+  "securityConcerns": [
+    {
+      "customer": "acsc",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "acsc",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "acsc",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "aegon",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "aegon",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "albright",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "allenmedia",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "allenmedia",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "archealth",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "archealth",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "arqiva",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "arqiva",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "arqiva",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "astate",
+      "environment": "sandbox-2310",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "boarshead",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "boarshead",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "boarshead",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "caliber",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "caliber",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "caliber",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carfinance",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "test-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "carveredison",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cisco",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cisco",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cisco",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "citgo",
+      "environment": "auth",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "citgo",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "citgo",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cityfurniture",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cityfurniture",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cityfurniture",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "cmcc",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "coop",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "coop",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "coop",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "prod2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "crakmedia",
+      "environment": "staging2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "duncan",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "duncan",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ejco",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ejco",
+      "environment": "poc-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ejco",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ejco",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "endowmentproject",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "endowmentproject",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "esa",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "esa",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "estes-dr",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "estes",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "estes",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "estes",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "firstmac",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "firstmac",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "firstmac",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "firstmac",
+      "environment": "test-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greatclips",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greatclips",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greatclips",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "qa-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "greensky",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "hyundaimexico",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ilag",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ilag",
+      "environment": "dev2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ilag",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "ilag",
+      "environment": "prod2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "mascotshop-dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "mascotshop-prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "mascotshop-staging",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "prochamp-dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "prochamp-prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "jostens",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lakecounty",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "leavitt",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox-dr",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "qa-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "sandbox-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "sandbox-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lennox",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lni",
+      "environment": "demo-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lni",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "lni",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "marywooduniversity",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "dev2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "prod2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "review-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "review2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "test-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "merkle",
+      "environment": "test2301",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "mlh",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "mlh",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "mlh",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "mlh",
+      "environment": "sandbox-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "msu",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "msu",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "muskegon",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "muskegon",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newell",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newell",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newell",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "newellbrands",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "pfw",
+      "environment": "auth2404",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "pfw",
+      "environment": "prod2404",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "pfw",
+      "environment": "qa2404",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "prosperitylife",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "institutional-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "retail",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-gam",
+      "environment": "us-sandbox",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-phncom",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rbc-phncom",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "revvable",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rotorooter",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rotorooter",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "rotorooter",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "sefi",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "serverscom",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "serverscom",
+      "environment": "prod-2310",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "sonnet",
+      "environment": "build-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "sonnet",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "sonnet",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "sonnet",
+      "environment": "stage-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "southernphone",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "suny",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "suny",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "qa",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "svpworldwide",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tallgrass",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tallgrass",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus-csd",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus-csd",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus-onesource-dr",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus-onesource",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus-onesource",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus",
+      "environment": "cws-dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus",
+      "environment": "cws-prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-auth",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "telus",
+      "environment": "milo-prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "thousandeyes",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "thousandeyes",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "trf-legacy",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "trf-legacy",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "trf-legacy",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tutorperini",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tutorperini",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "tylertech",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "uakron",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "uakron",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "unicity",
+      "environment": "dev",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "unicity",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "vanguard",
+      "environment": "auth-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "vanguard",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "vanguard",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "virtuoso",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "virtuoso",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "vivalab",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "vivalab",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "voxx",
+      "environment": "auth",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "voxx",
+      "environment": "prod",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "dev-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "prod-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "qa-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "staging-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wawanesa",
+      "environment": "staging-2",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "whitecastle",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "whitecastle",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "whitecastle",
+      "environment": "uat-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wmg",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wmg",
+      "environment": "dev-2403",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "worldline",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "worldline",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wpunj",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wth",
+      "environment": "dev-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wth",
+      "environment": "prod-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    },
+    {
+      "customer": "wth",
+      "environment": "qa-1",
+      "field": "envVars.security.DOT_COOKIES_HTTP_ONLY",
+      "currentValue": "false",
+      "expectedValue": "true",
+      "severity": "critical",
+      "possibleReason": "Misconfiguration or legacy setting \u2014 HttpOnly flag prevents XSS cookie theft",
+      "recommendation": "align to convention \u2014 set DOT_COOKIES_HTTP_ONLY=true"
+    }
+  ],
+  "misconfigurations": [],
+  "uniquePatterns": [
+    {
+      "customer": "acsc",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "albright",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "allenmedia",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "aptar",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['sandbox']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "arqiva",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "astate",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['sandbox-2310']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "bcbs",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "caliber",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "carveredison",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "citgo",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "cityfurniture",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "cmcc",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "coop",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "crakmedia",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Custom network policies: ['dragonfly-controller', 'dragonfly']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "customerLevel.networkPolicies.custom"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "ctt-grupo",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "ctt-grupobanco",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "dairyqueen",
+      "description": "Non-standard environment names: ['international-prod', 'international-auth']; Two international environments (international-prod, international-auth) instead of standard pattern; Naming uses hyphenated suffixes (-1) for multiple variants of same env type",
+      "fields": [
+        "structure.environments",
+        "structure.deviations"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "ejco",
+      "description": "Non-standard environment names: ['poc-1']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "endowmentproject",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "esa",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "estes",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "greatclips",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "greensky",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "hyundaimexico",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "ilag",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "jostens",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['mascotshop-dev', 'mascotshop-prod', 'mascotshop-staging', 'prochamp-dev', 'prochamp-prod']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "leavitt",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "lennox-emea",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "lennox",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['sandbox-1', 'sandbox-2']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "lni",
+      "description": "Non-standard environment names: ['demo-1']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "marywooduniversity",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "merkle",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['review-1', 'review2301']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "mlh",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['sandbox-1']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "muskegon",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "newell",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "pfw",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "pollard",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "prosperitylife",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "rbc-gam",
+      "description": "Non-standard environment names: ['institutional-1', 'retail', 'us-sandbox']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "rbc-phncom",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "serverscom",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "shsu",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "sonnet",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['build-1', 'stage-1']; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "svpworldwide",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "telus-onesource",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "telus",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Non-standard environment names: ['cws-dev', 'cws-prod', 'milo-auth', 'milo-dev', 'milo-prod']",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "structure.environments"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "trf-context",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "trf-legacy",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "tylertech",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "unicity",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "vanguard",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "wawanesa",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "whitecastle",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass; Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "customerLevel.hasSealedSecrets",
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "wmg",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "worldline",
+      "description": "Uses sealed secrets in addition to AWS SecretProviderClass",
+      "fields": [
+        "customerLevel.hasSealedSecrets"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    },
+    {
+      "customer": "wth",
+      "description": "Uses AWS WAFv2 ACL on ALB",
+      "fields": [
+        "ingress.wafAclArn"
+      ],
+      "recommendation": "Document in customer-specific values override \u2014 chart must support these via optional parameters"
+    }
+  ]
+}

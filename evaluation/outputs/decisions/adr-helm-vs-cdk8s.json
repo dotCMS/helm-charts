@@ -1,0 +1,74 @@
+{
+  "id": "ADR-004",
+  "title": "Helm vs cdk8s for dotCMS customer manifest migration",
+  "date": "2026-03-19",
+  "status": "ACCEPTED",
+  "context": {
+    "problem": "84 dotCMS customers currently managed via hand-crafted YAML manifests. Need to migrate to a reproducible, declarative approach that enables a provisioner agent to generate configurations from pipeline inputs.",
+    "constraints": [
+      "dotcms/helm-charts v1.0.34 already exists and is maintained",
+      "Team has YAML literacy but not deep Helm expertise",
+      "Some team members prefer Python-based tooling",
+      "Currently using ArgoCD for GitOps"
+    ],
+    "alternatives": ["Helm (dotcms/helm-charts)", "cdk8s (Python/TypeScript)"]
+  },
+  "decision": "Helm",
+  "rationale": {
+    "primary": "Complexity range (median 31 params, max 74) is squarely in Helm's target zone. Chart already exists, is maintained, and passes 100% semantic equivalence for all 84 customers.",
+    "evidence": {
+      "expressiveness": "SUFFICIENT — all 84 customer patterns expressible as values.yaml overrides via myapp.mergeEnvironment deep-merge",
+      "complexity": {"min": 15, "max": 74, "median": 31, "mean": 33.2},
+      "validationResult": "84/84 customers PASS, 100% match rate",
+      "valuesFileSizes": {"min": 70, "max": 253, "median": 113}
+    }
+  },
+  "helm_pros": [
+    "Chart already exists and is maintained — zero net-new build cost",
+    "ArgoCD native Helm support — no additional tooling",
+    "values.yaml is readable by the team (YAML literacy confirmed)",
+    "myapp.mergeEnvironment handles per-env overrides without template duplication",
+    "100% of 84 customer patterns expressible as values.yaml overrides",
+    "Industry-standard tooling with broad operator familiarity"
+  ],
+  "helm_cons": [
+    "7 bugs need to be fixed in the chart before migration",
+    "18 default value corrections required",
+    "affinity.type: preferred not yet expressible (requires BUG-003 fix)",
+    "Team needs to learn Helm values structure (low barrier)",
+    "Go template syntax in chart is opaque to Python-preferring engineers"
+  ],
+  "cdk8s_pros": [
+    "Python-native if team prefers Python over YAML",
+    "Full programming model for complex conditional logic",
+    "Type-safe schema validation"
+  ],
+  "cdk8s_cons": [
+    "Would require building a full Python cdk8s library from scratch",
+    "No existing chart to leverage — 100% net-new build",
+    "With ArgoCD: generate-and-commit anti-pattern required (no native cdk8s support)",
+    "Adds Python/Node.js runtime dependency to the delivery pipeline",
+    "No structural advantage for this complexity range",
+    "Harder to review: Python code vs YAML diffs in PRs"
+  ],
+  "fluxcd_consideration": {
+    "question": "Would switching from ArgoCD to FluxCD change the decision?",
+    "answer": "No. FluxCD has native Helm controller support (equivalent to ArgoCD's). cdk8s would gain nothing structurally — it would still require generate-and-commit to a separate manifest repo. The Helm verdict holds under FluxCD.",
+    "cdk8s_with_fluxcd": "Marginally better fit because FluxCD's Kustomize controller could apply generated manifests, but the operational cost of generate-and-commit pipeline complexity still outweighs any benefit at this complexity level."
+  },
+  "consequences": {
+    "immediate": [
+      "Fix 7 documented bugs in dotcms/helm-charts (see gap-analysis/bugs.json)",
+      "Update 18 default values (see gap-analysis/hardening.json)",
+      "Use generated values.yaml files as provisioner agent output contract"
+    ],
+    "longterm": [
+      "Provisioner agent generates values.yaml from pipeline inputs",
+      "ArgoCD applies chart + values.yaml per customer environment",
+      "Chart team maintains templates; platform team maintains values",
+      "Migration path: validate with helm diff, apply via ArgoCD sync"
+    ]
+  },
+  "decidedBy": "Spec-driven evaluation framework (Specs 00-06)",
+  "validatedBy": "84/84 customer semantic equivalence tests (Spec 06)"
+}

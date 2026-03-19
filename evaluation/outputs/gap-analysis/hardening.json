@@ -1,0 +1,222 @@
+{
+  "defaultChanges": [
+    {
+      "field": "terminationGracePeriodSeconds",
+      "current": "10",
+      "recommended": "40",
+      "reason": "98.8% of customer environments use 40s. 10s causes data loss.",
+      "priority": "critical"
+    },
+    {
+      "field": "linkerd.enabled",
+      "current": "false",
+      "recommended": "true",
+      "reason": "100% adoption. Every new customer deployment will miss Linkerd without this.",
+      "priority": "critical"
+    },
+    {
+      "field": "envVarsDefaults.DOT_COOKIES_HTTP_ONLY",
+      "current": "\"false\"",
+      "recommended": "\"true\"",
+      "reason": "Security hardening. HttpOnly=false exposes session cookies to XSS.",
+      "priority": "critical"
+    },
+    {
+      "field": "lifecycle.preStopSleepSeconds (new field)",
+      "current": "hardcoded 1",
+      "recommended": "20",
+      "reason": "1s preStop causes dropped requests during rolling updates.",
+      "priority": "critical"
+    },
+    {
+      "field": "ingress.alb.healthcheck.intervalSeconds",
+      "current": "10",
+      "recommended": "30",
+      "reason": "83.1% of customers use 30s. 10s is too aggressive.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.healthcheck.timeoutSeconds",
+      "current": "5",
+      "recommended": "2",
+      "reason": "Aligns with customer convention.",
+      "priority": "medium"
+    },
+    {
+      "field": "ingress.alb.healthcheck.healthyThresholdCount",
+      "current": "3",
+      "recommended": "2",
+      "reason": "Faster healthy recovery.",
+      "priority": "medium"
+    },
+    {
+      "field": "ingress.alb.targetGroup.deregistrationDelay.timeoutSeconds",
+      "current": "60",
+      "recommended": "30",
+      "reason": "Customers use 30s. Reduces deployment downtime.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.hosts.idleTimeout",
+      "current": "3600",
+      "recommended": "600",
+      "reason": "Customers use 600s. 3600s wastes ALB connection slots.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.hosts.accessLogs.enabled",
+      "current": "false",
+      "recommended": "true",
+      "reason": "All customers have access logs. Default should be on.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.hosts.default.sslPolicy",
+      "current": "\"\"",
+      "recommended": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "reason": "96.1% adoption. Provides a safe default instead of requiring explicit override.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.hosts.stickySessions.enabled",
+      "current": "false",
+      "recommended": "true",
+      "reason": "All customers need sticky sessions for dotCMS stateful sessions.",
+      "priority": "high"
+    },
+    {
+      "field": "ingress.alb.targetGroup.slowStart.durationSeconds",
+      "current": "120",
+      "recommended": "60",
+      "reason": "Customers use 60s. Faster target readiness.",
+      "priority": "medium"
+    },
+    {
+      "field": "telemetry.enabled",
+      "current": "false",
+      "recommended": "true",
+      "reason": "78.6% adoption. Should be on by default.",
+      "priority": "medium"
+    },
+    {
+      "field": "database.local.enabled",
+      "current": "true",
+      "recommended": "false",
+      "reason": "No customer uses local DB. Default creates dead resources.",
+      "priority": "high"
+    },
+    {
+      "field": "opensearch.local.enabled",
+      "current": "true",
+      "recommended": "false",
+      "reason": "No customer uses local OpenSearch.",
+      "priority": "high"
+    },
+    {
+      "field": "redis.local.enabled",
+      "current": "true",
+      "recommended": "false",
+      "reason": "No customer uses local Redis.",
+      "priority": "high"
+    },
+    {
+      "field": "prometheus.enabled",
+      "current": "true",
+      "recommended": "false",
+      "reason": "0% of customers have prometheus pod annotations. Verify with platform team.",
+      "priority": "low"
+    }
+  ],
+  "missingFeatures": [
+    {
+      "feature": "Configurable preStop sleep (lifecycle.preStopSleepSeconds)",
+      "customersAffected": 81,
+      "implementationEffort": "trivial",
+      "priority": "critical"
+    },
+    {
+      "feature": "Preferred anti-affinity mode (affinity.type: preferred|required|none)",
+      "customersAffected": 71,
+      "implementationEffort": "small",
+      "priority": "critical"
+    },
+    {
+      "feature": "Separate ALB healthcheck path/port (independent from readinessProbe)",
+      "customersAffected": 84,
+      "implementationEffort": "small",
+      "priority": "high"
+    },
+    {
+      "feature": "Per-environment EFS accessPoint documentation + example",
+      "customersAffected": 84,
+      "implementationEffort": "trivial",
+      "priority": "high"
+    },
+    {
+      "feature": "feature.glowroot block in values.yaml (currently only in helpers)",
+      "customersAffected": 68,
+      "implementationEffort": "small",
+      "priority": "high"
+    },
+    {
+      "feature": "feature.redisSessions block in values.yaml (currently only in helpers)",
+      "customersAffected": 78,
+      "implementationEffort": "small",
+      "priority": "high"
+    },
+    {
+      "feature": "VantaNonProd tag conditioned on environment name",
+      "customersAffected": 84,
+      "implementationEffort": "trivial",
+      "priority": "medium"
+    },
+    {
+      "feature": "serviceAccount.create: true as default (customers all need service accounts)",
+      "customersAffected": 84,
+      "implementationEffort": "trivial",
+      "priority": "medium"
+    },
+    {
+      "feature": "Custom NetworkPolicy support (for customers with non-standard policies)",
+      "customersAffected": 5,
+      "implementationEffort": "medium",
+      "priority": "low"
+    },
+    {
+      "feature": "Sealed secrets deployment support",
+      "customersAffected": 36,
+      "implementationEffort": "medium",
+      "priority": "low"
+    }
+  ],
+  "bugFixes": [
+    "BUG-001",
+    "BUG-002",
+    "BUG-003",
+    "BUG-004",
+    "BUG-005",
+    "BUG-006",
+    "BUG-007"
+  ],
+  "refactoringOpportunities": [
+    {
+      "area": "stickySessions values duplication",
+      "currentState": "Two separate values paths for stickiness: ingress.alb.hosts.stickySessions AND ingress.alb.targetGroup.stickiness. Only one is read by the helper (wrong one).",
+      "proposedState": "Single path: ingress.alb.targetGroup.stickiness. Remove ingress.alb.hosts.stickySessions entirely.",
+      "benefit": "Eliminates BUG-006 and BUG-007. Single source of truth for stickiness config."
+    },
+    {
+      "area": "ingress class annotation removal",
+      "currentState": "Both kubernetes.io/ingress.class annotation and spec.ingressClassName are set.",
+      "proposedState": "Remove deprecated annotation. Use only spec.ingressClassName.",
+      "benefit": "Fixes BUG-002. ALB controller v2.4+ behavior is deterministic."
+    },
+    {
+      "area": "features block in values.yaml",
+      "currentState": "Glowroot and Redis session features are implemented in _helpers.tpl but have no corresponding values.yaml block. Users cannot discover these features.",
+      "proposedState": "Add a top-level 'feature:' block in values.yaml with glowroot, redisSessions, analytics sub-sections, each with enabled: false/true and relevant config.",
+      "benefit": "Self-documenting chart. Helm docs generation (helm-docs) will auto-document these features."
+    }
+  ],
+  "analysisDate": "2026-03-19T15:15:02.077826+00:00"
+}

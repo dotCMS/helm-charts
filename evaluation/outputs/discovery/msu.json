@@ -1,0 +1,1071 @@
+{
+  "customer": "msu",
+  "discoveryDate": "2026-03-19T15:14:52.699679+00:00",
+  "structure": {
+    "environments": [
+      "dev-2",
+      "prod-2"
+    ],
+    "hasNamespaceDir": true,
+    "deviations": []
+  },
+  "customerLevel": {
+    "namespace": "msu",
+    "serviceAccountName": "msu-sa",
+    "iamRoleArn": "arn:aws:iam::948170117212:role/EKS_msu_ReadSecretsRole",
+    "awsSecretsArn": "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/msu/awssecret-EOhR1Y",
+    "cloudProvider": "aws",
+    "region": "us-east-1",
+    "networkPolicies": {
+      "standard": [
+        "default-deny",
+        "allow-dotcms",
+        "allow-linkerd",
+        "allow-inter-namespace"
+      ],
+      "custom": []
+    },
+    "volumes": {
+      "storageClass": "efs-sc",
+      "accessPoints": {
+        "msu-prod-2-efs-pvc": "fsap-0c14dc389302d3c59",
+        "msu-dev-2-efs-pvc": "fsap-0c59de0827cd445b5"
+      },
+      "volumeHandle": "fs-05a7bc5af4966f7da"
+    },
+    "hasSealedSecrets": false
+  },
+  "environments": {
+    "dev-2": {
+      "identity": {
+        "fullName": "dotcms-msu-dev-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "dev-2",
+          "ver": "25.08",
+          "cust": "msu",
+          "fullname": "dotcms-msu-dev-2"
+        }
+      },
+      "workload": {
+        "replicas": 1,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "3",
+            "memory": "6500M"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "6500M"
+          }
+        },
+        "javaHeap": "4G"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/msu_dev_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-dev-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-dev-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_VELOCITYCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_VELOCITYMACROCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.caffine.CaffineCache"
+          },
+          "DOT_CACHE_APITOKENCACHE_CHAIN": {
+            "type": "static_value",
+            "value": "com.dotmarketing.business.cache.provider.timedcache.TimedCacheProvider"
+          },
+          "DOT_CACHE_VANITYURLCACHE_SIZE": {
+            "type": "static_value",
+            "value": "35000"
+          },
+          "DOT_CACHE_CACHEDVANITYURLGROUP_SIZE": {
+            "type": "static_value",
+            "value": "35000"
+          },
+          "DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_FILEASSETMETADATACACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_FOLDERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "255000"
+          },
+          "DOT_CACHE_IDENTIFIERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "480000"
+          },
+          "DOT_CACHE_PERMISSIONCACHE_SIZE": {
+            "type": "static_value",
+            "value": "200000"
+          },
+          "DOT_CACHE_TAGBYNAMEANDHOSTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "DOT_CACHE_TAGCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_TAGINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "5000"
+          },
+          "DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "80000"
+          },
+          "DOT_CACHE_TRANSLATEDQUERYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "DOT_CACHE_VERSIONINFOCACHE_SIZE": {
+            "type": "static_value",
+            "value": "200000"
+          },
+          "DOT_CACHE_WORKFLOWSTEPCACHE_SIZE": {
+            "type": "static_value",
+            "value": "2000"
+          },
+          "DOT_CACHE_WORKFLOWTASKCACHE_SIZE": {
+            "type": "static_value",
+            "value": "315000"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.msu::dev-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "41 2 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "msu-dev-2"
+          },
+          "DOT_ENABLE_CLICKSTREAM_TRACKING": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_LINKCHECKER_ENABLEJOB": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_CONTENT_ALLOW_ZERO_LENGTH_FILES": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_ALLOWED_SUB_PATHS_WITHOUT_AUTHENTICATION": {
+            "type": "static_value",
+            "value": "/dwr,/html/js,/html/images,/html/css,/html/portal/login.jsp,/DotAjaxDirector/com.dotcms.publisher.ajax.RemotePublishAjaxAction/cmd/,/DotAjaxDirector/com.dotmarketing.sitesearch.ajax.SiteSearchAjaxAction/cmd/"
+          },
+          "DOT_EMAIL_SYSTEM_ADDRESS": {
+            "type": "static_value",
+            "value": "webadmin@anr.msu.edu"
+          },
+          "DOT_RESPECT_FRONTEND_ROLES_FOR_DOTPARSE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 150,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-msu-dev-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "msu-dev-2-efs-pvc",
+        "csiSecretProviderClass": "sh-msu-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/28f185b7-02a5-4884-a80a-397c5194d7bf",
+          "arn:aws:acm:us-east-1:948170117212:certificate/9381ca73-48b5-4279-824a-fa391de24ac9"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "300",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "msu/dev-2"
+        },
+        "hosts": {
+          "default": "msu-dev.dotcms.cloud",
+          "additional": [
+            "msu-dev-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "msu",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for msu dev-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-msu-dev-2"
+        }
+      }
+    },
+    "prod-2": {
+      "identity": {
+        "fullName": "dotcms-msu-prod-2",
+        "labels": {
+          "app": "dotcms",
+          "env": "prod-2",
+          "ver": "25.08",
+          "cust": "msu",
+          "fullname": "dotcms-msu-prod-2"
+        }
+      },
+      "workload": {
+        "replicas": 3,
+        "podManagementPolicy": "OrderedReady",
+        "terminationGracePeriodSeconds": 40,
+        "image": {
+          "repository": "mirror.gcr.io/dotcms/dotcms",
+          "tag": "26.02.27-01_3d130b5",
+          "fullImage": "mirror.gcr.io/dotcms/dotcms:26.02.27-01_3d130b5"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "4",
+            "memory": "15Gi"
+          },
+          "limits": {
+            "cpu": "6",
+            "memory": "15Gi"
+          }
+        },
+        "javaHeap": "11250M"
+      },
+      "envVars": {
+        "database": {
+          "DB_BASE_URL": {
+            "type": "static_value",
+            "value": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/msu_prod_2_db"
+          },
+          "DB_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-prod-2-database",
+            "key": "username"
+          },
+          "DB_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-prod-2-database",
+            "key": "password"
+          }
+        },
+        "elasticsearch": {
+          "DOT_ES_ENDPOINTS": {
+            "type": "static_value",
+            "value": "https://elasticsearch1.dotcms.cloud"
+          },
+          "DOT_ES_AUTH_TYPE": {
+            "type": "static_value",
+            "value": "BASIC"
+          },
+          "DOT_ES_AUTH_BASIC_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-elasticsearch",
+            "key": "username"
+          },
+          "DOT_ES_AUTH_BASIC_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-elasticsearch",
+            "key": "password"
+          }
+        },
+        "mail": {
+          "DOT_MAIL_SMTP_HOST": {
+            "type": "static_value",
+            "value": "email-smtp.us-east-1.amazonaws.com"
+          },
+          "DOT_MAIL_SMTP_USER": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-ses",
+            "key": "username"
+          },
+          "DOT_MAIL_SMTP_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-ses",
+            "key": "password"
+          },
+          "DOT_MAIL_SMTP_PORT": {
+            "type": "static_value",
+            "value": "587"
+          },
+          "DOT_MAIL_SMTP_AUTH": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_STARTTLS_ENABLE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_MAIL_SMTP_SSL_PROTOCOLS": {
+            "type": "static_value",
+            "value": "TLSv1.2"
+          }
+        },
+        "cache": {
+          "DOT_CACHE_CATEGORYPARENTSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "DOT_CACHE_CONTENTLETCACHE_SIZE": {
+            "type": "static_value",
+            "value": "30000"
+          },
+          "DOT_CACHE_FILEASSETMETADATACACHE_SIZE": {
+            "type": "static_value",
+            "value": "25000"
+          },
+          "DOT_CACHE_FOLDERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "75000"
+          },
+          "DOT_CACHE_HTMLPAGECACHE_SIZE": {
+            "type": "static_value",
+            "value": "35000"
+          },
+          "DOT_CACHE_IDENTIFIER404CACHE_SIZE": {
+            "type": "static_value",
+            "value": "100000"
+          },
+          "DOT_CACHE_IDENTIFIERCACHE_SIZE": {
+            "type": "static_value",
+            "value": "180000"
+          },
+          "DOT_CACHE_NAVCACHE_SIZE": {
+            "type": "static_value",
+            "value": "2500"
+          },
+          "DOT_CACHE_PERMISSIONCACHE_SIZE": {
+            "type": "static_value",
+            "value": "150000"
+          },
+          "DOT_CACHE_RULESCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_SHORTYIDCACHE_SIZE": {
+            "type": "static_value",
+            "value": "50000"
+          },
+          "DOT_CACHE_TAGBYNAMEANDHOSTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "7500"
+          },
+          "DOT_CACHE_TAGCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_TAGINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "200000"
+          },
+          "DOT_CACHE_TAGINODESBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "100000"
+          },
+          "DOT_CACHE_TAGSBYINODECACHE_SIZE": {
+            "type": "static_value",
+            "value": "75000"
+          },
+          "DOT_CACHE_TRANSLATEDQUERYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "60000"
+          },
+          "DOT_CACHE_USERDOTCMSCACHE_SIZE": {
+            "type": "static_value",
+            "value": "5000"
+          },
+          "DOT_CACHE_VANITYURLCACHE_SIZE": {
+            "type": "static_value",
+            "value": "80000"
+          },
+          "DOT_CACHE_VELOCITYCACHE_SIZE": {
+            "type": "static_value",
+            "value": "20000"
+          },
+          "DOT_CACHE_WORKFLOWSTEPCACHE_SIZE": {
+            "type": "static_value",
+            "value": "7500"
+          },
+          "DOT_CACHE_BLOCKDIRECTIVEHTMLPAGECACHE_SIZE": {
+            "type": "static_value",
+            "value": "15000"
+          },
+          "DOT_CACHE_VERSIONINFOCACHE_SIZE": {
+            "type": "static_value",
+            "value": "100000"
+          },
+          "DOT_CACHE_PAGEMULTITREESLIVE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          },
+          "DOT_CACHE_CACHEDVANITYURLGROUP_SIZE": {
+            "type": "static_value",
+            "value": "35000"
+          },
+          "DOT_CACHE_VANITYURLDIRECTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "50000"
+          },
+          "DOT_CACHE_RELATEDCONTENTCACHE_SIZE": {
+            "type": "static_value",
+            "value": "10000"
+          }
+        },
+        "java": {
+          "CMS_JAVA_OPTS": {
+            "type": "static_value",
+            "value": "-Xmx11250M -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+          }
+        },
+        "security": {
+          "DOT_COOKIES_HTTP_ONLY": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_SYSTEM_STATUS_API_IP_ACL": {
+            "type": "static_value",
+            "value": "0.0.0.0/0"
+          },
+          "DOT_REMOTE_CALL_SUBNET_BLACKLIST": {
+            "type": "static_value",
+            "value": "169.254.169.254/32,127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+          },
+          "DOT_REMOTE_CALL_ALLOW_REDIRECTS": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_URI_NORMALIZATION_FORBIDDEN_REGEX": {
+            "type": "static_value",
+            "value": "\\/\\/html\\/.*"
+          }
+        },
+        "reindex": {
+          "DOT_REINDEX_THREAD_MINIMUM_RUNTIME_IN_SEC": {
+            "type": "static_value",
+            "value": "120"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_SIZE": {
+            "type": "static_value",
+            "value": "1"
+          },
+          "DOT_REINDEX_THREAD_ELASTICSEARCH_BULK_ACTIONS": {
+            "type": "static_value",
+            "value": "20"
+          },
+          "DOT_REINDEX_RECORDS_TO_FETCH": {
+            "type": "static_value",
+            "value": "10"
+          }
+        },
+        "features": {
+          "TOMCAT_REDIS_SESSION_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "GLOWROOT_AGENT_ID": {
+            "type": "static_value",
+            "value": "k8s.msu::prod-2"
+          },
+          "GLOWROOT_COLLECTOR_ADDRESS": {
+            "type": "static_value",
+            "value": "http://glowrootcentral.dotcmscloud.com:8181"
+          },
+          "TOMCAT_REDIS_SESSION_HOST": {
+            "type": "static_value",
+            "value": "master.redis-dotcms-prod-1.j8m2fx.use1.cache.amazonaws.com"
+          },
+          "TOMCAT_REDIS_SESSION_USERNAME": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-redis",
+            "key": "username"
+          },
+          "TOMCAT_REDIS_SESSION_PASSWORD": {
+            "type": "secret_ref",
+            "secretName": "sh-msu-awssecret-redis",
+            "key": "password"
+          },
+          "TOMCAT_REDIS_SESSION_SSL_ENABLED": {
+            "type": "static_value",
+            "value": "true"
+          }
+        },
+        "telemetry": {
+          "DOT_TELEMETRY_SAVE_SCHEDULE": {
+            "type": "static_value",
+            "value": "7 3 */8 * * ?"
+          },
+          "DOT_TELEMETRY_PERSISTENCE_ENDPOINT": {
+            "type": "static_value",
+            "value": "https://dotcms-prod-1.analytics.dotcms.cloud/m"
+          },
+          "DOT_TELEMETRY_METRIC_TIMEOUT_SECONDS": {
+            "type": "static_value",
+            "value": "120"
+          }
+        },
+        "other": {
+          "DOT_DOTGENERATED_DEFAULT_PATH": {
+            "type": "static_value",
+            "value": "shared"
+          },
+          "DOT_DOTCMS_CLUSTER_ID": {
+            "type": "static_value",
+            "value": "msu-prod-2"
+          },
+          "DOT_EMAIL_SYSTEM_ADDRESS": {
+            "type": "static_value",
+            "value": "webadmin@anr.msu.edu"
+          },
+          "DOT_ENABLE_CLICKSTREAM_TRACKING": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_LINKCHECKER_ENABLEJOB": {
+            "type": "static_value",
+            "value": "false"
+          },
+          "DOT_CONTENT_ALLOW_ZERO_LENGTH_FILES": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_ALLOWED_SUB_PATHS_WITHOUT_AUTHENTICATION": {
+            "type": "static_value",
+            "value": "/dwr,/html/js,/html/images,/html/css,/html/portal/login.jsp,/DotAjaxDirector/com.dotcms.publisher.ajax.RemotePublishAjaxAction/cmd/,/DotAjaxDirector/com.dotmarketing.sitesearch.ajax.SiteSearchAjaxAction/cmd/"
+          },
+          "DOT_RESPECT_FRONTEND_ROLES_FOR_DOTPARSE": {
+            "type": "static_value",
+            "value": "true"
+          },
+          "DOT_PERMISSION_SECONDARY_CATEGORY_CHECK": {
+            "type": "static_value",
+            "value": "false"
+          }
+        }
+      },
+      "probes": {
+        "startup": {
+          "path": "/api/v1/probes/startup",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 10,
+          "failureThreshold": 50,
+          "successThreshold": 1,
+          "timeoutSeconds": 2
+        },
+        "liveness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 4,
+          "successThreshold": 1,
+          "timeoutSeconds": 10
+        },
+        "readiness": {
+          "path": "/api/v1/probes/alive",
+          "port": 8082,
+          "initialDelaySeconds": 30,
+          "periodSeconds": 30,
+          "failureThreshold": 1,
+          "successThreshold": 2,
+          "timeoutSeconds": 5
+        }
+      },
+      "affinity": {
+        "type": "preferred",
+        "topologyKey": "kubernetes.io/hostname",
+        "labelSelector": {
+          "matchExpressions": [
+            {
+              "key": "fullname",
+              "operator": "In",
+              "values": [
+                "dotcms-msu-prod-2"
+              ]
+            }
+          ]
+        }
+      },
+      "volumes": {
+        "pvcClaimName": "msu-prod-2-efs-pvc",
+        "csiSecretProviderClass": "sh-msu-awssecret"
+      },
+      "lifecycle": {
+        "postStart": "/bin/bash -c if [ ! -d /data/shared/assets/.backup ]; then mkdir /data/shared/assets/.backup; fi; ln -s /data/shared/assets/.backup /data/local/dotsecure/backup;",
+        "preStopSleepSeconds": 20
+      },
+      "annotations": {
+        "linkerd": {
+          "enabled": true,
+          "proxyWaitBeforeExit": 30
+        },
+        "prometheus": {
+          "enabled": false,
+          "port": null,
+          "path": null
+        },
+        "other": {
+          "aws-region": "us-east-1"
+        }
+      },
+      "ingress": {
+        "class": "alb",
+        "classAnnotation": "alb",
+        "classSpec": null,
+        "scheme": "internet-facing",
+        "targetType": "ip",
+        "certificateArns": [
+          "arn:aws:acm:us-east-1:948170117212:certificate/cee4349d-d345-498f-b2ca-ebff409b018b",
+          "arn:aws:acm:us-east-1:948170117212:certificate/28f185b7-02a5-4884-a80a-397c5194d7bf",
+          "arn:aws:acm:us-east-1:948170117212:certificate/9381ca73-48b5-4279-824a-fa391de24ac9"
+        ],
+        "sslPolicy": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+        "securityGroups": [
+          "sg-0e58bdc5220916793",
+          "sg-0879fdc3a60aa459f"
+        ],
+        "wafAclArn": null,
+        "healthcheck": {
+          "protocol": "HTTP",
+          "port": "8082",
+          "path": "/api/v1/appconfiguration",
+          "intervalSeconds": "30",
+          "timeoutSeconds": "5",
+          "healthyThresholdCount": "5",
+          "unhealthyThresholdCount": "2",
+          "successCodes": "200"
+        },
+        "targetGroupAttributes": {
+          "stickiness.enabled": "true",
+          "stickiness.lb_cookie.duration_seconds": "18000"
+        },
+        "loadBalancerAttributes": {
+          "idle_timeout.timeout_seconds": "300",
+          "access_logs.s3.enabled": "true",
+          "access_logs.s3.bucket": "dotcms-us-east-1-alb-access-logs",
+          "access_logs.s3.prefix": "msu/prod-2"
+        },
+        "hosts": {
+          "default": "msu-prod.dotcms.cloud",
+          "additional": [
+            "msu-prod-2.dotcms.cloud"
+          ]
+        },
+        "tags": {
+          "dotcms.client.name.short": "msu",
+          "VantaOwner": "dotcms-github-machine-user@dotcms.com",
+          "VantaDescription": "ALB for msu prod-2"
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "ports": [
+          {
+            "port": 8082,
+            "targetPort": 8082,
+            "protocol": "TCP"
+          }
+        ],
+        "selector": {
+          "fullname": "dotcms-msu-prod-2"
+        }
+      }
+    }
+  },
+  "crossEnvAnalysis": {
+    "sharedFields": [
+      "affinity.type",
+      "annotations.linkerd.enabled",
+      "envVars.elasticsearch.DOT_ES_AUTH_TYPE",
+      "envVars.elasticsearch.DOT_ES_ENDPOINTS",
+      "ingress.scheme",
+      "ingress.sslPolicy",
+      "lifecycle.preStopSleepSeconds",
+      "service.type",
+      "workload.image.repository",
+      "workload.image.tag",
+      "workload.terminationGracePeriodSeconds"
+    ],
+    "envSpecificFields": {
+      "envVars.database.DB_BASE_URL": {
+        "values": {
+          "dev-2": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/msu_dev_2_db",
+          "prod-2": "jdbc:postgresql://k8s-comm-2-green-3dmlmj.cafdyqpndbn1.us-east-1.rds.amazonaws.com/msu_prod_2_db"
+        },
+        "note": "Per-environment database endpoints"
+      },
+      "envVars.java.CMS_JAVA_OPTS": {
+        "values": {
+          "dev-2": "-Xmx4G -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork",
+          "prod-2": "-Xmx11250M -XX:+PrintFlagsFinal -Djdk.lang.Process.launchMechanism=fork"
+        },
+        "note": "Varies by environment"
+      },
+      "workload.javaHeap": {
+        "values": {
+          "dev-2": "4G",
+          "prod-2": "11250M"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.replicas": {
+        "values": {
+          "dev-2": "1",
+          "prod-2": "3"
+        },
+        "note": "Different scaling per environment tier"
+      },
+      "workload.resources.limits.cpu": {
+        "values": {
+          "dev-2": "4",
+          "prod-2": "6"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.limits.memory": {
+        "values": {
+          "dev-2": "6500M",
+          "prod-2": "15Gi"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.cpu": {
+        "values": {
+          "dev-2": "3",
+          "prod-2": "4"
+        },
+        "note": "Different sizing per environment tier"
+      },
+      "workload.resources.requests.memory": {
+        "values": {
+          "dev-2": "6500M",
+          "prod-2": "15Gi"
+        },
+        "note": "Different sizing per environment tier"
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "field": "environments.dev-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.dev-2.workload.replicas",
+      "description": "Single replica in dev-2 \u2014 no high availability.",
+      "severity": "warning",
+      "recommendation": "Consider replicas >= 2 for non-dev environments"
+    },
+    {
+      "field": "environments.dev-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in dev-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.dev-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    },
+    {
+      "field": "environments.prod-2.pdb",
+      "description": "No PodDisruptionBudget manifest found. The dotCMS chart v1.0.34 supports pdb.auto mode.",
+      "severity": "warning",
+      "recommendation": "Enable pdb: enabled: true in Helm values when replicas > 1"
+    },
+    {
+      "field": "environments.prod-2.affinity.type",
+      "description": "Soft (preferred) pod anti-affinity in prod-2. Multiple pods may land on same node during spot reaping (TylerTech incident 2026-03-17).",
+      "severity": "critical",
+      "recommendation": "Upgrade to requiredDuringSchedulingIgnoredDuringExecution or enable chart PDB"
+    },
+    {
+      "field": "environments.prod-2.ingress.classAnnotation",
+      "description": "Uses deprecated 'kubernetes.io/ingress.class' annotation instead of spec.ingressClassName.",
+      "severity": "info",
+      "recommendation": "Migrate to spec.ingressClassName for Kubernetes 1.18+ compliance"
+    }
+  ]
+}

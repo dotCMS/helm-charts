@@ -1,0 +1,304 @@
+{
+  "analysisDate": "2026-03-19T15:14:58.575065+00:00",
+  "recommendedDefaults": {
+    "workload.podManagementPolicy": {
+      "value": "Parallel",
+      "confidence": "high",
+      "basedOn": "226 of 255 environments (91.1%)",
+      "note": "Allows pods to start in parallel, reduces StatefulSet rollout time"
+    },
+    "workload.terminationGracePeriodSeconds": {
+      "value": "40",
+      "confidence": "high",
+      "basedOn": "252 of 255 environments (98.8%)",
+      "note": "Based on 252 of 255 environments (98.8% adoption)"
+    },
+    "affinity.topologyKey": {
+      "value": "kubernetes.io/hostname",
+      "confidence": "high",
+      "basedOn": "255 of 255 environments (100.0%)",
+      "note": "Standard hostname-based anti-affinity"
+    },
+    "ingress.scheme": {
+      "value": "internet-facing",
+      "confidence": "high",
+      "basedOn": "494 of 255 environments (100.0%)",
+      "note": "All customers are internet-facing"
+    },
+    "ingress.targetType": {
+      "value": "ip",
+      "confidence": "high",
+      "basedOn": "247 of 255 environments (100.0%)",
+      "note": "ALB target type \u2014 all customers use IP mode"
+    },
+    "ingress.sslPolicy": {
+      "value": "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+      "confidence": "high",
+      "basedOn": "245 of 255 environments (96.1%)",
+      "note": "Based on 245 of 255 environments (96.1% adoption)"
+    },
+    "ingress.healthcheck.path": {
+      "value": "/api/v1/probes/alive",
+      "confidence": "high",
+      "basedOn": "210 of 255 environments (82.4%)",
+      "note": "Standard dotCMS health endpoint"
+    },
+    "ingress.healthcheck.intervalSeconds": {
+      "value": "30",
+      "confidence": "high",
+      "basedOn": "212 of 255 environments (83.1%)",
+      "note": "Based on 212 of 255 environments (83.1% adoption)"
+    },
+    "ingress.healthcheck.timeoutSeconds": {
+      "value": "5",
+      "confidence": "high",
+      "basedOn": "212 of 255 environments (83.1%)",
+      "note": "Based on 212 of 255 environments (83.1% adoption)"
+    },
+    "ingress.healthcheck.successCodes": {
+      "value": "200",
+      "confidence": "high",
+      "basedOn": "255 of 255 environments (100.0%)",
+      "note": "Standard HTTP 200 success"
+    },
+    "ingress.tga.deregistration_delay": {
+      "value": "30",
+      "confidence": "high",
+      "basedOn": "42 of 255 environments (100.0%)",
+      "note": "Based on 42 of 255 environments (100.0% adoption)"
+    },
+    "ingress.tga.stickiness_enabled": {
+      "value": "true",
+      "confidence": "high",
+      "basedOn": "252 of 255 environments (99.6%)",
+      "note": "Session stickiness required for dotCMS stateful sessions"
+    },
+    "ingress.lba.idle_timeout": {
+      "value": "600",
+      "confidence": "low",
+      "basedOn": "119 of 255 environments (56.7%)",
+      "note": "Based on 119 of 255 environments (56.7% adoption)"
+    },
+    "service.type": {
+      "value": "NodePort",
+      "confidence": "high",
+      "basedOn": "255 of 255 environments (100.0%)",
+      "note": "All customers use NodePort for ALB"
+    },
+    "annotations.linkerd.enabled": {
+      "value": "false",
+      "confidence": "medium",
+      "basedOn": "254 of 255 environments (99.6%)",
+      "note": "Not universally enabled; opt-in per customer"
+    },
+    "annotations.prometheus.enabled": {
+      "value": "false",
+      "confidence": "medium",
+      "basedOn": "255 of 255 environments (100.0%)",
+      "note": "Not universally enabled; opt-in per customer"
+    },
+    "lifecycle.preStopSleepSeconds": {
+      "value": "20",
+      "confidence": "high",
+      "basedOn": "252 of 255 environments (100.0%)",
+      "note": "Based on 252 of 255 environments (100.0% adoption)"
+    }
+  },
+  "requiredParameters": [
+    {
+      "field": "customerLevel.namespace",
+      "description": "Kubernetes namespace (= customer name)",
+      "exampleValues": [
+        "acsc",
+        "tylertech",
+        "telus"
+      ],
+      "validationRule": "lowercase alphanumeric and hyphens"
+    },
+    {
+      "field": "customerLevel.iamRoleArn",
+      "description": "IAM role ARN for EFS/Secrets access",
+      "exampleValues": [
+        "arn:aws:iam::948170117212:role/EKS_acsc_ReadSecretsRole"
+      ],
+      "validationRule": "^arn:aws:iam::\\d+:role/.+$"
+    },
+    {
+      "field": "customerLevel.awsSecretsArn",
+      "description": "AWS Secrets Manager ARN for customer secrets",
+      "exampleValues": [
+        "arn:aws:secretsmanager:us-east-1:948170117212:secret:sh/acsc/awssecret-xxx"
+      ],
+      "validationRule": "^arn:aws:secretsmanager:.+$"
+    },
+    {
+      "field": "customerLevel.region",
+      "description": "AWS region for the deployment",
+      "exampleValues": [
+        "us-east-1",
+        "eu-central-1",
+        "ca-central-1",
+        "ap-southeast-2"
+      ],
+      "validationRule": "^[a-z]+-[a-z]+-\\d+$"
+    },
+    {
+      "field": "customerLevel.volumes.efsId",
+      "description": "EFS filesystem ID shared across all environments",
+      "exampleValues": [
+        "fs-0a70bee978c471a61"
+      ],
+      "validationRule": "^fs-[a-f0-9]+$"
+    },
+    {
+      "field": "env[].name",
+      "description": "Environment name (e.g. prod-1, dev-1)",
+      "exampleValues": [
+        "prod-1",
+        "dev-1",
+        "staging-1",
+        "uat-1"
+      ],
+      "validationRule": "lowercase alphanumeric and hyphens"
+    },
+    {
+      "field": "env[].workload.replicas",
+      "description": "Number of replicas for this environment",
+      "exampleValues": [
+        1,
+        2,
+        3
+      ],
+      "validationRule": "integer >= 1"
+    },
+    {
+      "field": "env[].workload.image.tag",
+      "description": "dotCMS Docker image tag",
+      "exampleValues": [
+        "26.02.27-01_3d130b5",
+        "23.10.24_lts_v26_2e349a6"
+      ],
+      "validationRule": "non-empty string"
+    },
+    {
+      "field": "env[].workload.resources",
+      "description": "CPU and memory requests/limits per environment",
+      "exampleValues": [
+        {
+          "requests": {
+            "cpu": "1",
+            "memory": "4Gi"
+          },
+          "limits": {
+            "cpu": "4",
+            "memory": "8Gi"
+          }
+        }
+      ],
+      "validationRule": "valid Kubernetes resource spec"
+    },
+    {
+      "field": "env[].workload.javaHeap",
+      "description": "JVM -Xmx value (must be < container memory limit)",
+      "exampleValues": [
+        "4G",
+        "8G",
+        "12G"
+      ],
+      "validationRule": "\\d+[GM]"
+    },
+    {
+      "field": "env[].ingress.host",
+      "description": "Primary hostname for this environment",
+      "exampleValues": [
+        "acsc-prod.dotcms.cloud",
+        "tylertech-prod-1.dotcms.cloud"
+      ],
+      "validationRule": "valid FQDN"
+    },
+    {
+      "field": "env[].ingress.certificateArns",
+      "description": "ACM certificate ARN(s) for HTTPS",
+      "exampleValues": [
+        "arn:aws:acm:us-east-1:948170117212:certificate/xxx"
+      ],
+      "validationRule": "^arn:aws:acm:.+$"
+    },
+    {
+      "field": "env[].volumes.accessPointId",
+      "description": "EFS Access Point ID for this environment's storage",
+      "exampleValues": [
+        "fsap-05565a6a1b0c237aa"
+      ],
+      "validationRule": "^fsap-[a-f0-9]+$"
+    }
+  ],
+  "optionalParameters": [
+    {
+      "field": "affinity.type",
+      "defaultValue": "preferred",
+      "description": "Pod anti-affinity strength",
+      "whenToOverride": "Use 'required' for prod environments with replicas > 1 to prevent co-scheduling"
+    },
+    {
+      "field": "pdb.enabled",
+      "defaultValue": "true",
+      "description": "PodDisruptionBudget",
+      "whenToOverride": "Disable for single-replica environments only"
+    },
+    {
+      "field": "ingress.wafAclArn",
+      "defaultValue": null,
+      "description": "AWS WAFv2 ACL ARN",
+      "whenToOverride": "Enable for customers requiring WAF protection (29/84 currently)"
+    },
+    {
+      "field": "annotations.linkerd.enabled",
+      "defaultValue": false,
+      "description": "Linkerd sidecar injection",
+      "whenToOverride": "Enable when service mesh is required for the cluster"
+    },
+    {
+      "field": "annotations.prometheus.enabled",
+      "defaultValue": false,
+      "description": "Prometheus scraping",
+      "whenToOverride": "Enable when customer has custom metrics exposure"
+    },
+    {
+      "field": "features.glowroot",
+      "defaultValue": false,
+      "description": "Glowroot APM agent",
+      "whenToOverride": "Enable for customers using Glowroot for Java profiling"
+    },
+    {
+      "field": "features.redisSessions",
+      "defaultValue": false,
+      "description": "Tomcat Redis session store",
+      "whenToOverride": "Enable for customers using Redis-backed sessions"
+    },
+    {
+      "field": "features.telemetry",
+      "defaultValue": false,
+      "description": "dotCMS telemetry env vars",
+      "whenToOverride": "Enable for customers opted into telemetry"
+    },
+    {
+      "field": "customerLevel.hasSealedSecrets",
+      "defaultValue": false,
+      "description": "Deploy sealed secrets alongside chart",
+      "whenToOverride": "Enable for 36 customers that currently use sealed secrets"
+    },
+    {
+      "field": "ingress.lba.idleTimeoutSeconds",
+      "defaultValue": "600",
+      "description": "ALB idle connection timeout",
+      "whenToOverride": "Reduce for cost optimization; increase for long-lived WebSocket connections"
+    },
+    {
+      "field": "ingress.tga.stickinessSeconds",
+      "defaultValue": "18000",
+      "description": "ALB session stickiness duration",
+      "whenToOverride": "Adjust per customer session length requirements"
+    }
+  ]
+}
