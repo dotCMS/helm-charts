@@ -90,7 +90,7 @@ spec:
             - name: POSTGRES_INITDB_ARGS
               value: "--auth-host=scram-sha-256"
             {{- range $envName := keys $.Values.environments }}
-            {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+            {{- with include "dotcms.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
             - name: POSTGRES_USERNAME_{{ upper $envName }}
               valueFrom:
                 secretKeyRef:
@@ -133,7 +133,7 @@ data:
     done
 
     {{- range $envName := keys $.Values.environments }}
-    {{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+    {{- with include "dotcms.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
     {{- $dbName := include "dotcms.db.name" . }}
     # Create user and set permissions for {{ $envName }}
     psql -v ON_ERROR_STOP=1 -v username="$POSTGRES_USERNAME_{{ upper $envName }}" -v password="$POSTGRES_PASSWORD_{{ upper $envName }}" --username "${POSTGRES_USER:-postgres}" --dbname "postgres" <<EOSQL

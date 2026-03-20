@@ -1,5 +1,5 @@
 {{- range $envName := keys .Values.environments }}
-{{- with include "myapp.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- with include "dotcms.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
 {{- $fullName := include "dotcms.env.fullName" . }}
 ---
 apiVersion: networking.k8s.io/v1
