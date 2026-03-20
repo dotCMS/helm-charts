@@ -4,10 +4,20 @@
 {{- $fullName := include "dotcms.env.fullName" . }}
 {{- $dbName := include "dotcms.db.name" . }}
 {{- $namespace := .Values.customerName }}
+{{- $configMapMetadata := include "dotcms.upgradeConfigMapName" . }}
+{{- $scriptsConfigMap := printf "%s-%s-scripts" .Values.customerName .Values.environment }}
 {{- $licenseSecretName := include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "license" "overridePath" "") | quote }}
 {{- $licenseSecretExists := ne (lookup "v1" "Secret" $namespace $licenseSecretName) nil }}
 {{- $useLicense := default (or $licenseSecretExists .Values.license) .Values.useLicense }}
-{{- $configMapMetadata := printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment }}
+{{/* $dbSecretName: database credential secret — local vs managed */}}
+{{- $dbSecretName := "" }}
+{{- if .Values.database.local.enabled }}
+  {{- $dbSecretName = include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
+{{- else }}
+  {{- $dbSecretName = include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
+{{- end }}
+{{/* Affinity type: preferred (default, 81.2% of customers) | required | none */}}
+{{- $affinityType := dig "affinity" "type" "preferred" .Values }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -48,6 +58,10 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       initContainers:
+
+        # Purpose: Block pod startup until the pre-upgrade Job completes.
+        # The pre-upgrade job scales down the StatefulSet; this gate ensures
+        # the new pods don't start before schema migrations finish.
         - name: wait-for-job
           image: groundnuty/k8s-wait-for:no-root-v1.7
           imagePullPolicy: IfNotPresent
@@ -55,6 +69,8 @@ spec:
             - job
             - {{ include "dotcms.preUpgradeJobName" . }}
 
+        # Purpose: Block pod startup until the local DB deployment is Ready.
+        # Only active in dev/local environments where database.local.enabled=true.
         {{- if .Values.database.local.enabled }}
         - name: wait-for-db
           image: bitnami/kubectl:1.32.0
@@ -64,213 +80,33 @@ spec:
             - |
               echo "Waiting for DB to be ready..."
               kubectl wait --for=condition=Ready pod -l app=db -n {{ $namespace }} --timeout=300s
-              echo "DB is ready."            
+              echo "DB is ready."
         {{- end }}
-        
+
+        # Purpose: Read backup/restore operation from ConfigMap and write signal
+        # file (/tmp/backup_restore) for the backup-restore container.
+        # Script source: {{ $scriptsConfigMap }} ConfigMap.
         - name: check-backup-restore
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              if [ -f /tmp/backup_restore ]; then
-                rm /tmp/backup_restore
-              fi
-
-              echo "Checking backup/restore operation status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
-              BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupRestoreEnabled}' 2>/dev/null || echo "false")
-              OPERATION_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.backupState}' 2>/dev/null || echo "none")
-              REQUESTED_OPERATION="{{ .Values.backup.operation }}"
-
-              echo "Current backup state: $OPERATION_STATE"
-              echo "Requested operation: $REQUESTED_OPERATION"
-
-              # List backup directory contents
-              echo "Listing backup directory contents:"
-              echo "--------------------------------"
-              ls -lh /data/shared/backups/*.tar.gz 2>/dev/null || echo "No backup files found in /data/shared/backups"
-              echo "--------------------------------"
-
-
-              if [ "$BACKUP_RESTORE_ENABLED" == "true" ]; then
-                case "$REQUESTED_OPERATION" in
-                  "backup")
-                    if [ "$OPERATION_STATE" != "completed" ]; then
-                      echo "$REQUESTED_OPERATION" > /tmp/backup_restore
-                      echo "Operation signal created: $REQUESTED_OPERATION"
-                      kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
-                        --type=merge \
-                        -p "{\"data\":{\"backupState\":\"in-progress\"}}"
-                    else
-                      echo "Backup already completed. Skipping."
-                    fi
-                    ;;
-                  "restore")
-                    RESTORE_STATE=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.restoreState}' 2>/dev/null || echo "none")
-                    if [ "$RESTORE_STATE" != "completed" ]; then
-                      echo "$REQUESTED_OPERATION" > /tmp/backup_restore
-                      echo "Operation signal created: $REQUESTED_OPERATION"
-                      kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
-                        --type=merge \
-                        -p "{\"data\":{\"restoreState\":\"in-progress\"}}"
-                    else
-                      echo "Restore already completed. Skipping."
-                    fi
-                    ;;
-                  *)
-                    if [ "$REQUESTED_OPERATION" != "none" ]; then
-                      echo "Operation state is '$OPERATION_STATE'. Must be 'none' to start a new operation. Reset the state first."
-                    else
-                      echo "No operation requested. Current state: $OPERATION_STATE"
-                    fi
-                    ;;
-                esac
-              else
-                echo "Backup/Restore operation not enabled. Skipping container"
-              fi
+          command: ["/bin/bash", "/scripts/check-backup-restore.sh"]
           volumeMounts:
+            - name: scripts
+              mountPath: /scripts
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
             - name: dotcms-shared
               mountPath: /data/shared
 
+        # Purpose: Execute pg_dump (backup) or psql restore based on signal file
+        # written by check-backup-restore. Writes /tmp/backup_completed or
+        # /tmp/restore_completed for the update-configmap container.
+        # Script source: {{ $scriptsConfigMap }} ConfigMap.
         - name: backup-restore
           image: pgvector/pgvector:pg16
           imagePullPolicy: IfNotPresent
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              {{ if .Values.hookDebug }}set -ex {{ end }}
-
-              echo "Checking for backup/restore operation signal..."
-              if [ ! -f /tmp/backup_restore ]; then
-                echo "No backup/restore operation signal found. Skipping container."
-                exit 0
-              fi
-
-              OPERATION=$(cat /tmp/backup_restore)
-              echo "Backup/Restore operation detected: $OPERATION"
-              echo "Checking for backup/restore operation signal..."
-
-              BACKUP_DIR=/data/shared/backups
-              DOTCMS_DATA_DIR=/data/shared
-              RESTORE_TMP_DIR=${BACKUP_DIR}/restore-temp
-              BACKUP_FILE_NAME="{{ .Values.backup.fileName | default "backup-complete" }}.tar.gz"
-              DB_DUMP="${BACKUP_DIR}/db-dump.sql"
-              ASSETS_BACKUP="${BACKUP_DIR}/assets.tar.gz"
-              FINAL_BACKUP="${BACKUP_DIR}/backup-complete-$(date +%Y%m%d%H%M%S).tar.gz"
-
-              mkdir -p "${BACKUP_DIR}" || {
-                  echo "ERROR: Failed to create backup directory at ${BACKUP_DIR}"
-                  exit 1
-              }
-
-              if [[ "$OPERATION" == "backup" ]]; then
-                  echo "Starting backup process..."
-
-                  # Database Dump
-                  if ! PGPASSWORD="${DB_PASSWORD}" pg_dump -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" -Fp -f "${DB_DUMP}"; then
-                      echo "ERROR: Database dump failed."
-                      exit 1
-                  fi
-
-                  echo "Archiving DotCMS data with exclusions..."
-
-                  # Create Assets Backup with Exclusions
-                  if ! tar \
-                      {{- range .Values.backup.excludes }}
-                      --exclude="{{ . }}" \
-                      {{- end }}
-                      -czf "${ASSETS_BACKUP}" -C "${DOTCMS_DATA_DIR}" assets; then
-                      echo "ERROR: Failed to archive DotCMS assets."
-                      exit 1
-                  fi
-
-                  # Create Final Backup
-                  if ! tar czf "${FINAL_BACKUP}" -C "${BACKUP_DIR}" db-dump.sql assets.tar.gz; then
-                      echo "ERROR: Failed to create final backup archive."
-                      exit 1
-                  fi
-
-                  echo "Backup completed successfully: ${FINAL_BACKUP}"
-
-                  rm -f "${DB_DUMP}" "${ASSETS_BACKUP}"
-                  echo "Temporary files cleaned up: ${DB_DUMP}, ${ASSETS_BACKUP}"
-
-                  # List backup directory contents
-                  echo "Listing backup directory contents:"
-                  echo "--------------------------------"
-                  ls -lh "${BACKUP_DIR}"/*.tar.gz 2>/dev/null || echo "No backup files found in ${BACKUP_DIR}"
-                  echo "--------------------------------"
-
-                  # Create completion file
-                  echo "{{ .Release.Revision }}" > /tmp/backup_completed
-                  echo "Backup completion signal created"
-
-              elif [[ "$OPERATION" == "restore" ]]; then
-                  echo "Starting restore process..."
-
-                  if [[ -d "${RESTORE_TMP_DIR}" ]]; then
-                      echo "Cleaning up leftover restore temp directory..."
-                      rm -rf "${RESTORE_TMP_DIR}"
-                  fi
-
-                  mkdir -p "${RESTORE_TMP_DIR}" || {
-                      echo "ERROR: Failed to create restore temp directory."
-                      exit 1
-                  }
-
-                  echo "Extracting backup..."
-                  if ! tar xzf "${BACKUP_DIR}/${BACKUP_FILE_NAME}" -C "${RESTORE_TMP_DIR}"; then
-                      echo "ERROR: Failed to extract backup archive."
-                      exit 1
-                  fi
-
-                  DB_EXISTS=$(PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';")
-                  if [ "$DB_EXISTS" == "1" ]; then
-                      echo "Database $DB_NAME exists. Dropping it..."
-                      if ! PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "DROP DATABASE \"$DB_NAME\";"; then
-                          echo "ERROR: Failed to drop existing database $DB_NAME."
-                          exit 1
-                      fi
-                  else
-                      echo "Database $DB_NAME does not exist. Skipping drop."
-                  fi
-
-                  if ! grep -q "CREATE DATABASE" "${RESTORE_TMP_DIR}/db-dump.sql"; then
-                      echo "Recreating database $DB_NAME since it's not in the backup..."
-                      if ! PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -U ${DB_USERNAME} -d postgres -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USERNAME\";"; then
-                          echo "ERROR: Failed to create database $DB_NAME."
-                          exit 1
-                      fi
-                  else
-                      echo "Backup already includes CREATE DATABASE. Skipping creation."
-                  fi              
-
-                  echo "Restoring database..."
-                  if ! PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" -f "${RESTORE_TMP_DIR}/db-dump.sql"; then
-                      echo "ERROR: Failed to restore database."
-                      exit 1
-                  fi
-
-                  echo "Restoring DotCMS assets..."
-                  if ! tar xzf "${RESTORE_TMP_DIR}/assets.tar.gz" -C "${DOTCMS_DATA_DIR}"; then
-                      echo "ERROR: Failed to restore DotCMS assets."
-                      exit 1
-                  fi
-
-                  echo "Restore completed successfully."
-
-                  # Create completion file
-                  echo "{{ .Release.Revision }}" > /tmp/restore_completed
-                  echo "Restore completion signal created"
-
-              else
-                  echo "Nothing to do [OPERATION='${OPERATION}']"
-              fi
+          command: ["/bin/bash", "/scripts/backup-restore.sh"]
           env:
-            - name: OPERATION
-              value: {{ .Values.backup.operation }}
             - name: DB_HOST
               value: "{{ include "dotcms.database.host" . }}"
             - name: DB_NAME
@@ -278,54 +114,53 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ if .Values.database.local.enabled }}
-                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
-                  {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
-                  {{ end }}
+                  name: {{ $dbSecretName }}
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ if .Values.database.local.enabled }}
-                    {{ include "dotcms.secret.shared.name" (dict "Values" .Values "secretName" "db-local-admin") }}
-                  {{ else }}
-                    {{ include "dotcms.secret.env.name" (dict "Values" .Values "secretName" "database" "overridePath" "database.secretNameOverride") }}
-                  {{ end }}
+                  name: {{ $dbSecretName }}
                   key: password
-
           volumeMounts:
+            - name: scripts
+              mountPath: /scripts
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
             - name: dotcms-shared
               mountPath: /data/shared
 
+        # Purpose: Check if a schema upgrade is required by reading ConfigMap
+        # {{ $configMapMetadata }}. Writes /tmp/skip-upgrade if no upgrade is needed,
+        # which the dotcms-upgrade container checks before running migrations.
         - name: check-upgrade
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/bash", "-c"]
           args:
             - |
-              if [ -f /tmp/skip ]; then
-                rm /tmp/skip
+              if [ -f /tmp/skip-upgrade ]; then
+                rm /tmp/skip-upgrade
               fi
-              echo "Checking upgrade status from ConfigMap {{ $configMapMetadata }} in namespace {{ $namespace }}..."
-              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapMetadata }} -n {{ $namespace }} -o=jsonpath='{.data.upgradeRequired}' 2>/dev/null || echo "false")
-              echo "Upgrade required value: $UPGRADE_REQUIRED"
+              echo "Checking upgrade status from ConfigMap {{ $configMapMetadata }}..."
+              UPGRADE_REQUIRED=$(kubectl get configmap {{ $configMapMetadata }} \
+                -n {{ $namespace }} -o=jsonpath='{.data.upgradeRequired}' 2>/dev/null || echo "false")
+              echo "Upgrade required: $UPGRADE_REQUIRED"
               if [ "$UPGRADE_REQUIRED" != "true" ]; then
-                echo "Upgrade not required. Marking skip..."
-                echo "skip" > /tmp/skip                   
-              fi            
+                echo "Upgrade not required. Writing /tmp/skip-upgrade..."
+                echo "skip-upgrade" > /tmp/skip-upgrade
+              fi
           volumeMounts:
             - name: admin-shared-{{ $envName }}
               mountPath: /tmp
 
-        - name: dotcms-upgrade      
+        # Purpose: Run dotCMS startup with DOT_SHUTDOWN_ON_STARTUP=true to apply
+        # schema migrations. Skipped if /tmp/skip-upgrade exists (written by check-upgrade).
+        - name: dotcms-upgrade
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" true "EnableProbes" false "ShutdownOnStartupValue" true "UseLicense" $useLicense) .) | nindent 10 }}
           command: ["/bin/bash", "-c"]
           args:
             - |
-              if [ -f /tmp/skip ]; then
+              if [ -f /tmp/skip-upgrade ]; then
                 echo "Upgrade not required. Skipping container execution."
               else
                 echo "Upgrade required. Launching original entrypoint..."
@@ -334,6 +169,8 @@ spec:
               fi
               exit 0
 
+        # Purpose: After backup-restore completes, update ConfigMap {{ $configMapMetadata }}
+        # to mark the operation as completed (prevents re-run on next rollout).
         - name: update-configmap
           image: bitnami/kubectl:1.32.0
           imagePullPolicy: IfNotPresent
@@ -341,17 +178,15 @@ spec:
           args:
             - |
               if [ -f /tmp/backup_completed ]; then
-                echo "Updating ConfigMap to mark backup as completed..."
+                echo "Marking backup as completed in ConfigMap..."
                 kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
-                  --type merge \
-                  --patch '{"data":{"backupState":"completed"}}'
-                echo "ConfigMap updated successfully."
+                  --type merge --patch '{"data":{"backupState":"completed"}}'
+                echo "ConfigMap updated."
               elif [ -f /tmp/restore_completed ]; then
-                echo "Updating ConfigMap to mark restore as completed..."
+                echo "Marking restore as completed in ConfigMap..."
                 kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
-                  --type merge \
-                  --patch '{"data":{"restoreState":"completed"}}'
-                echo "ConfigMap updated successfully."
+                  --type merge --patch '{"data":{"restoreState":"completed"}}'
+                echo "ConfigMap updated."
               else
                 echo "No completion signal found. Skipping ConfigMap update."
               fi
@@ -362,9 +197,12 @@ spec:
       containers:
         - name: dotcms
           {{- include "dotcms.container.spec" (merge (dict "IsUpgradeJob" false "EnableProbes" true "ShutdownOnStartupValue" false "useLicense" $useLicense) .) | nindent 10 }}
-      {{- if .Values.affinity.requireDifferentHosts }}
+
+      {{- if ne $affinityType "none" }}
       affinity:
         podAntiAffinity:
+          {{- if eq $affinityType "required" }}
+          # required: pods MUST be on different nodes — use for HA prod environments
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
@@ -372,23 +210,42 @@ spec:
                     operator: In
                     values:
                       - {{ $fullName }}
-              topologyKey: kubernetes.io/hostname
-        {{- end }}
+              topologyKey: {{ .Values.affinity.topologyKey | default "kubernetes.io/hostname" }}
+          {{- else }}
+          # preferred (default): pods SHOULD be on different nodes — scheduler may co-locate under resource pressure
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: fullname
+                      operator: In
+                      values:
+                        - {{ $fullName }}
+                topologyKey: {{ .Values.affinity.topologyKey | default "kubernetes.io/hostname" }}
+          {{- end }}
+      {{- end }}
+
       volumes:
       - name: admin-shared-{{ $envName }}
         emptyDir: {}
       - name: dotcms-shared
         persistentVolumeClaim:
-          claimName: {{ include "dotcms.pvc.env.name" . }}       
+          claimName: {{ include "dotcms.pvc.env.name" . }}
+      # ConfigMap with extracted init container bash scripts
+      - name: scripts
+        configMap:
+          name: {{ $scriptsConfigMap }}
+          defaultMode: 0755
       {{- if .Values.secrets.useSecretsStoreCSI }}
-      - name: {{ include "dotcms.secret.provider.className"  . }}
+      - name: {{ include "dotcms.secret.provider.className" . }}
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true
           volumeAttributes:
-            secretProviderClass: {{ include "dotcms.secret.provider.className" .  }}
+            secretProviderClass: {{ include "dotcms.secret.provider.className" . }}
       {{- end }}
-      serviceAccountName: {{ include "dotcms.serviceaccount.app" .  }}
+      serviceAccountName: {{ include "dotcms.serviceaccount.app" . }}
 
 {{- end }}
 
