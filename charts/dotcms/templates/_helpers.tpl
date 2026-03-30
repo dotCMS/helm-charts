@@ -77,23 +77,21 @@ SNAPSHOT
 ###########################################################
 */}}
 
-{{- define "dotcms.secret.env.name" -}}
-  {{- $secretName := .secretName -}}
-  {{- $overridePath := .overridePath | default "" -}}
-  {{- $overrideValue := "" -}}
-  {{- if ne $overridePath "" -}}
-    {{- $keys := splitList "." $overridePath -}}
-    {{- $overrideValue = index .Values (index $keys 0) (index $keys 1) | default "" -}}
-  {{- end -}}
-  {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
-    {{- printf "%s" $overrideValue -}}
-  {{- else -}}
-    {{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment $secretName -}}
-  {{- end -}}
-{{- end -}}
+{{/*
+dotcms.secret.name — unified secret naming helper.
 
-{{- define "dotcms.secret.shared.name" -}}
+Parameters (passed via dict):
+  secretName   (string) — logical secret suffix (e.g. "db", "app")
+  scope        (string) — "env" includes environment in the name; "shared" omits it
+  overridePath (string) — optional two-part dotted path (e.g. "database.secretName")
+                          that, when non-empty, returns that value directly
+
+Callers of the removed dotcms.secret.env.name:    use scope="env"
+Callers of the removed dotcms.secret.shared.name: use scope="shared"
+*/}}
+{{- define "dotcms.secret.name" -}}
   {{- $secretName := .secretName -}}
+  {{- $scope := .scope | default "env" -}}
   {{- $overridePath := .overridePath | default "" -}}
   {{- $overrideValue := "" -}}
   {{- if ne $overridePath "" -}}
@@ -102,9 +100,21 @@ SNAPSHOT
   {{- end -}}
   {{- if and $overrideValue (ne (trim $overrideValue) "") -}}
     {{- printf "%s" $overrideValue -}}
+  {{- else if eq $scope "env" -}}
+    {{- printf "%s-%s-%ssecret-%s-%s" .Values.hostType .Values.customerName .Values.cloudProvider .Values.environment $secretName -}}
   {{- else -}}
     {{- printf "%s-%s-%ssecret-%s" .Values.hostType .Values.customerName .Values.cloudProvider $secretName -}}
   {{- end -}}
+{{- end -}}
+
+{{/* Backward-compat shim: dotcms.secret.env.name → dotcms.secret.name (scope=env) */}}
+{{- define "dotcms.secret.env.name" -}}
+  {{- include "dotcms.secret.name" (merge (dict "scope" "env") .) -}}
+{{- end -}}
+
+{{/* Backward-compat shim: dotcms.secret.shared.name → dotcms.secret.name (scope=shared) */}}
+{{- define "dotcms.secret.shared.name" -}}
+  {{- include "dotcms.secret.name" (merge (dict "scope" "shared") .) -}}
 {{- end -}}
 
 {{- define "dotcms.secret.provider.className" -}}
@@ -330,7 +340,7 @@ lifecycle:
     exec:
       command:
         - sleep
-        - '1'
+        - {{ dig "lifecycle" "preStopSleepSeconds" 20 .Values | quote }}
 {{- end }}
 {{- end }}
 
@@ -445,10 +455,12 @@ fi
   {{- range $key, $value := $mergedEnv }}
   {{- $evaluatedValue := tpl $value $context }}
   {{- if contains "SECRET:" $evaluatedValue }}
+  {{- /* SECRET: prefix — value format is "SECRET:<secretName>:<key>" */}}
   {{- $parts := splitList ":" $evaluatedValue -}}
   {{- if ne (len $parts) 3 -}}
     {{- fail (printf "Invalid secret format for env var %s: expected SECRET:secretName:key" .envName) -}}
-  {{- end -}}  
+  {{- end -}}
+  {{- /* $secretArgs = ["<secretName>", "<key>"] (drops the "SECRET" prefix part) */}}
   {{- $secretArgs := rest $parts }}
 - name: {{ $key }}
   valueFrom:
@@ -456,6 +468,7 @@ fi
       name: {{ first $secretArgs | quote }}
       key: {{ $secretArgs | last | quote }}
   {{- else if contains "FIELD:" $evaluatedValue }}
+  {{- /* FIELD: prefix — value format is "FIELD:<fieldPath>" — maps to Downward API fieldRef */}}
   {{- $fieldPath := $evaluatedValue | replace "FIELD:" "" }}
 - name: {{ $key }}
   valueFrom:
@@ -470,25 +483,24 @@ fi
 
 {{/*
 ###########################################################
-# Helper: dotcms.envVars.features
-###########################################################
-# This helper generates additional environment variable mappings 
-# based on enabled feature flags. It conditionally adds blocks for 
-# features such as Analytics, Mail, Glowroot, and Redis Sessions.
-# Each block is rendered only if its corresponding feature flag is true.
+# Per-feature env var sub-helpers
+# Each sub-helper emits a YAML map (key: "value") consumed
+# by dotcms.envVars.features via fromYaml + mergeOverwrite.
 ###########################################################
 */}}
-{{- define "dotcms.envVars.features" -}}
-{{- $feat := .Values.feature | default dict }}
-{{- $redis := index $feat "redisSessions" | default dict }}
 
-{{- $analytics := $feat.analytics | default (dict) }}
+{{/* dotcms.envVars.features.analytics — experiment / A-B testing env vars */}}
+{{- define "dotcms.envVars.features.analytics" -}}
+{{- $analytics := (.Values.feature | default dict).analytics | default dict -}}
 {{- if $analytics.enabled | default false }}
 DOT_FEATURE_FLAG_EXPERIMENTS: "true"
 DOT_ENABLE_EXPERIMENTS_AUTO_JS_INJECTION: {{ default false $analytics.autoInjection | quote }}
 DOT_ANALYTICS_IDP_URL: {{ default "" $analytics.idpUrl | quote }}
 {{- end }}
+{{- end -}}
 
+{{/* dotcms.envVars.features.mail — SMTP relay env vars */}}
+{{- define "dotcms.envVars.features.mail" -}}
 {{- if .Values.mail.enabled | default false }}
 DOT_MAIL_SMTP_HOST: {{ default "" .Values.mail.smtp.host | quote }}
 DOT_MAIL_SMTP_PORT: {{ default 587 .Values.mail.smtp.port | quote }}
@@ -496,14 +508,21 @@ DOT_MAIL_SMTP_STARTTLS_ENABLE: {{ default true .Values.mail.smtp.starttlsEnable 
 DOT_MAIL_SMTP_AUTH: {{ default true .Values.mail.smtp.auth | quote }}
 DOT_MAIL_SMTP_SSL_PROTOCOLS: {{ default "TLSv1.2" .Values.mail.smtp.sslProtocols | quote }}
 {{- end }}
+{{- end -}}
 
-{{- $glow := $feat.glowroot | default (dict) }}
+{{/* dotcms.envVars.features.glowroot — Java APM agent env vars */}}
+{{- define "dotcms.envVars.features.glowroot" -}}
+{{- $glow := (.Values.feature | default dict).glowroot | default dict -}}
 {{- if $glow.enabled | default false }}
 GLOWROOT_ENABLED: "true"
 GLOWROOT_AGENT_ID: {{ $glow.agentIdOverride | default (printf "%s::%s" .Values.customerName .envName) }}
 GLOWROOT_COLLECTOR_ADDRESS: {{ $glow.collectorAddress | default "http://glowrootcentral.dotcmscloud.com:8181" }}
 {{- end }}
+{{- end -}}
 
+{{/* dotcms.envVars.features.redis — Tomcat Redis session store env vars */}}
+{{- define "dotcms.envVars.features.redis" -}}
+{{- $redis := index (.Values.feature | default dict) "redisSessions" | default dict -}}
 {{- if default false (index $redis "enabled") }}
 TOMCAT_REDIS_SESSION_ENABLED: "true"
 TOMCAT_REDIS_SESSION_HOST: {{ default "" (index $redis "redisHost") | quote }}
@@ -513,9 +532,13 @@ TOMCAT_REDIS_SESSION_PASSWORD: "SECRET:{{ default "" (index $redis "password") }
 TOMCAT_REDIS_SESSION_SSL_ENABLED: {{ default false (index $redis "sslEnabled") | quote }}
 TOMCAT_REDIS_SESSION_PERSISTENT_POLICIES: {{ default "DEFAULT" (index $redis "sessionPersistentPolicies") | quote }}
 {{- end }}
+{{- end -}}
+
+{{/* dotcms.envVars.features.prometheus — metrics tagging env vars */}}
+{{- define "dotcms.envVars.features.prometheus" -}}
 {{- if .Values.prometheus.enabled | default false }}
 {{/*
-These are currently being calculated within the app
+These are currently being calculated within the app:
 DOT_METRICS_TAG_VER: {{ include "dotcms.version" . | quote }}
 DOT_METRICS_TAG_FULLNAME: {{ include "dotcms.env.fullName" . | quote }}
 DOT_METRICS_TAG_HOSTNAME: "FIELD:metadata.name"
@@ -524,7 +547,22 @@ DOT_METRICS_TAG_APP: {{ .Values.app | quote }}
 DOT_METRICS_TAG_ENV: {{ .Values.environment | quote }}
 DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
 {{- end }}
+{{- end -}}
 
+{{/*
+###########################################################
+# Helper: dotcms.envVars.features
+###########################################################
+# Aggregates all per-feature env var sub-helpers into a single
+# YAML map. Uses fromYaml so callers can mergeOverwrite cleanly.
+###########################################################
+*/}}
+{{- define "dotcms.envVars.features" -}}
+{{ include "dotcms.envVars.features.analytics"  . }}
+{{ include "dotcms.envVars.features.mail"        . }}
+{{ include "dotcms.envVars.features.glowroot"    . }}
+{{ include "dotcms.envVars.features.redis"       . }}
+{{ include "dotcms.envVars.features.prometheus"  . }}
 {{- end }}
 
   {{/*
@@ -545,11 +583,17 @@ DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
 ###########################################################
 */}}
 {{- define "dotcms.ingress.alb.annotations" -}}
-alb.ingress.kubernetes.io/target-group-attributes: {{- if "dotcms.ingress.alb.hosts.stickySessions.enabled" }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
+# -- Target group: stickiness (required for dotCMS stateful sessions)
+alb.ingress.kubernetes.io/target-group-attributes: {{- if .Values.ingress.alb.hosts.stickySessions.enabled }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
+# -- Load balancer: idle timeout + optional S3 access logs
 alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.alb.hosts.idleTimeout }}{{- if .Values.ingress.alb.hosts.accessLogs.enabled }},access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.alb.hosts.accessLogs.bucketOverride }},access_logs.s3.prefix={{ .Values.ingress.alb.hosts.accessLogs.prefixOverride }}{{- end }}
+# -- TLS: forward-secrecy cipher policy
 alb.ingress.kubernetes.io/ssl-policy: {{ required "ingress.alb.hosts.default.sslPolicy is required when ingress.type is 'alb'" .Values.ingress.alb.hosts.default.sslPolicy }}
+# -- Security groups: controls which SGs are attached to the ALB
 alb.ingress.kubernetes.io/security-groups: {{ required "ingress.alb.securityGroups is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.securityGroups" .) }}
+# -- TLS: ACM certificate ARN(s), comma-separated for SNI multi-cert
 alb.ingress.kubernetes.io/certificate-arn: {{ required "ingress.alb.hosts.default.certificateArn is required when ingress.type is 'alb'" (include "dotcms.ingress.alb.certificateArns" .) }}
+# -- WAF: optional WAFv2 ACL ARN; empty string disables WAF attachment
 alb.ingress.kubernetes.io/wafv2-acl-arn: {{ default "" .Values.ingress.alb.hosts.wafArn | squote }}
 {{- end }}
 
@@ -689,14 +733,14 @@ alb.ingress.kubernetes.io/wafv2-acl-arn: {{ default "" .Values.ingress.alb.hosts
 # Environment Configuration Merge Helper
 ###########################################################
 
-_mergeEnvironment is a helper template that deep merges environment-specific values
-with base configuration.
+dotcms.mergeEnvironment deep merges environment-specific values from
+.Values.environments[envName] on top of the base values.
 
 Usage:
 {{ include "dotcms.mergeEnvironment" (dict "Values" .Values "envName" "prod") }}
 */}}
 
-{{- define "myapp.mergeEnvironment" -}}
+{{- define "dotcms.mergeEnvironment" -}}
 {{- $envConfig := index $.Values.environments .envName -}}
 {{- $baseValues := omit $.Values "environments" -}}
 {{- $mergedValues := mergeOverwrite (deepCopy $baseValues) $envConfig -}}
