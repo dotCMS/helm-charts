@@ -27,9 +27,15 @@ tag: 1.0.0-SNAPSHOT
 # -- Image pull policy (Always, IfNotPresent, Never)
 # @default -- IfNotPresent
 imagePullPolicy: IfNotPresent
-# -- Termination grace period in seconds
-# @default -- 10
-terminationGracePeriodSeconds: 10
+# -- Termination grace period in seconds (must be > preStopSleepSeconds + app shutdown time)
+# @default -- 40
+terminationGracePeriodSeconds: 40
+
+# Lifecycle hooks
+lifecycle:
+  # -- Seconds to sleep in preStop hook before SIGTERM. Allows ALB to drain in-flight requests.
+  # @default -- 20
+  preStopSleepSeconds: 20
 # -- Scale down before upgrading
 # @default -- false
 scaleDownBeforeUpgrade: false
@@ -109,95 +115,91 @@ ingress:
         # -- ARN of the TLS certificate for the ALB host
         # @default -- ""
         certificateArn: ""
-        # -- SSL policy name for the ALB
-        # @default -- ""
-        sslPolicy: ""
+        # -- SSL policy name for the ALB (forward-secrecy cipher suite)
+        # @default -- ELBSecurityPolicy-FS-1-2-Res-2020-10
+        sslPolicy: "ELBSecurityPolicy-FS-1-2-Res-2020-10"
       # -- Additional ALB hosts
       # @default -- []
       additionalHosts: []
       # -- Additional certificate ARNs for ALB
       # @default -- []
       additionalCertificateArns: []
-      # -- Sticky session configuration for ALB
+      # -- Sticky session configuration for ALB (required for dotCMS stateful sessions)
       stickySessions:
         # -- Enable sticky sessions
-        # @default -- false
-        enabled: false
+        # @default -- true
+        enabled: true
         # -- Sticky session duration in seconds
         # @default -- 18000
         duration: 18000
-      # -- ALB idle timeout in seconds
-      # @default -- 3600
-      idleTimeout: 3600
+      # -- ALB idle connection timeout in seconds
+      # @default -- 600
+      idleTimeout: 600
       # Access log settings for ALB
       accessLogs:
-        # -- Enable ALB access logs
-        # @default -- false
-        enabled: false
-        # -- Override for the S3 bucket for access logs
+        # -- Enable ALB access logs to S3
+        # @default -- true
+        enabled: true
+        # -- S3 bucket for access logs (must be set when enabled=true)
         # @default -- ""
         bucketOverride: ""
-        # -- Prefix override for access logs in S3
+        # -- S3 key prefix for access logs
         # @default -- ""
         prefixOverride: ""
-      # -- ARN of the WAF to associate with the ALB
+      # -- ARN of the WAF to associate with the ALB (empty = no WAF)
       # @default -- ""
       wafArn: ""
-      # Health check configuration for ALB
-      healthcheck:
-        # -- Backend protocol for health checks (HTTP or HTTPS)
-        # @default -- HTTP
-        backendProtocol: HTTP
-        # -- Protocol for health checks (HTTP or HTTPS)
-        # @default -- HTTP
-        protocol: HTTP
-        # -- Interval between health checks in seconds
-        # @default -- 10
-        intervalSeconds: 10
-        # -- Timeout for health checks in seconds
-        # @default -- 5
-        timeoutSeconds: 5
-        # -- Success codes for health checks
-        # @default -- "200"
-        successCodes: "200"
-        # -- Number of consecutive successful health checks before marking healthy
-        # @default -- 3
-        healthyThresholdCount: 3
-        # -- Number of consecutive failed health checks before marking unhealthy
-        # @default -- 2
-        unhealthyThresholdCount: 2
-      # Target group attributes for ALB
-      targetGroup:
-        # Stickiness configuration
-        stickiness:
-          # -- Enable sticky sessions
-          # @default -- true
-          enabled: true
-          # -- Cookie duration for sticky sessions in seconds
-          # @default -- 18000
-          cookieDuration: 18000
-        # Slow start configuration
-        slowStart:
-          # -- Slow start duration in seconds
-          # @default -- 120
-          durationSeconds: 120
-        # Deregistration delay configuration
-        deregistrationDelay:
-          # -- Deregistration delay timeout in seconds
-          # @default -- 60
-          timeoutSeconds: 60
-        # Load balancing algorithm configuration
-        loadBalancing:
-          # -- Load balancing algorithm type
-          # @default -- least_outstanding_requests
-          algorithmType: least_outstanding_requests
+    # ALB healthcheck — targets application port, not the management/probe port
+    healthcheck:
+      # -- Backend protocol for health checks
+      # @default -- HTTP
+      backendProtocol: HTTP
+      # -- Protocol for health checks
+      # @default -- HTTP
+      protocol: HTTP
+      # -- Application health endpoint path (82.4% of customers use this)
+      # @default -- /api/v1/appconfiguration
+      path: /api/v1/appconfiguration
+      # -- Application port for health checks (not the management port 8090)
+      # @default -- 8082
+      port: 8082
+      # -- Interval between health checks in seconds
+      # @default -- 30
+      intervalSeconds: 30
+      # -- Health check response timeout in seconds
+      # @default -- 2
+      timeoutSeconds: 2
+      # -- Success codes for health checks
+      # @default -- "200"
+      successCodes: "200"
+      # -- Consecutive successes to mark healthy
+      # @default -- 2
+      healthyThresholdCount: 2
+      # -- Consecutive failures to mark unhealthy
+      # @default -- 2
+      unhealthyThresholdCount: 2
+    # ALB target group attributes
+    targetGroup:
+      # -- Deregistration delay before removing a target (seconds)
+      # @default -- 30
+      deregistrationDelay: 30
+      # Slow start: gradually ramps up traffic to a newly registered target
+      slowStart:
+        # -- Slow start duration in seconds
+        # @default -- 60
+        durationSeconds: 60
+      # Load balancing algorithm
+      loadBalancing:
+        # -- Algorithm type (round_robin or least_outstanding_requests)
+        # @default -- least_outstanding_requests
+        algorithmType: least_outstanding_requests
 
 # Database configuration settings
 database:
   local:
-    # -- Enable the local database container
-    # @default -- true
-    enabled: true
+    # -- Enable the local database container (for dev/local only; false in all production environments)
+    # @default -- false
+    enabled: false
     # -- Docker image to use for the local database
     # @default -- pgvector/pgvector:pg16
     image: pgvector/pgvector:pg16
@@ -237,9 +239,9 @@ opensearch:
   # -- Computed endpoint URL for OpenSearch access
   endpointUrl: "{{ .Values.opensearch.protocol }}://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}"
   local:
-    # -- Enable the local OpenSearch container
-    # @default -- true
-    enabled: true
+    # -- Enable the local OpenSearch container (for dev/local only; false in all production environments)
+    # @default -- false
+    enabled: false
     # -- Docker image to use for the local OpenSearch instance
     # @default -- opensearchproject/opensearch:1
     image: opensearchproject/opensearch:1
@@ -287,9 +289,9 @@ mail:
 # Redis configuration
 redis:
   local:
-    # -- Enable the local Redis container
-    # @default -- true
-    enabled: true
+    # -- Enable the local Redis container (for dev/local only; false in all production environments)
+    # @default -- false
+    enabled: false
     # -- Docker image used for local Redis
     # @default -- redis:latest
     image: redis:latest
@@ -367,9 +369,9 @@ envVarsDefaults:
   # -- Whether remote calls should follow redirects
   # @default -- "true"
   DOT_REMOTE_CALL_ALLOW_REDIRECTS: "true"
-  # -- If true, cookies are set with HttpOnly flag
-  # @default -- "false"
-  DOT_COOKIES_HTTP_ONLY: "false"
+  # -- If true, cookies are set with HttpOnly flag (security best practice)
+  # @default -- "true"
+  DOT_COOKIES_HTTP_ONLY: "true"
   # -- Starter content URL for initializing DotCMS
   CUSTOM_STARTER_URL: '{{ include "dotcms.customStarter.url" . }}'
   # -- Toggle telemetry features via feature flag
@@ -472,8 +474,12 @@ backup:
   # -- Directory path inside the container where backups are stored
   # @default -- /data/shared/backups
   path: "/data/shared/backups"
-  # -- List of paths to exclude from backups
-  # @default -- ["assets/tmp_upload*", "assets/dotGenerated/", "assets/timemachine/", "assets/bundles/*", "assets/server/sql_backups/"]
+  # -- Paths to exclude from the assets tar archive (passed as --exclude to tar)
+  # tmp_upload* — in-progress uploads; incomplete, safe to skip
+  # dotGenerated/ — generated previews/thumbnails; regenerated on demand
+  # timemachine/ — time-machine snapshots; large, not needed for restore
+  # bundles/* — compiled front-end bundles; regenerated at startup
+  # server/sql_backups/ — old DB dumps from legacy tooling; redundant with pg_dump
   excludes:
     - "assets/tmp_upload*"
     - "assets/dotGenerated/"
@@ -557,18 +563,27 @@ readinessProbe:
   # @default -- 5
   timeoutSeconds: 5
 
-# Affinity configuration
-# Pod affinity and anti-affinity rules
+# Affinity configuration — pod anti-affinity for StatefulSet
 affinity:
-  # -- Enforce pods to be scheduled on different nodes
-  # @default -- false
-  requireDifferentHosts: false
+  # -- Anti-affinity strength: preferred (default) | required | none
+  # preferred: scheduler tries to spread pods but will co-locate under resource pressure
+  # required:  pods MUST be on different nodes — use for HA prod environments with replicas > 1
+  # none:      no affinity rule applied
+  # @default -- preferred
+  type: "preferred"
+  # -- Node topology key for anti-affinity
+  # @default -- kubernetes.io/hostname
+  topologyKey: kubernetes.io/hostname
+
+###########################################################
+# -- Feature flags: telemetry, management, prometheus, linkerd
+###########################################################
 
 # Configuration for telemetry reporting
 telemetry:
   # -- Enable or disable telemetry
-  # @default -- false
-  enabled: false
+  # @default -- true
+  enabled: true
   # -- Client name used for telemetry reporting (e.g., DEV, PROD)
   # @default -- DEV
   telemetryClient: DEV
@@ -601,10 +616,11 @@ prometheus:
 
 # Service mesh configuration using Linkerd
 linkerd:
-  # -- Enable Linkerd sidecar injection
-  # @default -- false
-  enabled: false
-  # -- Proxy wait before exit seconds (allows graceful shutdown)
+  # -- Enable Linkerd sidecar injection (inject: enabled annotation on pods)
+  # @default -- true
+  enabled: true
+  # -- Seconds the Linkerd proxy waits after receiving SIGTERM before exiting.
+  # Must be < terminationGracePeriodSeconds. Ensures proxy stays up for app shutdown.
   # @default -- 90
   proxyWaitBeforeExitSeconds: 90
 
@@ -619,55 +635,6 @@ environments:
     # @ignore -- Keys to remove from environment variables in the 'prod' environment
     # @default -- {}
     removeKeys: {}
-    # Ensure ingress configuration is available in environment context
-    ingress:
-      alb:
-        healthcheck:
-          # -- Backend protocol for health checks (HTTP or HTTPS)
-          # @default -- HTTP
-          backendProtocol: HTTP
-          # -- Protocol for health checks (HTTP or HTTPS)
-          # @default -- HTTP
-          protocol: HTTP
-          # -- Interval between health checks in seconds
-          # @default -- 10
-          intervalSeconds: 10
-          # -- Timeout for health checks in seconds
-          # @default -- 5
-          timeoutSeconds: 5
-          # -- Success codes for health checks
-          # @default -- "200"
-          successCodes: "200"
-          # -- Number of consecutive successful health checks before marking healthy
-          # @default -- 3
-          healthyThresholdCount: 3
-          # -- Number of consecutive failed health checks before marking unhealthy
-          # @default -- 2
-          unhealthyThresholdCount: 2
-        targetGroup:
-          # Stickiness configuration
-          stickiness:
-            # -- Enable sticky sessions
-            # @default -- true
-            enabled: true
-            # -- Cookie duration for sticky sessions in seconds
-            # @default -- 18000
-            cookieDuration: 18000
-          # Slow start configuration
-          slowStart:
-            # -- Slow start duration in seconds
-            # @default -- 120
-            durationSeconds: 120
-          # Deregistration delay configuration
-          deregistrationDelay:
-            # -- Deregistration delay timeout in seconds
-            # @default -- 60
-            timeoutSeconds: 60
-          # Load balancing algorithm configuration
-          loadBalancing:
-            # -- Load balancing algorithm type
-            # @default -- least_outstanding_requests
-            algorithmType: least_outstanding_requests
 
 # Network Policy configuration
 networkPolicy:
