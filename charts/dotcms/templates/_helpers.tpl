@@ -216,6 +216,10 @@ Callers of the removed dotcms.secret.shared.name: use scope="shared"
 {{- printf "%s-%s-pre-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}
 
+{{- define "dotcms.upgradeConfigMapName" -}}
+{{- printf "%s-%s-upgrade-metadata" .Values.customerName .Values.environment -}}
+{{- end }}
+
 {{- define "dotcms.postUpgradeJobName" -}}
 {{- printf "%s-%s-post-upgrade" .Values.customerName .Values.environment -}}
 {{- end }}

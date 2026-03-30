@@ -1,0 +1,200 @@
+{{- if .Values.coreServiceEnabled }}
+{{- range $envName := keys $.Values.environments }}
+{{- with include "dotcms.mergeEnvironment" ( mergeOverwrite $ (dict "envName" $envName )) | fromYaml }}
+{{- $namespace := .Values.customerName }}
+{{- $configMapMetadata := include "dotcms.upgradeConfigMapName" . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.customerName }}-{{ .Values.environment }}-scripts
+  namespace: {{ $namespace }}
+data:
+  # ---------------------------------------------------------------------------
+  # check-backup-restore.sh
+  #
+  # Signal file contract (all files live in the admin-shared emptyDir /tmp):
+  #   /tmp/backup_restore      — written here to signal backup-restore to act
+  #   /tmp/backup_completed    — written by backup-restore.sh after backup
+  #   /tmp/restore_completed   — written by backup-restore.sh after restore
+  #   /tmp/skip-upgrade        — written by check-upgrade container if no
+  #                              schema migration is needed; read by dotcms-upgrade
+  #
+  # This script reads the desired operation from ConfigMap {{ $configMapMetadata }}
+  # and writes /tmp/backup_restore so the backup-restore container knows what to do.
+  # ---------------------------------------------------------------------------
+  check-backup-restore.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    # Clean up any stale signal file from a previous run
+    check_state() {
+      if [ -f /tmp/backup_restore ]; then
+        rm /tmp/backup_restore
+      fi
+
+      echo "Checking backup/restore state from ConfigMap {{ $configMapMetadata }}..."
+      BACKUP_RESTORE_ENABLED=$(kubectl get configmap {{ $configMapMetadata }} \
+        -n {{ $namespace }} -o=jsonpath='{.data.backupRestoreEnabled}' 2>/dev/null || echo "false")
+      OPERATION_STATE=$(kubectl get configmap {{ $configMapMetadata }} \
+        -n {{ $namespace }} -o=jsonpath='{.data.backupState}' 2>/dev/null || echo "none")
+      REQUESTED_OPERATION="{{ .Values.backup.operation }}"
+
+      echo "Current backup state   : $OPERATION_STATE"
+      echo "Requested operation    : $REQUESTED_OPERATION"
+      echo "Backup/restore enabled : $BACKUP_RESTORE_ENABLED"
+
+      echo "Listing backup directory:"
+      ls -lh /data/shared/backups/*.tar.gz 2>/dev/null || echo "  (no backup files found)"
+
+      if [ "$BACKUP_RESTORE_ENABLED" != "true" ]; then
+        echo "Backup/restore not enabled. Nothing to do."
+        exit 0
+      fi
+
+      case "$REQUESTED_OPERATION" in
+        backup)
+          if [ "$OPERATION_STATE" != "completed" ]; then
+            echo "$REQUESTED_OPERATION" > /tmp/backup_restore
+            echo "Signal written: $REQUESTED_OPERATION"
+            kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+              --type=merge -p '{"data":{"backupState":"in-progress"}}'
+          else
+            echo "Backup already completed. Skipping."
+          fi
+          ;;
+        restore)
+          RESTORE_STATE=$(kubectl get configmap {{ $configMapMetadata }} \
+            -n {{ $namespace }} -o=jsonpath='{.data.restoreState}' 2>/dev/null || echo "none")
+          if [ "$RESTORE_STATE" != "completed" ]; then
+            echo "$REQUESTED_OPERATION" > /tmp/backup_restore
+            echo "Signal written: $REQUESTED_OPERATION"
+            kubectl patch configmap {{ $configMapMetadata }} -n {{ $namespace }} \
+              --type=merge -p '{"data":{"restoreState":"in-progress"}}'
+          else
+            echo "Restore already completed. Skipping."
+          fi
+          ;;
+        none|"")
+          echo "No operation requested. Current state: $OPERATION_STATE"
+          ;;
+        *)
+          echo "Unknown operation '$REQUESTED_OPERATION'. Valid values: backup, restore, none"
+          exit 1
+          ;;
+      esac
+    }
+
+    check_state
+
+  # ---------------------------------------------------------------------------
+  # backup-restore.sh
+  #
+  # Reads /tmp/backup_restore (written by check-backup-restore.sh) and
+  # performs the requested backup or restore operation.
+  #
+  # Required env vars (injected by the init container spec):
+  #   DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD, OPERATION
+  # ---------------------------------------------------------------------------
+  backup-restore.sh: |
+    #!/bin/bash
+    set -euo pipefail
+    {{ if .Values.hookDebug }}set -x{{ end }}
+
+    BACKUP_DIR=/data/shared/backups
+    DOTCMS_DATA_DIR=/data/shared
+    RESTORE_TMP_DIR="${BACKUP_DIR}/restore-temp"
+    BACKUP_FILE_NAME="{{ .Values.backup.fileName | default "backup-complete" }}.tar.gz"
+    DB_DUMP="${BACKUP_DIR}/db-dump.sql"
+    ASSETS_BACKUP="${BACKUP_DIR}/assets.tar.gz"
+    FINAL_BACKUP="${BACKUP_DIR}/backup-complete-$(date +%Y%m%d%H%M%S).tar.gz"
+
+    # -- check_state: verify signal file exists and return operation
+    check_state() {
+      if [ ! -f /tmp/backup_restore ]; then
+        echo "No backup/restore signal found. Skipping."
+        exit 0
+      fi
+      OPERATION=$(cat /tmp/backup_restore)
+      echo "Signal detected: $OPERATION"
+    }
+
+    # -- run_backup: pg_dump + tar assets → single archive
+    run_backup() {
+      echo "Starting backup..."
+      mkdir -p "${BACKUP_DIR}"
+
+      echo "  Dumping database to ${DB_DUMP}..."
+      PGPASSWORD="${DB_PASSWORD}" pg_dump \
+        -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" -Fp -f "${DB_DUMP}"
+
+      echo "  Archiving assets with exclusions..."
+      tar \
+        {{- range .Values.backup.excludes }}
+        --exclude="{{ . }}" \
+        {{- end }}
+        -czf "${ASSETS_BACKUP}" -C "${DOTCMS_DATA_DIR}" assets
+
+      echo "  Creating final archive ${FINAL_BACKUP}..."
+      tar czf "${FINAL_BACKUP}" -C "${BACKUP_DIR}" db-dump.sql assets.tar.gz
+
+      echo "Backup completed: ${FINAL_BACKUP}"
+      rm -f "${DB_DUMP}" "${ASSETS_BACKUP}"
+      ls -lh "${BACKUP_DIR}"/*.tar.gz 2>/dev/null || true
+
+      # Signal to update-configmap container
+      echo "{{ .Release.Revision }}" > /tmp/backup_completed
+    }
+
+    # -- run_restore: extract archive, drop/recreate DB, psql restore, restore assets
+    run_restore() {
+      echo "Starting restore..."
+      [ -d "${RESTORE_TMP_DIR}" ] && rm -rf "${RESTORE_TMP_DIR}"
+      mkdir -p "${RESTORE_TMP_DIR}"
+
+      echo "  Extracting ${BACKUP_DIR}/${BACKUP_FILE_NAME}..."
+      tar xzf "${BACKUP_DIR}/${BACKUP_FILE_NAME}" -C "${RESTORE_TMP_DIR}"
+
+      # Drop existing database if present
+      DB_EXISTS=$(PGPASSWORD="${DB_PASSWORD}" psql \
+        -h "${DB_HOST}" -U "${DB_USERNAME}" -d postgres \
+        -tAc "SELECT 1 FROM pg_database WHERE datname = '${DB_NAME}';")
+      if [ "${DB_EXISTS}" = "1" ]; then
+        echo "  Dropping existing database ${DB_NAME}..."
+        PGPASSWORD="${DB_PASSWORD}" psql \
+          -h "${DB_HOST}" -U "${DB_USERNAME}" -d postgres \
+          -c "DROP DATABASE \"${DB_NAME}\";"
+      fi
+
+      # Recreate if backup doesn't include CREATE DATABASE
+      if ! grep -q "CREATE DATABASE" "${RESTORE_TMP_DIR}/db-dump.sql"; then
+        echo "  Recreating database ${DB_NAME}..."
+        PGPASSWORD="${DB_PASSWORD}" psql \
+          -h "${DB_HOST}" -U "${DB_USERNAME}" -d postgres \
+          -c "CREATE DATABASE \"${DB_NAME}\" OWNER \"${DB_USERNAME}\";"
+      fi
+
+      echo "  Restoring database..."
+      PGPASSWORD="${DB_PASSWORD}" psql \
+        -h "${DB_HOST}" -U "${DB_USERNAME}" -d "${DB_NAME}" \
+        -f "${RESTORE_TMP_DIR}/db-dump.sql"
+
+      echo "  Restoring assets..."
+      tar xzf "${RESTORE_TMP_DIR}/assets.tar.gz" -C "${DOTCMS_DATA_DIR}"
+
+      echo "Restore completed."
+
+      # Signal to update-configmap container
+      echo "{{ .Release.Revision }}" > /tmp/restore_completed
+    }
+
+    check_state
+
+    case "${OPERATION}" in
+      backup)  run_backup  ;;
+      restore) run_restore ;;
+      *)       echo "Nothing to do [OPERATION='${OPERATION}']" ;;
+    esac
+{{- end }}
+{{- end }}
+{{- end }}
