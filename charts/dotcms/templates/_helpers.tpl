@@ -583,8 +583,12 @@ DOT_METRICS_TAG_CUST: {{ .Values.customerName | quote }}
 ###########################################################
 */}}
 {{- define "dotcms.ingress.alb.annotations" -}}
-# -- Target group: stickiness (required for dotCMS stateful sessions)
-alb.ingress.kubernetes.io/target-group-attributes: {{- if .Values.ingress.alb.hosts.stickySessions.enabled }} stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }} {{- end }}
+# -- Target group attributes: stickiness, slow-start, deregistration, LB algorithm
+alb.ingress.kubernetes.io/target-group-attributes: >-
+  deregistration_delay.timeout_seconds={{ dig "ingress" "alb" "targetGroup" "deregistrationDelay" "30" .Values }},
+  slow_start.duration_seconds={{ dig "ingress" "alb" "targetGroup" "slowStart" "durationSeconds" "60" .Values }},
+  load_balancing.algorithm.type={{ dig "ingress" "alb" "targetGroup" "loadBalancing" "algorithmType" "least_outstanding_requests" .Values }}
+  {{- if .Values.ingress.alb.hosts.stickySessions.enabled }},stickiness.enabled=true,stickiness.lb_cookie.duration_seconds={{ .Values.ingress.alb.hosts.stickySessions.duration }}{{- end }}
 # -- Load balancer: idle timeout + optional S3 access logs
 alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.alb.hosts.idleTimeout }}{{- if .Values.ingress.alb.hosts.accessLogs.enabled }},access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.alb.hosts.accessLogs.bucketOverride }},access_logs.s3.prefix={{ .Values.ingress.alb.hosts.accessLogs.prefixOverride }}{{- end }}
 # -- TLS: forward-secrecy cipher policy
